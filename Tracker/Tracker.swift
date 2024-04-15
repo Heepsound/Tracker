@@ -8,12 +8,21 @@
 import UIKit
 
 struct Tracker {
-    let id: UUID
+    let id: String
     let name: String
     let trackerType: TrackerTypes
     let color: UIColor
     let emoji: String
     let schedule: [DaysOfWeek]
+
+    init(name: String, trackerType: TrackerTypes, color: UIColor, emoji: String, schedule: [DaysOfWeek]) {
+        self.id = NSUUID().uuidString
+        self.name = name
+        self.trackerType = trackerType
+        self.color = color
+        self.emoji = emoji
+        self.schedule = schedule
+    }
 }
 
 enum TrackerTypes {

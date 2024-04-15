@@ -19,20 +19,22 @@ final class NewTrackerViewController: UIViewController {
         textField.textColor = .trackerBlack
         textField.borderStyle = .none
         textField.placeholder = "Введите название трекера"
-        textField.backgroundColor = .trackerFieldBackground
+        textField.backgroundColor = .trackerFieldAlpha30
         textField.layer.cornerRadius = 16
         textField.layer.masksToBounds = true
         textField.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: textField.frame.height))
+        textField.leftViewMode = .always
         return textField
     }()
     private lazy var tableView: UITableView = {
         let tableView = UITableView.init(frame: .zero, style: .plain)
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.backgroundColor = .trackerFieldBackground
+        tableView.backgroundColor = .trackerFieldAlpha30
         tableView.layer.masksToBounds = true
         tableView.layer.cornerRadius = 16
-        tableView.register(CategoryCell.self, forCellReuseIdentifier: CategoryCell.reuseIdentifier)
+        tableView.register(TrackerTypeCell.self, forCellReuseIdentifier: TrackerTypeCell.reuseIdentifier)
         return tableView
     }()
     private lazy var addButton: UIButton = {
@@ -69,8 +71,7 @@ final class NewTrackerViewController: UIViewController {
 
     private var trackerService = TrackerService.shared
     private var categoryRowsCount: Int = 0
-    
-    var dismissClosure: (() -> Void)?
+    weak var delegate: NewTrackerViewControllerDelegate?
     
     // MARK: - Lifecycle
     
@@ -142,13 +143,14 @@ final class NewTrackerViewController: UIViewController {
     // MARK: - Actions
     
     @objc private func didTapAddButton() {
-        
+        trackerService.newTrackerName = nameTextField.text
+        trackerService.addNewTracker()
+        delegate?.newTrackerCreateCompleted()
     }
     
     @objc private func didTapCancelButton() {
-        trackerService.clearNewTrackerData()
-        dismiss(animated: true)
-        dismissClosure?()
+        trackerService.clearNewTracker()
+        delegate?.newTrackerCreateCompleted()
     }
 }
 
@@ -158,8 +160,8 @@ extension NewTrackerViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: CategoryCell.reuseIdentifier, for: indexPath)
-        guard let cell = cell as? CategoryCell else {
+        let cell = tableView.dequeueReusableCell(withIdentifier: TrackerTypeCell.reuseIdentifier, for: indexPath)
+        guard let cell = cell as? TrackerTypeCell else {
             return UITableViewCell()
         }
         cell.isSchedule = indexPath.row == 1
@@ -178,15 +180,19 @@ extension NewTrackerViewController: UITableViewDataSource {
 
 extension NewTrackerViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.row == 1 {
+        if indexPath.row == 0 {
+            let categoryViewController = CategoryViewController()
+            categoryViewController.dismissClosure = { [weak self] in
+                self?.tableView.reloadData()
+            }
+            self.present(categoryViewController, animated: true)
+        } else {
             let scheduleViewController = ScheduleViewController()
             scheduleViewController.dismissClosure = { [weak self] in
                 self?.trackerService.newTrackerSchedule.sort(by: {$0.dayNumber < $1.dayNumber})
                 self?.tableView.reloadData()
             }
             self.present(scheduleViewController, animated: true)
-        } else {
-            
         }
     }
 }

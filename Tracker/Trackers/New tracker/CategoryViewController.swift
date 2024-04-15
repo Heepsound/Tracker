@@ -1,16 +1,16 @@
 //
-//  ScheduleViewController.swift
+//  CategoryViewController.swift
 //  Tracker
 //
-//  Created by Владимир Горбачев on 14.04.2024.
+//  Created by Владимир Горбачев on 15.04.2024.
 //
 
 import UIKit
 
-final class ScheduleViewController: UIViewController {
+final class CategoryViewController: UIViewController {
     private var titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Расписание"
+        label.text = "Категория"
         label.textColor = .trackerBlack
         label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         return label
@@ -22,20 +22,22 @@ final class ScheduleViewController: UIViewController {
         tableView.backgroundColor = .trackerFieldAlpha30
         tableView.layer.masksToBounds = true
         tableView.layer.cornerRadius = 16
-        tableView.register(ScheduleCell.self, forCellReuseIdentifier: ScheduleCell.reuseIdentifier)
+        tableView.register(CategoryCell.self, forCellReuseIdentifier: CategoryCell.reuseIdentifier)
         return tableView
     }()
-    private lazy var confirmButton: UIButton = {
+    private lazy var addCategoryButton: UIButton = {
         let button = UIButton(type: .custom)
         button.backgroundColor = .trackerBlack
-        button.setTitle("Готово", for: .normal)
+        button.setTitle("Добавить категорию", for: .normal)
         button.setTitleColor(.trackerWhite, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
-        button.addTarget(self, action: #selector(didTapConfirmButton), for: .touchUpInside)
+        button.addTarget(self, action: #selector(didTapAddCategoryButton), for: .touchUpInside)
         return button
     }()
+    
+    private var trackerService = TrackerService.shared
     
     var dismissClosure: (() -> Void)?
     
@@ -43,12 +45,12 @@ final class ScheduleViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupScheduleViewController()
+        setupCategoryViewController()
     }
     
-    private func setupScheduleViewController() {
+    private func setupCategoryViewController() {
         view.backgroundColor = .trackerWhite
-        let indexPaths = (0...6).map { i in
+        let indexPaths = (0..<trackerService.categories.count).map { i in
             IndexPath(row: i, section: 0)
         }
         tableView.insertRows(at: indexPaths, with: .automatic)
@@ -60,7 +62,7 @@ final class ScheduleViewController: UIViewController {
     private func addSubViews() {
         view.addSubviewWithoutAutoresizingMask(titleLabel)
         view.addSubviewWithoutAutoresizingMask(tableView)
-        view.addSubviewWithoutAutoresizingMask(confirmButton)
+        view.addSubviewWithoutAutoresizingMask(addCategoryButton)
     }
 
     private func applyConstraints() {
@@ -71,38 +73,37 @@ final class ScheduleViewController: UIViewController {
         ])
         NSLayoutConstraint.activate([
             tableView.widthAnchor.constraint(equalToConstant: 343),
-            tableView.heightAnchor.constraint(equalToConstant: CGFloat(7 * 75)),
+            tableView.heightAnchor.constraint(equalToConstant: CGFloat(trackerService.categories.count * 75)),
             tableView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             tableView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 30)
         ])
         NSLayoutConstraint.activate([
-            confirmButton.widthAnchor.constraint(equalToConstant: 335),
-            confirmButton.heightAnchor.constraint(equalToConstant: 60),
-            confirmButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            confirmButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            addCategoryButton.widthAnchor.constraint(equalToConstant: 335),
+            addCategoryButton.heightAnchor.constraint(equalToConstant: 60),
+            addCategoryButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            addCategoryButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
     
     // MARK: - Actions
     
-    @objc private func didTapConfirmButton() {
-        dismissClosure?()
-        dismiss(animated: true)
+    @objc private func didTapAddCategoryButton() {
+        
     }
 }
 
-extension ScheduleViewController: UITableViewDataSource {
+extension CategoryViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 7
+        return trackerService.categories.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: ScheduleCell.reuseIdentifier, for: indexPath)
-        guard let cell = cell as? ScheduleCell else {
+        let cell = tableView.dequeueReusableCell(withIdentifier: CategoryCell.reuseIdentifier, for: indexPath)
+        guard let cell = cell as? CategoryCell else {
             return UITableViewCell()
         }
-        cell.dayOfWeek = DaysOfWeek(rawValue: indexPath.row + 1)
-        if indexPath.row == 6 {
+        cell.categoryName = trackerService.categories[indexPath.row].name
+        if indexPath.row == 1 {
             cell.separatorInset.left = 1000
         } else {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
@@ -115,8 +116,11 @@ extension ScheduleViewController: UITableViewDataSource {
     }
 }
 
-extension ScheduleViewController: UITableViewDelegate {
+extension CategoryViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-
+        trackerService.newTrackerCategory = trackerService.categories[indexPath.row].name
+        dismissClosure?()
+        dismiss(animated: true)
     }
 }
+
