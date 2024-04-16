@@ -58,9 +58,31 @@ class TrackerCell: UICollectionViewCell {
             cardLabel.backgroundColor = tracker.color
             completedButton.backgroundColor = tracker.color
             emojiLabel.text = tracker.emoji
-            counterLabel.text = "5 дней"
+            refreshData()
         }
     }
+    
+    private var doneTimes: Int = 0 {
+        didSet {
+            counterLabel.text = "\(doneTimes) дней"
+        }
+    }
+    
+    private var isDone: Bool = false {
+        didSet {
+            if isDone {
+                completedButton.setImage(UIImage(named: "Done"), for: .normal)
+                completedButton.setTitle("", for: .normal)
+            } else {
+                completedButton.setImage(UIImage(), for: .normal)
+                completedButton.setTitle("+", for: .normal)
+            }
+        }
+    }
+    
+    private var trackerService = TrackerService.shared
+    
+    private var trackerServiceObserver: NSObjectProtocol?
     
     static let reuseIdentifier = "trackerCell"
     
@@ -68,7 +90,14 @@ class TrackerCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        trackerServiceObserver = NotificationCenter.default.addObserver(forName: TrackerService.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
+            self?.refreshData()
+        }
         setupTrackerCell()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     private func setupTrackerCell() {
@@ -128,11 +157,25 @@ class TrackerCell: UICollectionViewCell {
         ])
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    func refreshData() {
+        completedButton.isEnabled = trackerService.canChangeStatus()
+        completedButton.alpha = completedButton.isEnabled ? 1.0 : 0.3
+        if let id = tracker?.id {
+            isDone = trackerService.isDone(id: id)
+            doneTimes = trackerService.doneCount(id: id)
+        }
     }
     
+    // MARK: - Actions
+    
     @objc private func didTapCompletedButton() {
-  
+        guard let id = tracker?.id else { return }
+        if isDone {
+            trackerService.setUndone(id: id)
+        } else {
+            trackerService.setDone(id: id)
+        }
+        isDone = !isDone
+        doneTimes = trackerService.doneCount(id: id)
     }
 }

@@ -139,8 +139,9 @@ final class TrackersViewController: UIViewController {
     }
     
     func updateTrackers() {
-        categories = trackerService.categories
+        categories = trackerService.getTrackers(onDate: currentDate)
         collectionView.isHidden = categories.isEmpty
+        collectionView.reloadData()
     }
     
     // MARK: - Actions
@@ -153,6 +154,7 @@ final class TrackersViewController: UIViewController {
     
     @objc private func datePickerValueChanged(_ sender: UIDatePicker) {
         currentDate = sender.date
+        updateTrackers()
     }
 }
 
@@ -231,7 +233,6 @@ extension TrackersViewController: UICollectionViewDelegate {
 extension TrackersViewController: NewTrackerViewControllerDelegate {
     func newTrackerCreateCompleted() {
         self.dismiss(animated: true)
-        guard let _ = trackerService.newTrackerType else { return }
         updateTrackers()
     }
 }
