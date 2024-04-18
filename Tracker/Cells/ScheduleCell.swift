@@ -16,6 +16,7 @@ final class ScheduleCell: UITableViewCell {
     }()
     private lazy var scheduleSwitch: UISwitch = {
         let scheduleSwitch = UISwitch()
+        scheduleSwitch.onTintColor = .trackerBlue
         scheduleSwitch.addTarget(self, action: #selector(valueChangedScheduleSwitch), for: .valueChanged)
         return scheduleSwitch
     }()
@@ -24,7 +25,7 @@ final class ScheduleCell: UITableViewCell {
         didSet {
             if let dayOfWeek {
                 titleLabel.text = dayOfWeek.name
-                if let index = trackerService.newTrackerSchedule.firstIndex(of: dayOfWeek) {
+                if let _ = trackerService.newTrackerSchedule.firstIndex(of: dayOfWeek) {
                     scheduleSwitch.isOn = true
                 }
             } else {

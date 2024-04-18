@@ -46,6 +46,7 @@ final class TrackerTypeViewController: UIViewController {
     }()
     
     private var trackerService = TrackerService.shared
+    weak var delegate: NewTrackerViewControllerDelegate?
     
     // MARK: - Lifecycle
     
@@ -87,23 +88,20 @@ final class TrackerTypeViewController: UIViewController {
         ])
     }
     
-    // MARK: - Actions
-    
-    @objc private func didTapAddHabitButton() {
-        trackerService.newTrackerType = .habit
+    func showNewTrackerViewController(trackerType: TrackerTypes) {
+        trackerService.newTrackerType = trackerType
         let newTrackerViewController = NewTrackerViewController()
-        newTrackerViewController.dismissClosure = { [weak self] in
-            self?.dismiss(animated: true)
-        }
+        newTrackerViewController.delegate = self.delegate
         self.present(newTrackerViewController, animated: true)
     }
     
+    // MARK: - Actions
+    
+    @objc private func didTapAddHabitButton() {
+        showNewTrackerViewController(trackerType: .habit)
+    }
+    
     @objc private func didTapAddIrregularEventButton() {
-        trackerService.newTrackerType = .irregularEvent
-        let newTrackerViewController = NewTrackerViewController()
-        newTrackerViewController.dismissClosure = { [weak self] in
-            self?.dismiss(animated: true)
-        }
-        self.present(newTrackerViewController, animated: true)
+        showNewTrackerViewController(trackerType: .irregularEvent)
     }
 }

@@ -1,5 +1,5 @@
 //
-//  CategoryCell.swift
+//  TrackerType.swift
 //  Tracker
 //
 //  Created by Владимир Горбачев on 14.04.2024.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class CategoryCell: UITableViewCell {
+final class TrackerTypeCell: UITableViewCell {
     private var titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .trackerBlack
@@ -51,6 +51,7 @@ final class CategoryCell: UITableViewCell {
                     }
                 } else {
                     titleLabel.text = "Категория"
+                    valueLabel.text = trackerService.newTrackerCategory ?? ""
                 }
             } else {
                 titleLabel.text = "Неопределено"
@@ -61,7 +62,7 @@ final class CategoryCell: UITableViewCell {
     
     private var trackerService = TrackerService.shared
     
-    static let reuseIdentifier = "categoryCell"
+    static let reuseIdentifier = "trackerTypeCell"
     
     // MARK: - Lifecycle
     
