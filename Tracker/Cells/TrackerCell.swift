@@ -58,7 +58,10 @@ class TrackerCell: UICollectionViewCell {
             cardLabel.backgroundColor = tracker.color
             completedButton.backgroundColor = tracker.color
             emojiLabel.text = tracker.emoji
-            refreshData()
+            completedButton.isEnabled = trackerService.canChangeStatus()
+            completedButton.alpha = completedButton.isEnabled ? 1.0 : 0.3
+            isDone = trackerService.isDone(id: tracker.id)
+            doneTimes = trackerService.doneCount(id: tracker.id)
         }
     }
     
@@ -81,18 +84,12 @@ class TrackerCell: UICollectionViewCell {
     }
     
     private var trackerService = TrackerService.shared
-    
-    private var trackerServiceObserver: NSObjectProtocol?
-    
     static let reuseIdentifier = "trackerCell"
     
     // MARK: - Lifecycle
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        trackerServiceObserver = NotificationCenter.default.addObserver(forName: TrackerService.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
-            self?.refreshData()
-        }
         setupTrackerCell()
     }
     
@@ -157,15 +154,6 @@ class TrackerCell: UICollectionViewCell {
         ])
     }
     
-    func refreshData() {
-        completedButton.isEnabled = trackerService.canChangeStatus()
-        completedButton.alpha = completedButton.isEnabled ? 1.0 : 0.3
-        if let id = tracker?.id {
-            isDone = trackerService.isDone(id: id)
-            doneTimes = trackerService.doneCount(id: id)
-        }
-    }
-    
     // MARK: - Actions
     
     @objc private func didTapCompletedButton() {
@@ -179,3 +167,4 @@ class TrackerCell: UICollectionViewCell {
         doneTimes = trackerService.doneCount(id: id)
     }
 }
+

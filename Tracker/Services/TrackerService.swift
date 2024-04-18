@@ -15,8 +15,6 @@ final class TrackerService {
     
     private(set) var trackersDate: Date = Date()
     
-    static let didChangeNotification = Notification.Name(rawValue: "TrackerServiceDidChange")
-    
     var newTrackerName: String?
     var newTrackerType: TrackerTypes?
     var newTrackerColor: UIColor?
@@ -27,25 +25,6 @@ final class TrackerService {
     // MARK: - Lifecycle
     
     private init() {
-        /*let tracker = Tracker(name: "Кошка заслонила камеру на созвоне",
-                              trackerType: .habit,
-                              color: .trackerPink,
-                              emoji: "😻",
-                              schedule: [.monday,.tuesday, .wednesday])
-        let tracker2 = Tracker(name: "Уборка дома",
-                              trackerType: .habit,
-                              color: .trackerPink,
-                              emoji: "🌺",
-                               schedule: [.thursday, .friday])
-        categories.append(TrackerCategory(name: "Домашний уют", trackers: [tracker, tracker2]))
-        
-        let tracker3 = Tracker(name: "День рождения",
-                               trackerType: .irregularEvent,
-                               color: .trackerBlue,
-                               emoji: "🌺",
-                               schedule: newTrackerSchedule)
-        categories.append(TrackerCategory(name: "Радостные мелочи", trackers: [tracker3]))*/
-        
         categories.append(TrackerCategory(name: "Домашний уют", trackers: []))
         categories.append(TrackerCategory(name: "Радостные мелочи", trackers: []))
     }
@@ -100,7 +79,6 @@ final class TrackerService {
                 categoriesOnDate.append(TrackerCategory(name: category.name, trackers: trackersOnDate))
             }
         }
-        NotificationCenter.default.post(name: TrackerService.didChangeNotification, object: self)
         return categoriesOnDate
     }
     
