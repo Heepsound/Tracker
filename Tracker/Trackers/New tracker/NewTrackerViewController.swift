@@ -14,7 +14,7 @@ final class NewTrackerViewController: UIViewController {
         label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         return label
     }()
-    private var nameTextField: UITextField = {
+    private lazy var nameTextField: UITextField = {
         let textField = UITextField()
         textField.textColor = .trackerBlack
         textField.borderStyle = .none
@@ -25,6 +25,7 @@ final class NewTrackerViewController: UIViewController {
         textField.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: textField.frame.height))
         textField.leftViewMode = .always
+        textField.delegate = self
         return textField
     }()
     private lazy var tableView: UITableView = {
@@ -216,6 +217,15 @@ final class NewTrackerViewController: UIViewController {
 }
 
 // MARK: - Extensions
+
+extension NewTrackerViewController: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let maxLenght = 38
+        guard let text = textField.text else { return false }
+        let updatedString = NSString(string: text).replacingCharacters(in: range, with: string)
+        return updatedString.count <= maxLenght
+    }
+}
 
 extension NewTrackerViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
