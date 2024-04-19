@@ -7,6 +7,10 @@
 
 import UIKit
 
+protocol TrackerServiceNewTrackerDelegate: AnyObject {
+    func newTrackerDataChanged(_ allDataEntered: Bool)
+}
+
 final class TrackerService {
     static let shared = TrackerService()
     
@@ -15,18 +19,52 @@ final class TrackerService {
     
     private(set) var trackersDate: Date = Date()
     
-    var newTrackerName: String?
-    var newTrackerType: TrackerTypes?
-    var newTrackerColor: String?
-    var newTrackerEmoji: String?
-    var newTrackerCategory: String?
-    var newTrackerSchedule: [DaysOfWeek] = []
+    var newTrackerDelegate: TrackerServiceNewTrackerDelegate?
+    
+    var newTrackerName: String? {
+        didSet {
+            checkNewTrackerData()
+        }
+    }
+    var newTrackerType: TrackerTypes? {
+        didSet {
+            checkNewTrackerData()
+        }
+    }
+    var newTrackerColor: String? {
+        didSet {
+            checkNewTrackerData()
+        }
+    }
+    var newTrackerEmoji: String? {
+        didSet {
+            checkNewTrackerData()
+        }
+    }
+    var newTrackerCategory: String? {
+        didSet {
+            checkNewTrackerData()
+        }
+    }
+    var newTrackerSchedule: [DaysOfWeek] = [] {
+        didSet {
+            checkNewTrackerData()
+        }
+    }
     
     // MARK: - Lifecycle
     
     private init() {
         categories.append(TrackerCategory(name: "Домашний уют", trackers: []))
         categories.append(TrackerCategory(name: "Радостные мелочи", trackers: []))
+    }
+    
+    func checkNewTrackerData() {
+        guard let newTrackerType, let newTrackerName, let newTrackerEmoji, let newTrackerColor, let newTrackerCategory else {
+            newTrackerDelegate?.newTrackerDataChanged(false)
+            return
+        }
+        newTrackerDelegate?.newTrackerDataChanged(!(newTrackerName.isEmpty || (newTrackerType == .habit && newTrackerSchedule.isEmpty)))
     }
     
     func clearNewTracker() {

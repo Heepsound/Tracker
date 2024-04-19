@@ -26,6 +26,7 @@ final class NewTrackerViewController: UIViewController {
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: textField.frame.height))
         textField.leftViewMode = .always
         textField.delegate = self
+        textField.addTarget(self, action: #selector(nameTextFieldDidChange(_:)), for: .editingChanged)
         return textField
     }()
     private lazy var tableView: UITableView = {
@@ -59,6 +60,7 @@ final class NewTrackerViewController: UIViewController {
     private lazy var addButton: UIButton = {
         let button = UIButton(type: .custom)
         button.backgroundColor = .trackerGray
+        button.isEnabled = false
         button.setTitle("Создать", for: .normal)
         button.setTitleColor(.trackerWhite, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
@@ -113,6 +115,7 @@ final class NewTrackerViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNewTrackerViewController()
+        trackerService.newTrackerDelegate = self
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -205,7 +208,6 @@ final class NewTrackerViewController: UIViewController {
     // MARK: - Actions
     
     @objc private func didTapAddButton() {
-        trackerService.newTrackerName = nameTextField.text
         trackerService.addNewTracker()
         delegate?.newTrackerCreateCompleted()
     }
@@ -214,9 +216,20 @@ final class NewTrackerViewController: UIViewController {
         trackerService.clearNewTracker()
         delegate?.newTrackerCreateCompleted()
     }
+    
+    @objc private func nameTextFieldDidChange(_ sender: UITextField) {
+        trackerService.newTrackerName = sender.text
+    }
 }
 
 // MARK: - Extensions
+
+extension NewTrackerViewController: TrackerServiceNewTrackerDelegate {
+    func newTrackerDataChanged(_ allDataEntered: Bool) {
+        addButton.isEnabled = allDataEntered
+        addButton.backgroundColor = allDataEntered ? UIColor.trackerBlack : UIColor.trackerGray
+    }
+}
 
 extension NewTrackerViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
