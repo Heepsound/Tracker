@@ -11,11 +11,11 @@ struct Tracker {
     let id: String
     let name: String
     let trackerType: TrackerTypes
-    let color: UIColor
+    let color: String
     let emoji: String
     let schedule: [DaysOfWeek]
 
-    init(name: String, trackerType: TrackerTypes, color: UIColor, emoji: String, schedule: [DaysOfWeek]) {
+    init(name: String, trackerType: TrackerTypes, color: String, emoji: String, schedule: [DaysOfWeek]) {
         self.id = NSUUID().uuidString
         self.name = name
         self.trackerType = trackerType

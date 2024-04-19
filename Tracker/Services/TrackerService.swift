@@ -17,7 +17,7 @@ final class TrackerService {
     
     var newTrackerName: String?
     var newTrackerType: TrackerTypes?
-    var newTrackerColor: UIColor?
+    var newTrackerColor: String?
     var newTrackerEmoji: String?
     var newTrackerCategory: String?
     var newTrackerSchedule: [DaysOfWeek] = []
@@ -41,7 +41,7 @@ final class TrackerService {
     func addNewTracker() {
         let tracker = Tracker(name: newTrackerName ?? "",
                               trackerType: newTrackerType ?? .irregularEvent,
-                              color: newTrackerColor ?? .trackerColdBlue,
+                              color: newTrackerColor ?? "7994F5",
                               emoji: newTrackerEmoji ?? "🤔",
                               schedule: newTrackerSchedule)
         if let index = categories.firstIndex(where: {$0.name == newTrackerCategory}) {

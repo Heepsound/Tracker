@@ -7,7 +7,7 @@
 
 import UIKit
 
-class TrackerCell: UICollectionViewCell {
+final class TrackerCell: UICollectionViewCell {
     private var titleLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 0
@@ -54,9 +54,10 @@ class TrackerCell: UICollectionViewCell {
     var tracker: Tracker? {
         didSet {
             guard let tracker else { return }
+            let color = UIColor(hex: tracker.color)
             titleLabel.text = tracker.name
-            cardLabel.backgroundColor = tracker.color
-            completedButton.backgroundColor = tracker.color
+            cardLabel.backgroundColor = color
+            completedButton.backgroundColor = color
             emojiLabel.text = tracker.emoji
             completedButton.isEnabled = trackerService.canChangeStatus()
             completedButton.alpha = completedButton.isEnabled ? 1.0 : 0.3
@@ -135,9 +136,8 @@ class TrackerCell: UICollectionViewCell {
         
         NSLayoutConstraint.activate([
             titleLabel.leadingAnchor.constraint(equalTo: cardLabel.leadingAnchor, constant: 12),
-            titleLabel.topAnchor.constraint(equalTo: cardLabel.topAnchor, constant: 44),
-            titleLabel.trailingAnchor.constraint(equalTo: cardLabel.trailingAnchor, constant: -12),
-            titleLabel.heightAnchor.constraint(equalToConstant: 34)
+            titleLabel.bottomAnchor.constraint(equalTo: cardLabel.bottomAnchor, constant: -12),
+            titleLabel.trailingAnchor.constraint(equalTo: cardLabel.trailingAnchor, constant: -12)
         ])
         
         NSLayoutConstraint.activate([

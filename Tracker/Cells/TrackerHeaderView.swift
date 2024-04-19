@@ -7,7 +7,7 @@
 
 import UIKit
 
-class TrackerHeaderView: UICollectionReusableView {
+final class TrackerHeaderView: UICollectionReusableView {
     private var titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .trackerBlack
