@@ -16,7 +16,7 @@ struct Tracker {
     let schedule: [DaysOfWeek]
 
     init(name: String, trackerType: TrackerTypes, color: String, emoji: String, schedule: [DaysOfWeek]) {
-        self.id = NSUUID().self as UUID
+        self.id = UUID().self
         self.name = name
         self.trackerType = trackerType
         self.color = color

@@ -11,6 +11,10 @@ protocol TrackerServiceNewTrackerDelegate: AnyObject {
     func newTrackerDataChanged(_ allDataEntered: Bool)
 }
 
+protocol TrackerServiceNewCategoryDelegate: AnyObject {
+    func newCategoryDataChanged(_ allDataEntered: Bool)
+}
+
 final class TrackerService {
     static let shared = TrackerService()
     
@@ -20,6 +24,7 @@ final class TrackerService {
     private(set) var trackersDate: Date = Date()
     
     var newTrackerDelegate: TrackerServiceNewTrackerDelegate?
+    var newCategoryDelegate: TrackerServiceNewCategoryDelegate?
     
     var newTrackerName: String? {
         didSet {
@@ -52,12 +57,15 @@ final class TrackerService {
         }
     }
     
+    var newCategoryName: String? {
+        didSet {
+            checkNewCategoryData()
+        }
+    }
+    
     // MARK: - Lifecycle
     
-    private init() {
-        categories.append(TrackerCategory(name: "Домашний уют", trackers: []))
-        categories.append(TrackerCategory(name: "Радостные мелочи", trackers: []))
-    }
+    private init() {}
     
     func checkNewTrackerData() {
         guard let newTrackerType, let newTrackerName, let _ = newTrackerEmoji, let _ = newTrackerColor, let _ = newTrackerCategory else {
@@ -67,6 +75,14 @@ final class TrackerService {
         newTrackerDelegate?.newTrackerDataChanged(!(newTrackerName.isEmpty || (newTrackerType == .habit && newTrackerSchedule.isEmpty)))
     }
     
+    func checkNewCategoryData() {
+        guard let newCategoryName else {
+            newCategoryDelegate?.newCategoryDataChanged(false)
+            return
+        }
+        newCategoryDelegate?.newCategoryDataChanged(!newCategoryName.isEmpty)
+    }
+    
     func clearNewTracker() {
         newTrackerName = nil
         newTrackerType = nil
@@ -74,6 +90,15 @@ final class TrackerService {
         newTrackerEmoji = nil
         newTrackerCategory = nil
         newTrackerSchedule = []
+    }
+    
+    func clearNewCategory() {
+        newCategoryName = nil
+    }
+    
+    func addNewCategory() {
+        categories.append(TrackerCategory(name: newCategoryName ?? "", trackers: []))
+        clearNewCategory()
     }
     
     func addNewTracker() {

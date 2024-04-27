@@ -12,7 +12,9 @@ final class TrackerCategoryStore {
     
     func add(_ trackerCategory: TrackerCategory) {
         let entity = TrackerCategoryCoreData(context: coreDataManager.context)
+        entity.id = trackerCategory.id
         entity.name = trackerCategory.name
+        coreDataManager.saveContext()
     }
 }
 
