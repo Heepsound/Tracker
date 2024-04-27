@@ -60,7 +60,7 @@ final class TrackerService {
     }
     
     func checkNewTrackerData() {
-        guard let newTrackerType, let newTrackerName, let newTrackerEmoji, let newTrackerColor, let newTrackerCategory else {
+        guard let newTrackerType, let newTrackerName, let _ = newTrackerEmoji, let _ = newTrackerColor, let _ = newTrackerCategory else {
             newTrackerDelegate?.newTrackerDataChanged(false)
             return
         }
