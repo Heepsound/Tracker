@@ -5,10 +5,15 @@
 //  Created by Владимир Горбачев on 27.04.2024.
 //
 
-import UIKit
 import CoreData
 
 final class TrackerRecordStore {
-    private let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    private var coreDataManager = CoreDataManager.shared
+    
+    func add(tracker: Tracker, date: Date) {
+        let entity = TrackerRecordCoreData(context: coreDataManager.context)
+ 
+        entity.date = date
+    }
 }
 

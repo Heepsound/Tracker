@@ -8,7 +8,7 @@
 import UIKit
 
 struct Tracker {
-    let id: String
+    let id: UUID
     let name: String
     let trackerType: TrackerTypes
     let color: String
@@ -16,7 +16,7 @@ struct Tracker {
     let schedule: [DaysOfWeek]
 
     init(name: String, trackerType: TrackerTypes, color: String, emoji: String, schedule: [DaysOfWeek]) {
-        self.id = NSUUID().uuidString
+        self.id = NSUUID().self as UUID
         self.name = name
         self.trackerType = trackerType
         self.color = color
@@ -25,9 +25,8 @@ struct Tracker {
     }
 }
 
-enum TrackerTypes {
-    case habit
-    case irregularEvent
+enum TrackerTypes: Int {
+    case habit = 1, irregularEvent
 }
 
 enum DaysOfWeek: Int {

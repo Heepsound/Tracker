@@ -8,10 +8,12 @@
 import Foundation
 
 struct TrackerCategory {
+    let id: UUID
     let name: String
     let trackers: [Tracker]
     
     init(name: String, trackers: [Tracker]) {
+        self.id = UUID().self
         self.name = name
         self.trackers = trackers
     }

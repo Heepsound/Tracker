@@ -23,6 +23,7 @@
 		E73B351D2BDCE8B0000FD1A4 /* TrackerStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73B351C2BDCE8B0000FD1A4 /* TrackerStore.swift */; };
 		E73B351F2BDCE8BD000FD1A4 /* TrackerCategoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73B351E2BDCE8BD000FD1A4 /* TrackerCategoryStore.swift */; };
 		E73B35212BDCE8CA000FD1A4 /* TrackerRecordStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73B35202BDCE8CA000FD1A4 /* TrackerRecordStore.swift */; };
+		E73B35242BDD085B000FD1A4 /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73B35232BDD085B000FD1A4 /* CoreDataManager.swift */; };
 		E7663B512BD1B6AE001D6AAE /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7663B502BD1B6AE001D6AAE /* UIColor+Extensions.swift */; };
 		E7663B532BD1BB02001D6AAE /* EmojiCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7663B522BD1BB02001D6AAE /* EmojiCell.swift */; };
 		E7663B552BD1BCB2001D6AAE /* ColorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7663B542BD1BCB2001D6AAE /* ColorCell.swift */; };
@@ -57,6 +58,7 @@
 		E73B351C2BDCE8B0000FD1A4 /* TrackerStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerStore.swift; sourceTree = "<group>"; };
 		E73B351E2BDCE8BD000FD1A4 /* TrackerCategoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategoryStore.swift; sourceTree = "<group>"; };
 		E73B35202BDCE8CA000FD1A4 /* TrackerRecordStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerRecordStore.swift; sourceTree = "<group>"; };
+		E73B35232BDD085B000FD1A4 /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
 		E7663B502BD1B6AE001D6AAE /* UIColor+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
 		E7663B522BD1BB02001D6AAE /* EmojiCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiCell.swift; sourceTree = "<group>"; };
 		E7663B542BD1BCB2001D6AAE /* ColorCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorCell.swift; sourceTree = "<group>"; };
@@ -175,6 +177,7 @@
 			isa = PBXGroup;
 			children = (
 				E731606F2BC129D400960D97 /* Tracker.xcdatamodeld */,
+				E73B35232BDD085B000FD1A4 /* CoreDataManager.swift */,
 				E72D0D122BCA905A00D9FA2E /* Models */,
 				E73B351B2BDCE87B000FD1A4 /* DataStore */,
 			);
@@ -312,6 +315,7 @@
 				E7663B512BD1B6AE001D6AAE /* UIColor+Extensions.swift in Sources */,
 				E78AFD802BCD4AA100D47122 /* CategoryViewController.swift in Sources */,
 				E7663B532BD1BB02001D6AAE /* EmojiCell.swift in Sources */,
+				E73B35242BDD085B000FD1A4 /* CoreDataManager.swift in Sources */,
 				E78C9D9F2BCBE305004FB5DF /* TrackerTypeCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

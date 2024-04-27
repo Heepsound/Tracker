@@ -120,19 +120,19 @@ final class TrackerService {
         return categoriesOnDate
     }
     
-    func setDone(id: String) {
+    func setDone(id: UUID) {
         records.append(TrackerRecord(id: id, date: trackersDate))
     }
     
-    func setUndone(id: String) {
+    func setUndone(id: UUID) {
         records.removeAll(where: {$0.id == id && $0.date == trackersDate})
     }
     
-    func doneCount(id: String) -> Int {
+    func doneCount(id: UUID) -> Int {
         return records.filter({$0.id == id}).count
     }
     
-    func doneDate(id: String) -> Date? {
+    func doneDate(id: UUID) -> Date? {
         if let index = records.firstIndex(where: {$0.id == id}) {
             return records[index].date
         } else {
@@ -140,7 +140,7 @@ final class TrackerService {
         }
     }
     
-    func isDone(id: String) -> Bool {
+    func isDone(id: UUID) -> Bool {
         if let _ = records.firstIndex(where: {$0.id == id && $0.date == trackersDate}) {
             return true
         } else {

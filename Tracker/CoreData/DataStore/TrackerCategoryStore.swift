@@ -5,10 +5,14 @@
 //  Created by Владимир Горбачев on 27.04.2024.
 //
 
-import UIKit
 import CoreData
 
 final class TrackerCategoryStore {
-    private let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    private var coreDataManager = CoreDataManager.shared
+    
+    func add(_ trackerCategory: TrackerCategory) {
+        let entity = TrackerCategoryCoreData(context: coreDataManager.context)
+        entity.name = trackerCategory.name
+    }
 }
 
