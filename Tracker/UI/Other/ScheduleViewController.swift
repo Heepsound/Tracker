@@ -37,7 +37,9 @@ final class ScheduleViewController: UIViewController {
         return button
     }()
     
-    var dismissClosure: (() -> Void)?
+    var schedule: [DaysOfWeek] = []
+    
+    var dismissClosure: ((_ schedule: [DaysOfWeek]) -> Void)?
     
     // MARK: - Lifecycle
     
@@ -86,10 +88,12 @@ final class ScheduleViewController: UIViewController {
     // MARK: - Actions
     
     @objc private func didTapConfirmButton() {
-        dismissClosure?()
+        dismissClosure?(schedule)
         dismiss(animated: true)
     }
 }
+
+// MARK: - UITableViewDataSource
 
 extension ScheduleViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -101,6 +105,7 @@ extension ScheduleViewController: UITableViewDataSource {
         guard let cell = cell as? ScheduleCell else {
             return UITableViewCell()
         }
+        cell.delegate = self
         cell.dayOfWeek = DaysOfWeek(rawValue: indexPath.row + 1)
         if indexPath.row == 6 {
             cell.separatorInset.left = 1000
@@ -115,8 +120,24 @@ extension ScheduleViewController: UITableViewDataSource {
     }
 }
 
+// MARK: - UITableViewDelegate
+
 extension ScheduleViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
+    }
+}
+
+// MARK: - ScheduleCellDelegate
+
+extension ScheduleViewController: ScheduleCellDelegate {
+    func add(_ dayOfWeek: DaysOfWeek) {
+        schedule.append(dayOfWeek)
+    }
+    
+    func delete(_ dayOfWeek: DaysOfWeek) {
+        if let index = schedule.firstIndex(of: dayOfWeek) {
+            schedule.remove(at: index)
+        }
     }
 }

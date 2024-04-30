@@ -7,7 +7,11 @@
 
 import UIKit
 
-final class NewTrackerViewController: UIViewController {
+protocol NewTrackerViewControllerDelegate: AnyObject {
+    func add(_ record: Tracker?)
+}
+
+final class NewTrackerViewController: UIViewController, TrackerTypeCellDelegate {
     private var titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .trackerBlack
@@ -105,6 +109,37 @@ final class NewTrackerViewController: UIViewController {
         "F9D4D4", "34A7FE", "46E69D", "35347C", "FF674D", "FF99CC",
         "F6C48B", "7994F5", "832CF1", "AD56DA", "8D72E6", "2FD058"
     ]
+    
+    private var newTrackerName: String? {
+        didSet {
+            checkNewTrackerData()
+        }
+    }
+    var newTrackerType: TrackerTypes? {
+        didSet {
+            checkNewTrackerData()
+        }
+    }
+    private var newTrackerColor: String? {
+        didSet {
+            checkNewTrackerData()
+        }
+    }
+    private var newTrackerEmoji: String? {
+        didSet {
+            checkNewTrackerData()
+        }
+    }
+    var newTrackerCategory: String? {
+        didSet {
+            checkNewTrackerData()
+        }
+    }
+    var newTrackerSchedule: [DaysOfWeek] = [] {
+        didSet {
+            checkNewTrackerData()
+        }
+    }
 
     private var trackerService = TrackerService.shared
     private var categoryRowsCount: Int = 0
@@ -115,7 +150,6 @@ final class NewTrackerViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNewTrackerViewController()
-        trackerService.newTrackerDelegate = self
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -125,14 +159,23 @@ final class NewTrackerViewController: UIViewController {
         scrollView.contentSize = CGSize(width: self.view.frame.size.width, height: contentRect.height)
     }
     
+    private func checkNewTrackerData() {
+        var allDataEntered = false
+        if let newTrackerType, let newTrackerName, let _ = newTrackerEmoji, let _ = newTrackerColor, let _ = newTrackerCategory {
+            allDataEntered = !(newTrackerName.isEmpty || (newTrackerType == .habit && newTrackerSchedule.isEmpty))
+        }
+        addButton.isEnabled = allDataEntered
+        addButton.backgroundColor = allDataEntered ? UIColor.trackerBlack : UIColor.trackerGray
+    }
+    
     private func setupNewTrackerViewController() {
         view.backgroundColor = .trackerWhite
-        if trackerService.newTrackerType == .habit {
+        if newTrackerType == .habit {
             titleLabel.text = "Новая привычка"
         } else {
             titleLabel.text = "Новое нерегулярное событие"
         }
-        if let trackerType = trackerService.newTrackerType {
+        if let trackerType = newTrackerType {
             categoryRowsCount = trackerType == .irregularEvent ? 1 : 2
         }
         let indexPaths = (0..<categoryRowsCount).map { i in
@@ -208,28 +251,24 @@ final class NewTrackerViewController: UIViewController {
     // MARK: - Actions
     
     @objc private func didTapAddButton() {
-        trackerService.addNewTracker()
-        delegate?.newTrackerCreateCompleted()
+        let tracker = Tracker(name: newTrackerName ?? "",
+                              trackerType: newTrackerType ?? .irregularEvent,
+                              color: newTrackerColor ?? "7994F5",
+                              emoji: newTrackerEmoji ?? "🤔",
+                              schedule: newTrackerSchedule)
+        delegate?.add(tracker)
     }
     
     @objc private func didTapCancelButton() {
-        trackerService.clearNewTracker()
-        delegate?.newTrackerCreateCompleted()
+        delegate?.add(nil)
     }
     
     @objc private func nameTextFieldDidChange(_ sender: UITextField) {
-        trackerService.newTrackerName = sender.text
+        newTrackerName = sender.text
     }
 }
 
-// MARK: - Extensions
-
-extension NewTrackerViewController: TrackerServiceNewTrackerDelegate {
-    func newTrackerDataChanged(_ allDataEntered: Bool) {
-        addButton.isEnabled = allDataEntered
-        addButton.backgroundColor = allDataEntered ? UIColor.trackerBlack : UIColor.trackerGray
-    }
-}
+// MARK: - UITextFieldDelegate
 
 extension NewTrackerViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
@@ -239,6 +278,8 @@ extension NewTrackerViewController: UITextFieldDelegate {
         return updatedString.count <= maxLenght
     }
 }
+
+// MARK: - UITableViewDataSource
 
 extension NewTrackerViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -250,6 +291,7 @@ extension NewTrackerViewController: UITableViewDataSource {
         guard let cell = cell as? TrackerTypeCell else {
             return UITableViewCell()
         }
+        cell.delegate = self
         cell.isSchedule = indexPath.row == 1
         if indexPath.row == categoryRowsCount - 1 {
             cell.separatorInset.left = 1000
@@ -258,30 +300,37 @@ extension NewTrackerViewController: UITableViewDataSource {
         }
         return cell
     }
+}
+
+// MARK: - UITableViewDelegate
+
+extension NewTrackerViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if indexPath.row == 0 {
+            let categoryViewController = CategoryViewController()
+            categoryViewController.dismissClosure = { category in
+                self.newTrackerCategory = category?.name
+                self.tableView.reloadData()
+            }
+            self.present(categoryViewController, animated: true)
+        } else {
+            let scheduleViewController = ScheduleViewController()
+            scheduleViewController.schedule = newTrackerSchedule
+            scheduleViewController.dismissClosure = { schedule in
+                self.newTrackerSchedule = schedule
+                self.newTrackerSchedule.sort(by: {$0.dayNumber < $1.dayNumber})
+                self.tableView.reloadData()
+            }
+            self.present(scheduleViewController, animated: true)
+        }
+    }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 75
     }
 }
 
-extension NewTrackerViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.row == 0 {
-            let categoryViewController = CategoryViewController()
-            categoryViewController.dismissClosure = { [weak self] in
-                self?.tableView.reloadData()
-            }
-            self.present(categoryViewController, animated: true)
-        } else {
-            let scheduleViewController = ScheduleViewController()
-            scheduleViewController.dismissClosure = { [weak self] in
-                self?.trackerService.newTrackerSchedule.sort(by: {$0.dayNumber < $1.dayNumber})
-                self?.tableView.reloadData()
-            }
-            self.present(scheduleViewController, animated: true)
-        }
-    }
-}
+// MARK: - UICollectionViewDataSource
 
 extension NewTrackerViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -327,6 +376,8 @@ extension NewTrackerViewController: UICollectionViewDataSource {
     }
 }
 
+// MARK: - UICollectionViewDelegateFlowLayout
+
 extension NewTrackerViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         let indexPath = IndexPath(row: 0, section: section)
@@ -345,14 +396,16 @@ extension NewTrackerViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
+// MARK: - UICollectionViewDelegate
+
 extension NewTrackerViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView == emojisCollectionView {
             let cell = collectionView.cellForItem(at: indexPath) as? EmojiCell
-            trackerService.newTrackerEmoji = cell?.emoji
+            newTrackerEmoji = cell?.emoji
         } else {
             let cell = collectionView.cellForItem(at: indexPath) as? ColorCell
-            trackerService.newTrackerColor = cell?.hexColor
+            newTrackerColor = cell?.hexColor
         }
     }
     

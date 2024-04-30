@@ -45,7 +45,6 @@ final class TrackerTypeViewController: UIViewController {
         return stackView
     }()
     
-    private var trackerService = TrackerService.shared
     weak var delegate: NewTrackerViewControllerDelegate?
     
     // MARK: - Lifecycle
@@ -89,8 +88,8 @@ final class TrackerTypeViewController: UIViewController {
     }
     
     func showNewTrackerViewController(trackerType: TrackerTypes) {
-        trackerService.newTrackerType = trackerType
         let newTrackerViewController = NewTrackerViewController()
+        newTrackerViewController.newTrackerType = trackerType
         newTrackerViewController.delegate = self.delegate
         self.present(newTrackerViewController, animated: true)
     }

@@ -7,6 +7,12 @@
 
 import UIKit
 
+protocol ScheduleCellDelegate: AnyObject {
+    var schedule: [DaysOfWeek] { get }
+    func add(_ dayOfWeek: DaysOfWeek)
+    func delete(_ dayOfWeek: DaysOfWeek)
+}
+
 final class ScheduleCell: UITableViewCell {
     private var titleLabel: UILabel = {
         let label = UILabel()
@@ -21,11 +27,13 @@ final class ScheduleCell: UITableViewCell {
         return scheduleSwitch
     }()
     
+    weak var delegate: ScheduleCellDelegate?
+    
     var dayOfWeek: DaysOfWeek? {
         didSet {
             if let dayOfWeek {
                 titleLabel.text = dayOfWeek.name
-                if let _ = trackerService.newTrackerSchedule.firstIndex(of: dayOfWeek) {
+                if let _ = delegate?.schedule.firstIndex(of: dayOfWeek) {
                     scheduleSwitch.isOn = true
                 }
             } else {
@@ -33,8 +41,6 @@ final class ScheduleCell: UITableViewCell {
             }
         }
     }
-    
-    private var trackerService = TrackerService.shared
     
     static let reuseIdentifier = "scheduleCell"
     
@@ -79,11 +85,9 @@ final class ScheduleCell: UITableViewCell {
     @objc private func valueChangedScheduleSwitch(_ sender: UISwitch) {
         guard let dayOfWeek else { return }
         if sender.isOn {
-            trackerService.newTrackerSchedule.append(dayOfWeek)
+            delegate?.add(dayOfWeek)
         } else {
-            if let index = trackerService.newTrackerSchedule.firstIndex(of: dayOfWeek) {
-                trackerService.newTrackerSchedule.remove(at: index)
-            }
+            delegate?.delete(dayOfWeek)
         }
     }
 }

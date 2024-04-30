@@ -7,7 +7,7 @@
 
 import UIKit
 
-struct Tracker {
+struct Tracker: DataRecord {
     let id: UUID
     let name: String
     let trackerType: TrackerTypes

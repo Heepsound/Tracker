@@ -7,6 +7,19 @@
 
 import CoreData
 
+struct DataStoreUpdate {
+    let insertedIndexes: IndexSet
+    let deletedIndexes: IndexSet
+}
+
+protocol DataStoreDelegate: AnyObject {
+    func didUpdate(_ update: DataStoreUpdate)
+}
+
+protocol DataRecord {
+    var id: UUID { get }
+}
+
 final class CoreDataManager: NSObject {
     static let shared = CoreDataManager()
     

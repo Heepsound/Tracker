@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct TrackerCategory {
+struct TrackerCategory: DataRecord  {
     let id: UUID
     let name: String
     let trackers: [Tracker]

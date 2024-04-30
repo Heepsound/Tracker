@@ -7,10 +7,6 @@
 
 import UIKit
 
-protocol NewTrackerViewControllerDelegate: AnyObject {
-    func newTrackerCreateCompleted()
-}
-
 final class TrackersViewController: UIViewController {
     private lazy var addButton: UIButton = {
         let button = UIButton(type: .custom)
@@ -71,6 +67,12 @@ final class TrackersViewController: UIViewController {
     private var categories: [TrackerCategory] = []
     
     private var trackerService = TrackerService.shared
+    
+    private lazy var dataStore: TrackerStore = {
+        let dataStore = TrackerStore()
+        dataStore.delegate = self
+        return dataStore
+    }()
     
     // MARK: - Lifecycle
     
@@ -158,7 +160,7 @@ final class TrackersViewController: UIViewController {
     }
 }
 
-// MARK: - Extensions
+// MARK: - UICollectionViewDataSource
 
 extension TrackersViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -201,6 +203,8 @@ extension TrackersViewController: UICollectionViewDataSource {
     }
 }
 
+// MARK: - UICollectionViewDelegateFlowLayout
+
 extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         let indexPath = IndexPath(row: 0, section: section)
@@ -219,6 +223,8 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
+// MARK: - UICollectionViewDelegate
+
 extension TrackersViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
@@ -229,9 +235,26 @@ extension TrackersViewController: UICollectionViewDelegate {
     }
 }
 
+// MARK: - NewTrackerViewControllerDelegate
+
 extension TrackersViewController: NewTrackerViewControllerDelegate {
-    func newTrackerCreateCompleted() {
+    func add(_ record: Tracker?) {
         self.dismiss(animated: true)
-        updateTrackers()
+        guard let record else { return }
+        dataStore.add(record)
     }
 }
+
+// MARK: - DataStoreDelegate
+
+extension TrackersViewController: DataStoreDelegate {
+    func didUpdate(_ update: DataStoreUpdate) {
+        collectionView.performBatchUpdates {
+            let insertedIndexPaths = update.insertedIndexes.map { IndexPath(item: $0, section: 0) }
+            let deletedIndexPaths = update.deletedIndexes.map { IndexPath(item: $0, section: 0) }
+            collectionView.insertItems(at: insertedIndexPaths)
+            collectionView.deleteItems(at: deletedIndexPaths)
+        }
+    }
+}
+

@@ -7,6 +7,10 @@
 
 import UIKit
 
+protocol NewCategoryViewControllerDelegate: AnyObject {
+    func add(_ record: TrackerCategory)
+}
+
 final class NewCategoryViewController: UIViewController {
     private var titleLabel: UILabel = {
         let label = UILabel()
@@ -42,6 +46,8 @@ final class NewCategoryViewController: UIViewController {
         return button
     }()
     
+    var newCategoryName: String?
+    
     private var trackerService = TrackerService.shared
     weak var delegate: NewCategoryViewControllerDelegate?
     
@@ -50,7 +56,6 @@ final class NewCategoryViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNewCategoryViewController()
-        trackerService.newCategoryDelegate = self
     }
     
     private func setupNewCategoryViewController() {
@@ -85,25 +90,26 @@ final class NewCategoryViewController: UIViewController {
         ])
     }
     
+    private func checkNewCategoryData() {
+        var allDataEntered = false
+        if let newCategoryName, !newCategoryName.isEmpty {
+            allDataEntered = true
+        }
+        addButton.isEnabled = allDataEntered
+        addButton.backgroundColor = allDataEntered ? UIColor.trackerBlack : UIColor.trackerGray
+    }
+    
     // MARK: - Actions
     
     @objc private func didTapAddButton() {
-        trackerService.addNewCategory()
-        delegate?.newCategoryCreateCompleted()
+        delegate?.add(TrackerCategory(name: newCategoryName ?? "Untitled", trackers: []))
         self.dismiss(animated: true)
     }
     
     @objc private func nameTextFieldDidChange(_ sender: UITextField) {
-        trackerService.newCategoryName = sender.text
+        newCategoryName = sender.text
+        checkNewCategoryData()
     }
 }
 
-// MARK: - Extensions
-
-extension NewCategoryViewController: TrackerServiceNewCategoryDelegate {
-    func newCategoryDataChanged(_ allDataEntered: Bool) {
-        addButton.isEnabled = allDataEntered
-        addButton.backgroundColor = allDataEntered ? UIColor.trackerBlack : UIColor.trackerGray
-    }
-}
 

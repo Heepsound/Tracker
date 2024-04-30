@@ -8,12 +8,12 @@
 import CoreData
 
 final class TrackerRecordStore {
-    private var coreDataManager = CoreDataManager.shared
-    
-    func add(tracker: Tracker, date: Date) {
-        let entity = TrackerRecordCoreData(context: coreDataManager.context)
- 
+    static func add(tracker: Tracker, date: Date, context: NSManagedObjectContext) {
+        /*let trackerEntity = TrackerStore.getById(id: tracker.id, context: context)
+        guard let trackerEntity else { return }
+        let entity = TrackerRecordCoreData(context: context)
         entity.date = date
+        entity.tracker = trackerEntity*/
     }
 }
 

@@ -7,10 +7,6 @@
 
 import UIKit
 
-protocol NewCategoryViewControllerDelegate: AnyObject {
-    func newCategoryCreateCompleted()
-}
-
 final class CategoryViewController: UIViewController {
     private var titleLabel: UILabel = {
         let label = UILabel()
@@ -61,9 +57,13 @@ final class CategoryViewController: UIViewController {
         return button
     }()
     
-    private var trackerService = TrackerService.shared
+    private lazy var dataStore: TrackerCategoryStore = {
+        let dataStore = TrackerCategoryStore()
+        dataStore.delegate = self
+        return dataStore
+    }()
     
-    var dismissClosure: (() -> Void)?
+    var dismissClosure: ((_ category: TrackerCategoryCoreData?) -> Void)?
     
     // MARK: - Lifecycle
     
@@ -79,11 +79,6 @@ final class CategoryViewController: UIViewController {
     
     private func setupCategoryViewController() {
         view.backgroundColor = .trackerWhite
-        let indexPaths = (0..<trackerService.categories.count).map { i in
-            IndexPath(row: i, section: 0)
-        }
-        tableView.insertRows(at: indexPaths, with: .automatic)
-        tableView.reloadData()
         addSubViews()
         applyConstraints()
     }
@@ -109,7 +104,6 @@ final class CategoryViewController: UIViewController {
             addCategoryButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             addCategoryButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
-        
         NSLayoutConstraint.activate([
             workAreaStackView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 30),
             workAreaStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -128,7 +122,6 @@ final class CategoryViewController: UIViewController {
         ])
         NSLayoutConstraint.activate([
             tableView.widthAnchor.constraint(equalToConstant: 343),
-            tableView.heightAnchor.constraint(equalToConstant: CGFloat(75)),
             tableView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             tableView.topAnchor.constraint(equalTo: workAreaStackView.topAnchor),
             tableView.bottomAnchor.constraint(lessThanOrEqualTo: workAreaStackView.bottomAnchor)
@@ -136,10 +129,9 @@ final class CategoryViewController: UIViewController {
     }
     
     func updateCategories() {
-        tableView.isHidden = trackerService.categories.isEmpty
-        noCategoryLabel.isHidden = !trackerService.categories.isEmpty
-        noCategoryImageView.isHidden = !trackerService.categories.isEmpty
-        tableView.reloadData()
+        tableView.isHidden = dataStore.numberOfRowsInSection(0) == 0
+        noCategoryLabel.isHidden = dataStore.numberOfRowsInSection(0) != 0
+        noCategoryImageView.isHidden = dataStore.numberOfRowsInSection(0) != 0
     }
     
     // MARK: - Actions
@@ -151,11 +143,15 @@ final class CategoryViewController: UIViewController {
     }
 }
 
-// MARK: - Extensions
+// MARK: - UITableViewDataSource
 
 extension CategoryViewController: UITableViewDataSource {
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return dataStore.numberOfSections
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return trackerService.categories.count
+        return dataStore.numberOfRowsInSection(section)
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -163,13 +159,34 @@ extension CategoryViewController: UITableViewDataSource {
         guard let cell = cell as? CategoryCell else {
             return UITableViewCell()
         }
-        cell.categoryName = trackerService.categories[indexPath.row].name
-        if indexPath.row == trackerService.categories.count - 1 {
+        guard let record = dataStore.object(at: indexPath) else {
+            return UITableViewCell()
+        }
+        cell.categoryName = record.name
+        /*if indexPath.row == dataStore.numberOfRowsInSection(indexPath.section) - 1 {
             cell.separatorInset.left = 1000
         } else {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-        }
+        }*/
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        guard editingStyle == .delete else { return }
+        dataStore.delete(at: indexPath)
+    }
+}
+
+// MARK: - UITableViewDelegate
+
+extension CategoryViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        dismissClosure?(dataStore.object(at: indexPath))
+        dismiss(animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        tableView.layoutIfNeeded()
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -177,20 +194,23 @@ extension CategoryViewController: UITableViewDataSource {
     }
 }
 
-extension CategoryViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        trackerService.newTrackerCategory = trackerService.categories[indexPath.row].name
-        dismissClosure?()
-        dismiss(animated: true)
-    }
-    
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        tableView.layoutIfNeeded()
+// MARK: - NewCategoryViewControllerDelegate
+
+extension CategoryViewController: NewCategoryViewControllerDelegate {
+    func add(_ record: TrackerCategory) {
+        dataStore.add(record)
     }
 }
 
-extension CategoryViewController: NewCategoryViewControllerDelegate {
-    func newCategoryCreateCompleted() {
-        updateCategories()
+// MARK: - DataStoreDelegate
+
+extension CategoryViewController: DataStoreDelegate {
+    func didUpdate(_ update: DataStoreUpdate) {
+        tableView.performBatchUpdates {
+            let insertedIndexPaths = update.insertedIndexes.map { IndexPath(item: $0, section: 0) }
+            let deletedIndexPaths = update.deletedIndexes.map { IndexPath(item: $0, section: 0) }
+            tableView.insertRows(at: insertedIndexPaths, with: .automatic)
+            tableView.deleteRows(at: deletedIndexPaths, with: .fade)
+        }
     }
 }
