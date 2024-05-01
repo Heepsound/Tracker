@@ -249,7 +249,7 @@ extension TrackersViewController: NewTrackerViewControllerDelegate {
 
 extension TrackersViewController: DataStoreDelegate {
     func didUpdate(_ update: DataStoreUpdate) {
-        collectionView.reloadData()
+        updateTrackers()
     }
 }
 

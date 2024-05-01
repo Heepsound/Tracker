@@ -163,11 +163,6 @@ extension CategoryViewController: UITableViewDataSource {
             return UITableViewCell()
         }
         cell.categoryName = record.name
-        if indexPath.row == dataStore.numberOfRowsInSection(indexPath.section) - 1 {
-            cell.separatorInset.left = 1000
-        } else {
-            cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-        }
         return cell
     }
     

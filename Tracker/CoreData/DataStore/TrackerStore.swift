@@ -55,6 +55,7 @@ final class TrackerStore: NSObject {
             scheduleEntity.tracker = object
         }
         coreDataManager.saveContext()
+        delegate?.didUpdate(DataStoreUpdate(insertedIndexPaths: [], deletedIndexPaths: []))
     }
     
     func delete(at indexPath: IndexPath) {
