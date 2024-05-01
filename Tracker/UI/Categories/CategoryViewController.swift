@@ -163,11 +163,11 @@ extension CategoryViewController: UITableViewDataSource {
             return UITableViewCell()
         }
         cell.categoryName = record.name
-        /*if indexPath.row == dataStore.numberOfRowsInSection(indexPath.section) - 1 {
+        if indexPath.row == dataStore.numberOfRowsInSection(indexPath.section) - 1 {
             cell.separatorInset.left = 1000
         } else {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-        }*/
+        }
         return cell
     }
     
@@ -207,10 +207,9 @@ extension CategoryViewController: NewCategoryViewControllerDelegate {
 extension CategoryViewController: DataStoreDelegate {
     func didUpdate(_ update: DataStoreUpdate) {
         tableView.performBatchUpdates {
-            let insertedIndexPaths = update.insertedIndexes.map { IndexPath(item: $0, section: 0) }
-            let deletedIndexPaths = update.deletedIndexes.map { IndexPath(item: $0, section: 0) }
-            tableView.insertRows(at: insertedIndexPaths, with: .automatic)
-            tableView.deleteRows(at: deletedIndexPaths, with: .fade)
+            tableView.insertRows(at: update.insertedIndexPaths, with: .automatic)
+            tableView.deleteRows(at: update.deletedIndexPaths, with: .fade)
         }
+        updateCategories()
     }
 }

@@ -7,7 +7,7 @@
 
 import UIKit
 
-struct Tracker: DataRecord {
+struct Tracker {
     let id: UUID
     let name: String
     let trackerType: TrackerTypes
@@ -22,6 +22,23 @@ struct Tracker: DataRecord {
         self.color = color
         self.emoji = emoji
         self.schedule = schedule
+    }
+    
+    init(trackerCoreData: TrackerCoreData) {
+        self.id = trackerCoreData.id ?? UUID().self
+        self.name = trackerCoreData.name ?? ""
+        self.trackerType = TrackerTypes(rawValue: Int(trackerCoreData.trackerType)) ?? .habit
+        self.color = trackerCoreData.color ?? "7994F5"
+        self.emoji = trackerCoreData.emoji ?? "🤔"
+        var tempSchedule: [DaysOfWeek] = []
+        if let schedule = trackerCoreData.schedule {
+            for item in schedule {
+                if let scheduleCoreData = item as? ScheduleCoreData {
+                    tempSchedule.append(DaysOfWeek(rawValue: Int(scheduleCoreData.dayOfWeek)) ?? .monday)
+                }
+            }
+        }
+        self.schedule = tempSchedule
     }
 }
 

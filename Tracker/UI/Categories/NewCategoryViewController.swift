@@ -30,6 +30,7 @@ final class NewCategoryViewController: UIViewController {
         textField.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: textField.frame.height))
         textField.leftViewMode = .always
+        textField.delegate = self
         textField.addTarget(self, action: #selector(nameTextFieldDidChange(_:)), for: .editingChanged)
         return textField
     }()
@@ -48,7 +49,6 @@ final class NewCategoryViewController: UIViewController {
     
     var newCategoryName: String?
     
-    private var trackerService = TrackerService.shared
     weak var delegate: NewCategoryViewControllerDelegate?
     
     // MARK: - Lifecycle
@@ -112,4 +112,12 @@ final class NewCategoryViewController: UIViewController {
     }
 }
 
+// MARK: - UITextFieldDelegate
+
+extension NewCategoryViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+}
 

@@ -11,8 +11,8 @@ final class TrackerCategoryStore: NSObject {
     private var coreDataManager = CoreDataManager.shared
     
     weak var delegate: DataStoreDelegate?
-    private var insertedIndexes: IndexSet?
-    private var deletedIndexes: IndexSet?
+    private var insertedIndexPaths: [IndexPath] = []
+    private var deletedIndexPaths: [IndexPath] = []
     
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCategoryCoreData> = {
         let fetchRequest = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
@@ -24,11 +24,12 @@ final class TrackerCategoryStore: NSObject {
     }()
     
     var numberOfSections: Int {
-        fetchedResultsController.sections?.count ?? 0
+        return fetchedResultsController.sections?.count ?? 0
     }
     
     func numberOfRowsInSection(_ section: Int) -> Int {
-        fetchedResultsController.sections?[section].numberOfObjects ?? 0
+        guard let sections = fetchedResultsController.sections else { return 0 }
+        return sections.isEmpty ? 0 : sections[section].numberOfObjects
     }
     
     func object(at indexPath: IndexPath) -> TrackerCategoryCoreData? {
@@ -53,25 +54,25 @@ final class TrackerCategoryStore: NSObject {
 
 extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
     func controllerWillChangeContent(_ controller: NSFetchedResultsController<any NSFetchRequestResult>) {
-        insertedIndexes = IndexSet()
-        deletedIndexes = IndexSet()
+        insertedIndexPaths = []
+        deletedIndexPaths = []
     }
     
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<any NSFetchRequestResult>) {
-        delegate?.didUpdate(DataStoreUpdate(insertedIndexes: insertedIndexes ?? IndexSet(), deletedIndexes: deletedIndexes ?? IndexSet()))
-        insertedIndexes = nil
-        deletedIndexes = nil
+        delegate?.didUpdate(DataStoreUpdate(insertedIndexPaths: insertedIndexPaths, deletedIndexPaths: deletedIndexPaths))
+        insertedIndexPaths = []
+        deletedIndexPaths = []
     }
     
     func controller(_ controller: NSFetchedResultsController<any NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
         switch type {
         case .delete:
             if let indexPath {
-                deletedIndexes?.insert(indexPath.item)
+                deletedIndexPaths.append(indexPath)
             }
         case .insert:
             if let newIndexPath {
-                insertedIndexes?.insert(newIndexPath.item)
+                insertedIndexPaths.append(newIndexPath)
             }
         default:
             break

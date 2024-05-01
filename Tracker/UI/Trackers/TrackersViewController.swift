@@ -63,16 +63,18 @@ final class TrackersViewController: UIViewController {
         return collectionView
     }()
         
-    private var currentDate: Date = Date()
-    private var categories: [TrackerCategory] = []
-    
-    private var trackerService = TrackerService.shared
-    
     private lazy var dataStore: TrackerStore = {
-        let dataStore = TrackerStore()
+        let dataStore = TrackerStore.shared
         dataStore.delegate = self
         return dataStore
     }()
+    
+    private var currentDate: Date? {
+        didSet {
+            guard let currentDate else { return }
+            self.currentDate = Calendar.current.startOfDay(for: currentDate)
+        }
+    }
     
     // MARK: - Lifecycle
     
@@ -80,6 +82,7 @@ final class TrackersViewController: UIViewController {
         super.viewDidLoad()
         setupTrackerViewController()
         datePicker.date = Date()
+        currentDate = datePicker.date
         updateTrackers()
     }
     
@@ -141,9 +144,10 @@ final class TrackersViewController: UIViewController {
     }
     
     func updateTrackers() {
-        categories = trackerService.getTrackers(onDate: currentDate)
-        collectionView.isHidden = categories.isEmpty
+        guard let currentDate else { return }
+        dataStore.getOnDate(date: currentDate)
         collectionView.reloadData()
+        collectionView.isHidden = dataStore.numberOfRowsInSection(0) == 0
     }
     
     // MARK: - Actions
@@ -164,23 +168,21 @@ final class TrackersViewController: UIViewController {
 
 extension TrackersViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return categories.count
+        return dataStore.numberOfSections
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if categories.isEmpty {
-            return 0
-        } else {
-            return categories[section].trackers.count
-        }
+        return dataStore.numberOfRowsInSection(section)
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCell.reuseIdentifier, for: indexPath)
-        guard let cell = cell as? TrackerCell else {
+        guard let cell = cell as? TrackerCell, let record = dataStore.object(at: indexPath), let currentDate else {
             return UICollectionViewCell()
         }
-        cell.tracker = categories[indexPath.section].trackers[indexPath.row]
+        cell.trackerDate = currentDate
+        cell.indexPath = indexPath
+        cell.tracker = Tracker(trackerCoreData: record)
         return cell
     }
     
@@ -191,9 +193,7 @@ extension TrackersViewController: UICollectionViewDataSource {
             guard let view = view as? TrackerHeaderView else {
                 return UICollectionViewCell()
             }
-            if !categories.isEmpty {
-                view.title = categories[indexPath.section].name
-            }
+            view.title = dataStore.object(at: indexPath)?.category?.name ?? ""
             return view
         case UICollectionView.elementKindSectionFooter:
             return UICollectionReusableView()
@@ -238,10 +238,10 @@ extension TrackersViewController: UICollectionViewDelegate {
 // MARK: - NewTrackerViewControllerDelegate
 
 extension TrackersViewController: NewTrackerViewControllerDelegate {
-    func add(_ record: Tracker?) {
+    func add(_ record: Tracker?, _ category: TrackerCategoryCoreData?) {
         self.dismiss(animated: true)
-        guard let record else { return }
-        dataStore.add(record)
+        guard let record, let category else { return }
+        dataStore.add(record, category)
     }
 }
 
@@ -249,12 +249,7 @@ extension TrackersViewController: NewTrackerViewControllerDelegate {
 
 extension TrackersViewController: DataStoreDelegate {
     func didUpdate(_ update: DataStoreUpdate) {
-        collectionView.performBatchUpdates {
-            let insertedIndexPaths = update.insertedIndexes.map { IndexPath(item: $0, section: 0) }
-            let deletedIndexPaths = update.deletedIndexes.map { IndexPath(item: $0, section: 0) }
-            collectionView.insertItems(at: insertedIndexPaths)
-            collectionView.deleteItems(at: deletedIndexPaths)
-        }
+        collectionView.reloadData()
     }
 }
 

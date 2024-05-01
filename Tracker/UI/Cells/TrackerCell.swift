@@ -59,12 +59,17 @@ final class TrackerCell: UICollectionViewCell {
             cardLabel.backgroundColor = color
             completedButton.backgroundColor = color
             emojiLabel.text = tracker.emoji
-            completedButton.isEnabled = trackerService.canChangeStatus()
-            completedButton.alpha = completedButton.isEnabled ? 1.0 : 0.3
-            isDone = trackerService.isDone(id: tracker.id)
-            doneTimes = trackerService.doneCount(id: tracker.id)
+            if let indexPath {
+                isDone = trackerRecordStore.isDone(indexPath: indexPath, trackersDate: trackerDate)
+                doneTimes = trackerRecordStore.recordCount(indexPath: indexPath)
+            }
+            let canChangeStatus = trackerDate <= Calendar.current.startOfDay(for: Date())
+            completedButton.isEnabled = canChangeStatus
+            completedButton.alpha = canChangeStatus ? 1.0 : 0.3
         }
     }
+    var indexPath: IndexPath?
+    var trackerDate: Date = Date()
     
     private var doneTimes: Int = 0 {
         didSet {
@@ -84,7 +89,7 @@ final class TrackerCell: UICollectionViewCell {
         }
     }
     
-    private var trackerService = TrackerService.shared
+    private var trackerRecordStore = TrackerRecordStore.shared
     static let reuseIdentifier = "trackerCell"
     
     // MARK: - Lifecycle
@@ -157,14 +162,14 @@ final class TrackerCell: UICollectionViewCell {
     // MARK: - Actions
     
     @objc private func didTapCompletedButton() {
-        guard let id = tracker?.id else { return }
+        guard let indexPath, let id = tracker?.id else { return }
         if isDone {
-            trackerService.setUndone(id: id)
+            trackerRecordStore.delete(id: id, trackersDate: trackerDate)
         } else {
-            trackerService.setDone(id: id)
+            trackerRecordStore.add(indexPath: indexPath, onDate: trackerDate )
         }
         isDone = !isDone
-        doneTimes = trackerService.doneCount(id: id)
+        doneTimes = trackerRecordStore.recordCount(indexPath: indexPath)
     }
 }
 

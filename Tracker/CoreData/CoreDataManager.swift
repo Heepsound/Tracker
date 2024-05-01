@@ -8,16 +8,12 @@
 import CoreData
 
 struct DataStoreUpdate {
-    let insertedIndexes: IndexSet
-    let deletedIndexes: IndexSet
+    let insertedIndexPaths: [IndexPath]
+    let deletedIndexPaths: [IndexPath]
 }
 
 protocol DataStoreDelegate: AnyObject {
     func didUpdate(_ update: DataStoreUpdate)
-}
-
-protocol DataRecord {
-    var id: UUID { get }
 }
 
 final class CoreDataManager: NSObject {

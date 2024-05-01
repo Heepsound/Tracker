@@ -8,7 +8,7 @@
 import UIKit
 
 protocol NewTrackerViewControllerDelegate: AnyObject {
-    func add(_ record: Tracker?)
+    func add(_ record: Tracker?, _ category: TrackerCategoryCoreData?)
 }
 
 final class NewTrackerViewController: UIViewController, TrackerTypeCellDelegate {
@@ -135,13 +135,13 @@ final class NewTrackerViewController: UIViewController, TrackerTypeCellDelegate 
             checkNewTrackerData()
         }
     }
+    private var newTrackerCategoryCoreData: NSObject?
     var newTrackerSchedule: [DaysOfWeek] = [] {
         didSet {
             checkNewTrackerData()
         }
     }
 
-    private var trackerService = TrackerService.shared
     private var categoryRowsCount: Int = 0
     weak var delegate: NewTrackerViewControllerDelegate?
     
@@ -256,11 +256,11 @@ final class NewTrackerViewController: UIViewController, TrackerTypeCellDelegate 
                               color: newTrackerColor ?? "7994F5",
                               emoji: newTrackerEmoji ?? "🤔",
                               schedule: newTrackerSchedule)
-        delegate?.add(tracker)
+        delegate?.add(tracker, newTrackerCategoryCoreData as? TrackerCategoryCoreData)
     }
     
     @objc private func didTapCancelButton() {
-        delegate?.add(nil)
+        delegate?.add(nil, nil)
     }
     
     @objc private func nameTextFieldDidChange(_ sender: UITextField) {
@@ -276,6 +276,11 @@ extension NewTrackerViewController: UITextFieldDelegate {
         guard let text = textField.text else { return false }
         let updatedString = NSString(string: text).replacingCharacters(in: range, with: string)
         return updatedString.count <= maxLenght
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
     }
 }
 
@@ -309,6 +314,7 @@ extension NewTrackerViewController: UITableViewDelegate {
         if indexPath.row == 0 {
             let categoryViewController = CategoryViewController()
             categoryViewController.dismissClosure = { category in
+                self.newTrackerCategoryCoreData = category
                 self.newTrackerCategory = category?.name
                 self.tableView.reloadData()
             }
