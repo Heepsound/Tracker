@@ -7,7 +7,7 @@
 
 import UIKit
 
-class TrackerCell: UICollectionViewCell {
+final class TrackerCell: UICollectionViewCell {
     private var titleLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 0
@@ -54,13 +54,22 @@ class TrackerCell: UICollectionViewCell {
     var tracker: Tracker? {
         didSet {
             guard let tracker else { return }
+            let color = UIColor(hex: tracker.color)
             titleLabel.text = tracker.name
-            cardLabel.backgroundColor = tracker.color
-            completedButton.backgroundColor = tracker.color
+            cardLabel.backgroundColor = color
+            completedButton.backgroundColor = color
             emojiLabel.text = tracker.emoji
-            refreshData()
+            if let indexPath {
+                isDone = trackerRecordStore.isDone(indexPath: indexPath, trackersDate: trackerDate)
+                doneTimes = trackerRecordStore.recordCount(indexPath: indexPath)
+            }
+            let canChangeStatus = trackerDate <= Calendar.current.startOfDay(for: Date())
+            completedButton.isEnabled = canChangeStatus
+            completedButton.alpha = canChangeStatus ? 1.0 : 0.3
         }
     }
+    var indexPath: IndexPath?
+    var trackerDate: Date = Date()
     
     private var doneTimes: Int = 0 {
         didSet {
@@ -80,19 +89,13 @@ class TrackerCell: UICollectionViewCell {
         }
     }
     
-    private var trackerService = TrackerService.shared
-    
-    private var trackerServiceObserver: NSObjectProtocol?
-    
+    private var trackerRecordStore = TrackerRecordStore.shared
     static let reuseIdentifier = "trackerCell"
     
     // MARK: - Lifecycle
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        trackerServiceObserver = NotificationCenter.default.addObserver(forName: TrackerService.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
-            self?.refreshData()
-        }
         setupTrackerCell()
     }
     
@@ -138,9 +141,8 @@ class TrackerCell: UICollectionViewCell {
         
         NSLayoutConstraint.activate([
             titleLabel.leadingAnchor.constraint(equalTo: cardLabel.leadingAnchor, constant: 12),
-            titleLabel.topAnchor.constraint(equalTo: cardLabel.topAnchor, constant: 44),
-            titleLabel.trailingAnchor.constraint(equalTo: cardLabel.trailingAnchor, constant: -12),
-            titleLabel.heightAnchor.constraint(equalToConstant: 34)
+            titleLabel.bottomAnchor.constraint(equalTo: cardLabel.bottomAnchor, constant: -12),
+            titleLabel.trailingAnchor.constraint(equalTo: cardLabel.trailingAnchor, constant: -12)
         ])
         
         NSLayoutConstraint.activate([
@@ -157,25 +159,17 @@ class TrackerCell: UICollectionViewCell {
         ])
     }
     
-    func refreshData() {
-        completedButton.isEnabled = trackerService.canChangeStatus()
-        completedButton.alpha = completedButton.isEnabled ? 1.0 : 0.3
-        if let id = tracker?.id {
-            isDone = trackerService.isDone(id: id)
-            doneTimes = trackerService.doneCount(id: id)
-        }
-    }
-    
     // MARK: - Actions
     
     @objc private func didTapCompletedButton() {
-        guard let id = tracker?.id else { return }
+        guard let indexPath, let id = tracker?.id else { return }
         if isDone {
-            trackerService.setUndone(id: id)
+            trackerRecordStore.delete(id: id, trackersDate: trackerDate)
         } else {
-            trackerService.setDone(id: id)
+            trackerRecordStore.add(indexPath: indexPath, onDate: trackerDate )
         }
         isDone = !isDone
-        doneTimes = trackerService.doneCount(id: id)
+        doneTimes = trackerRecordStore.recordCount(indexPath: indexPath)
     }
 }
+
