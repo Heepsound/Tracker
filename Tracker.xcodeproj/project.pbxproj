@@ -24,6 +24,8 @@
 		E73B351F2BDCE8BD000FD1A4 /* TrackerCategoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73B351E2BDCE8BD000FD1A4 /* TrackerCategoryStore.swift */; };
 		E73B35212BDCE8CA000FD1A4 /* TrackerRecordStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73B35202BDCE8CA000FD1A4 /* TrackerRecordStore.swift */; };
 		E73B35242BDD085B000FD1A4 /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73B35232BDD085B000FD1A4 /* CoreDataManager.swift */; };
+		E743E01E2BEA0F60005FA94D /* TrackerTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = E743E01D2BEA0F60005FA94D /* TrackerTypes.swift */; };
+		E743E0202BEA0F8E005FA94D /* DaysOfWeek.swift in Sources */ = {isa = PBXBuildFile; fileRef = E743E01F2BEA0F8E005FA94D /* DaysOfWeek.swift */; };
 		E7663B512BD1B6AE001D6AAE /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7663B502BD1B6AE001D6AAE /* UIColor+Extensions.swift */; };
 		E7663B532BD1BB02001D6AAE /* EmojiCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7663B522BD1BB02001D6AAE /* EmojiCell.swift */; };
 		E7663B552BD1BCB2001D6AAE /* ColorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7663B542BD1BCB2001D6AAE /* ColorCell.swift */; };
@@ -59,6 +61,8 @@
 		E73B351E2BDCE8BD000FD1A4 /* TrackerCategoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategoryStore.swift; sourceTree = "<group>"; };
 		E73B35202BDCE8CA000FD1A4 /* TrackerRecordStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerRecordStore.swift; sourceTree = "<group>"; };
 		E73B35232BDD085B000FD1A4 /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
+		E743E01D2BEA0F60005FA94D /* TrackerTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerTypes.swift; sourceTree = "<group>"; };
+		E743E01F2BEA0F8E005FA94D /* DaysOfWeek.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaysOfWeek.swift; sourceTree = "<group>"; };
 		E7663B502BD1B6AE001D6AAE /* UIColor+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
 		E7663B522BD1BB02001D6AAE /* EmojiCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiCell.swift; sourceTree = "<group>"; };
 		E7663B542BD1BCB2001D6AAE /* ColorCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorCell.swift; sourceTree = "<group>"; };
@@ -118,6 +122,7 @@
 				E73160682BC129D400960D97 /* SceneDelegate.swift */,
 				E73B351A2BDCE864000FD1A4 /* CoreData */,
 				E731608A2BC15E3E00960D97 /* Services */,
+				E743E01C2BEA0F2E005FA94D /* Enumerations */,
 				E73160812BC133C400960D97 /* UI */,
 				E73160872BC1430300960D97 /* Helpers */,
 				E73160722BC129D500960D97 /* Assets.xcassets */,
@@ -174,6 +179,15 @@
 				E73B35202BDCE8CA000FD1A4 /* TrackerRecordStore.swift */,
 			);
 			path = DataStore;
+			sourceTree = "<group>";
+		};
+		E743E01C2BEA0F2E005FA94D /* Enumerations */ = {
+			isa = PBXGroup;
+			children = (
+				E743E01F2BEA0F8E005FA94D /* DaysOfWeek.swift */,
+				E743E01D2BEA0F60005FA94D /* TrackerTypes.swift */,
+			);
+			path = Enumerations;
 			sourceTree = "<group>";
 		};
 		E78C9D962BCBBCA2004FB5DF /* Other */ = {
@@ -296,10 +310,12 @@
 				E73160712BC129D400960D97 /* Tracker.xcdatamodeld in Sources */,
 				E731606B2BC129D400960D97 /* TabBarController.swift in Sources */,
 				E72D0D1A2BCA90C200D9FA2E /* TrackerRecord.swift in Sources */,
+				E743E0202BEA0F8E005FA94D /* DaysOfWeek.swift in Sources */,
 				E73B351F2BDCE8BD000FD1A4 /* TrackerCategoryStore.swift in Sources */,
 				E72D0D162BCA90A800D9FA2E /* Tracker.swift in Sources */,
 				E78C9DA12BCBE317004FB5DF /* ScheduleCell.swift in Sources */,
 				E72D0D182BCA90B700D9FA2E /* TrackerCategory.swift in Sources */,
+				E743E01E2BEA0F60005FA94D /* TrackerTypes.swift in Sources */,
 				E73160842BC1342C00960D97 /* TrackersViewController.swift in Sources */,
 				E78C9D982BCBBCDD004FB5DF /* TrackerTypeViewController.swift in Sources */,
 				E731608C2BC15E5200960D97 /* DateFormatManager.swift in Sources */,

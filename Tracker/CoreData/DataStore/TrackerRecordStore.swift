@@ -43,10 +43,8 @@ final class TrackerRecordStore {
     }
     
     func recordCount(indexPath: IndexPath) -> Int {
-        guard let tracker = trackerStore.object(at: indexPath) else {
-            return 0
-        }
-        return tracker.records?.count ?? 0
+        guard let tracker = trackerStore.object(at: indexPath) else { return .zero }
+        return tracker.records?.count ?? .zero
     }
     
     func isDone(indexPath: IndexPath, trackersDate: Date) -> Bool {
@@ -54,11 +52,7 @@ final class TrackerRecordStore {
             return false
         }
         let record = records.first(where: {($0 as? TrackerRecordCoreData)?.date == trackersDate})
-        if let _ = record {
-            return true
-        } else {
-            return false
-        }
+        return record != nil
     }
 }
 

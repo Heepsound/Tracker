@@ -24,12 +24,12 @@ final class TrackerCategoryStore: NSObject {
     }()
     
     var numberOfSections: Int {
-        return fetchedResultsController.sections?.count ?? 0
+        return fetchedResultsController.sections?.count ?? .zero
     }
     
     func numberOfRowsInSection(_ section: Int) -> Int {
-        guard let sections = fetchedResultsController.sections else { return 0 }
-        return sections.isEmpty ? 0 : sections[section].numberOfObjects
+        guard let sections = fetchedResultsController.sections else { return .zero }
+        return sections.isEmpty ? .zero : sections[section].numberOfObjects
     }
     
     func object(at indexPath: IndexPath) -> TrackerCategoryCoreData? {
@@ -64,7 +64,13 @@ extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
         deletedIndexPaths = []
     }
     
-    func controller(_ controller: NSFetchedResultsController<any NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+    func controller(
+        _ controller: NSFetchedResultsController<any NSFetchRequestResult>,
+        didChange anObject: Any,
+        at indexPath: IndexPath?,
+        for type: NSFetchedResultsChangeType,
+        newIndexPath: IndexPath?
+    ) {
         switch type {
         case .delete:
             if let indexPath {

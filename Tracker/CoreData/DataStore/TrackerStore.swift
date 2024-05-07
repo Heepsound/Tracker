@@ -25,7 +25,7 @@ final class TrackerStore: NSObject {
     }()
     
     var numberOfSections: Int {
-        return fetchedResultsController.sections?.count ?? 0
+        return fetchedResultsController.sections?.count ?? .zero
     }
     
     private override init() {
@@ -33,8 +33,8 @@ final class TrackerStore: NSObject {
     }
     
     func numberOfRowsInSection(_ section: Int) -> Int {
-        guard let sections = fetchedResultsController.sections else { return 0 }
-        return sections.isEmpty ? 0 : sections[section].numberOfObjects
+        guard let sections = fetchedResultsController.sections else { return .zero }
+        return sections.isEmpty ? .zero : sections[section].numberOfObjects
     }
     
     func object(at indexPath: IndexPath) -> TrackerCoreData? {
@@ -97,16 +97,20 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
         deletedIndexPaths = []
     }
     
-    func controller(_ controller: NSFetchedResultsController<any NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+    func controller(
+        _ controller: NSFetchedResultsController<any NSFetchRequestResult>,
+        didChange anObject: Any,
+        at indexPath: IndexPath?,
+        for type: NSFetchedResultsChangeType,
+        newIndexPath: IndexPath?
+    ) {
         switch type {
         case .delete:
-            if let indexPath {
-                deletedIndexPaths.append(indexPath)
-            }
+            guard let indexPath else { return }
+            deletedIndexPaths.append(indexPath)
         case .insert:
-            if let newIndexPath {
-                insertedIndexPaths.append(newIndexPath)
-            }
+            guard let newIndexPath else { return }
+            insertedIndexPaths.append(newIndexPath)
         default:
             break
         }

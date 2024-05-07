@@ -156,10 +156,7 @@ extension CategoryViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: CategoryCell.reuseIdentifier, for: indexPath)
-        guard let cell = cell as? CategoryCell else {
-            return UITableViewCell()
-        }
-        guard let record = dataStore.object(at: indexPath) else {
+        guard let cell = cell as? CategoryCell, let record = dataStore.object(at: indexPath) else {
             return UITableViewCell()
         }
         cell.categoryName = record.name
