@@ -39,8 +39,7 @@ final class CategoryCell: UITableViewCell {
     }
     
     private func setupCategoryCell() {
-        backgroundColor = .clear
-        contentView.backgroundColor = .clear
+        backgroundColor = .trackerFieldAlpha30
         selectionStyle = .none
         addSubViews()
         applyConstraints()

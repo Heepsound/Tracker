@@ -35,13 +35,12 @@ final class CategoryViewController: UIViewController {
         return label
     }()
     private lazy var tableView: UITableView = {
-        let tableView = UITableView.init(frame: .zero, style: .plain)
+        let tableView = UITableView.init(frame: .zero, style: .insetGrouped)
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.backgroundColor = .trackerFieldAlpha30
+        tableView.backgroundColor = .clear
         tableView.layer.masksToBounds = true
         tableView.layer.cornerRadius = 16
-        tableView.autoresizingMask = .flexibleHeight
         tableView.register(CategoryCell.self, forCellReuseIdentifier: CategoryCell.reuseIdentifier)
         return tableView
     }()
@@ -71,10 +70,6 @@ final class CategoryViewController: UIViewController {
         super.viewDidLoad()
         setupCategoryViewController()
         updateCategories()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        self.tableView.layoutSubviews()
     }
     
     private func setupCategoryViewController() {
@@ -121,8 +116,8 @@ final class CategoryViewController: UIViewController {
             noCategoryLabel.topAnchor.constraint(equalTo: noCategoryImageView.bottomAnchor, constant: 8)
         ])
         NSLayoutConstraint.activate([
-            tableView.widthAnchor.constraint(equalToConstant: 343),
-            tableView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            tableView.leadingAnchor.constraint(equalTo: workAreaStackView.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: workAreaStackView.trailingAnchor),
             tableView.topAnchor.constraint(equalTo: workAreaStackView.topAnchor),
             tableView.bottomAnchor.constraint(lessThanOrEqualTo: workAreaStackView.bottomAnchor)
         ])
@@ -175,10 +170,6 @@ extension CategoryViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         dismissClosure?(dataStore.object(at: indexPath))
         dismiss(animated: true)
-    }
-    
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        tableView.layoutIfNeeded()
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
