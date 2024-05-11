@@ -8,7 +8,7 @@
 import UIKit
 
 protocol NewTrackerViewControllerDelegate: AnyObject {
-    func add(_ record: Tracker?, _ category: TrackerCategoryCoreData?)
+    func add(_ record: Tracker?, _ category: TrackerCategory?)
 }
 
 final class NewTrackerViewController: UIViewController, TrackerTypeCellDelegate {
@@ -130,12 +130,12 @@ final class NewTrackerViewController: UIViewController, TrackerTypeCellDelegate 
             checkNewTrackerData()
         }
     }
-    var newTrackerCategory: String? {
+    var newTrackerCategory: TrackerCategory? {
         didSet {
             checkNewTrackerData()
         }
     }
-    private var newTrackerCategoryCoreData: NSObject?
+    
     var newTrackerSchedule: [DaysOfWeek] = [] {
         didSet {
             checkNewTrackerData()
@@ -256,7 +256,7 @@ final class NewTrackerViewController: UIViewController, TrackerTypeCellDelegate 
                               color: newTrackerColor ?? "7994F5",
                               emoji: newTrackerEmoji ?? "🤔",
                               schedule: newTrackerSchedule)
-        delegate?.add(tracker, newTrackerCategoryCoreData as? TrackerCategoryCoreData)
+        delegate?.add(tracker, newTrackerCategory)
     }
     
     @objc private func didTapCancelButton() {
@@ -312,10 +312,9 @@ extension NewTrackerViewController: UITableViewDataSource {
 extension NewTrackerViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == 0 {
-            let categoryViewController = CategoryViewController()
+            let categoryViewController = CategoryViewController(viewModel: CategoryViewModel())
             categoryViewController.dismissClosure = { category in
-                self.newTrackerCategoryCoreData = category
-                self.newTrackerCategory = category?.name
+                self.newTrackerCategory = category
                 self.tableView.reloadData()
             }
             self.present(categoryViewController, animated: true)

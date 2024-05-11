@@ -40,6 +40,7 @@
 		E7AB0A552BEF5F36006F8805 /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7AB0A542BEF5F36006F8805 /* OnboardingViewController.swift */; };
 		E7AB0A582BEF65A4006F8805 /* OnboardingPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7AB0A572BEF65A4006F8805 /* OnboardingPageViewController.swift */; };
 		E7AB0A5F2BEF7A54006F8805 /* UserDefaultsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7AB0A5E2BEF7A54006F8805 /* UserDefaultsService.swift */; };
+		E7AB0A622BEF933D006F8805 /* CategoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7AB0A612BEF933D006F8805 /* CategoryViewModel.swift */; };
 		E7B8A0E92BCC11F100E8BC11 /* ScheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7B8A0E82BCC11F100E8BC11 /* ScheduleViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -79,6 +80,7 @@
 		E7AB0A542BEF5F36006F8805 /* OnboardingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewController.swift; sourceTree = "<group>"; };
 		E7AB0A572BEF65A4006F8805 /* OnboardingPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingPageViewController.swift; sourceTree = "<group>"; };
 		E7AB0A5E2BEF7A54006F8805 /* UserDefaultsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsService.swift; sourceTree = "<group>"; };
+		E7AB0A612BEF933D006F8805 /* CategoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryViewModel.swift; sourceTree = "<group>"; };
 		E7B8A0E82BCC11F100E8BC11 /* ScheduleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -125,8 +127,9 @@
 				E73160662BC129D400960D97 /* AppDelegate.swift */,
 				E73160682BC129D400960D97 /* SceneDelegate.swift */,
 				E73B351A2BDCE864000FD1A4 /* CoreData */,
-				E743E01C2BEA0F2E005FA94D /* Enumerations */,
+				E7AB0A602BEF92B5006F8805 /* ViewModels */,
 				E73160812BC133C400960D97 /* UI */,
+				E743E01C2BEA0F2E005FA94D /* Enumerations */,
 				E7AB0A5D2BEF7A27006F8805 /* Services */,
 				E73160872BC1430300960D97 /* Helpers */,
 				E73160722BC129D500960D97 /* Assets.xcassets */,
@@ -247,6 +250,14 @@
 			path = Services;
 			sourceTree = "<group>";
 		};
+		E7AB0A602BEF92B5006F8805 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				E7AB0A612BEF933D006F8805 /* CategoryViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -342,6 +353,7 @@
 				E7663B552BD1BCB2001D6AAE /* ColorCell.swift in Sources */,
 				E73160672BC129D400960D97 /* AppDelegate.swift in Sources */,
 				E73160692BC129D400960D97 /* SceneDelegate.swift in Sources */,
+				E7AB0A622BEF933D006F8805 /* CategoryViewModel.swift in Sources */,
 				E73B35212BDCE8CA000FD1A4 /* TrackerRecordStore.swift in Sources */,
 				E7663B512BD1B6AE001D6AAE /* UIColor+Extensions.swift in Sources */,
 				E7AB0A582BEF65A4006F8805 /* OnboardingPageViewController.swift in Sources */,

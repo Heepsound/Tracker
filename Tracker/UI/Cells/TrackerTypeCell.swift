@@ -9,7 +9,7 @@ import UIKit
 
 protocol TrackerTypeCellDelegate: AnyObject {
     var newTrackerSchedule: [DaysOfWeek] { get }
-    var newTrackerCategory: String? { get }
+    var newTrackerCategory: TrackerCategory? { get }
 }
 
 final class TrackerTypeCell: UITableViewCell {
@@ -57,7 +57,7 @@ final class TrackerTypeCell: UITableViewCell {
                     }
                 } else {
                     titleLabel.text = "Категория"
-                    valueLabel.text = delegate?.newTrackerCategory ?? ""
+                    valueLabel.text = delegate?.newTrackerCategory?.name ?? ""
                 }
             } else {
                 titleLabel.text = "Неопределено"

@@ -56,20 +56,22 @@ final class CategoryViewController: UIViewController {
         return button
     }()
     
-    private lazy var dataStore: TrackerCategoryStore = {
-        let dataStore = TrackerCategoryStore()
-        dataStore.delegate = self
-        return dataStore
-    }()
-    
-    var dismissClosure: ((_ category: TrackerCategoryCoreData?) -> Void)?
+    var dismissClosure: ((_ category: TrackerCategory?) -> Void)?
+    private var viewModel: CategoryViewModel?
     
     // MARK: - Lifecycle
+    
+    convenience init(viewModel: CategoryViewModel) {
+        self.init()
+        self.viewModel = viewModel
+        bind()
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupCategoryViewController()
         updateCategories()
+        
     }
     
     private func setupCategoryViewController() {
@@ -123,10 +125,22 @@ final class CategoryViewController: UIViewController {
         ])
     }
     
+    private func bind() {
+        guard let viewModel else { return }
+        viewModel.updateData = { [weak self] update in
+            self?.tableView.performBatchUpdates {
+                self?.tableView.insertRows(at: update.insertedIndexPaths, with: .automatic)
+                self?.tableView.deleteRows(at: update.deletedIndexPaths, with: .fade)
+            }
+            self?.updateCategories()
+        }
+    }
+    
     func updateCategories() {
-        tableView.isHidden = dataStore.numberOfRowsInSection(0) == 0
-        noCategoryLabel.isHidden = dataStore.numberOfRowsInSection(0) != 0
-        noCategoryImageView.isHidden = dataStore.numberOfRowsInSection(0) != 0
+        guard let hasData = viewModel?.hasData() else { return }
+        tableView.isHidden = hasData
+        noCategoryLabel.isHidden = !hasData
+        noCategoryImageView.isHidden = !hasData
     }
     
     // MARK: - Actions
@@ -142,25 +156,25 @@ final class CategoryViewController: UIViewController {
 
 extension CategoryViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        return dataStore.numberOfSections
+        return viewModel?.numberOfSections() ?? 0
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return dataStore.numberOfRowsInSection(section)
+        return viewModel?.numberOfRowsInSection(section) ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: CategoryCell.reuseIdentifier, for: indexPath)
-        guard let cell = cell as? CategoryCell, let record = dataStore.object(at: indexPath) else {
+        guard let cell = cell as? CategoryCell, let model = viewModel?.model(at: indexPath) else {
             return UITableViewCell()
         }
-        cell.categoryName = record.name
+        cell.categoryName = model.name
         return cell
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         guard editingStyle == .delete else { return }
-        dataStore.delete(at: indexPath)
+        viewModel?.delete(at: indexPath)
     }
 }
 
@@ -168,7 +182,7 @@ extension CategoryViewController: UITableViewDataSource {
 
 extension CategoryViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        dismissClosure?(dataStore.object(at: indexPath))
+        dismissClosure?(viewModel?.model(at: indexPath))
         dismiss(animated: true)
     }
     
@@ -180,19 +194,8 @@ extension CategoryViewController: UITableViewDelegate {
 // MARK: - NewCategoryViewControllerDelegate
 
 extension CategoryViewController: NewCategoryViewControllerDelegate {
-    func add(_ record: TrackerCategory) {
-        dataStore.add(record)
+    func add(_ model: TrackerCategory) {
+        viewModel?.add(model)
     }
 }
 
-// MARK: - DataStoreDelegate
-
-extension CategoryViewController: DataStoreDelegate {
-    func didUpdate(_ update: DataStoreUpdate) {
-        tableView.performBatchUpdates {
-            tableView.insertRows(at: update.insertedIndexPaths, with: .automatic)
-            tableView.deleteRows(at: update.deletedIndexPaths, with: .fade)
-        }
-        updateCategories()
-    }
-}

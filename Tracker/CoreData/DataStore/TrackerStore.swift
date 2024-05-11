@@ -41,14 +41,14 @@ final class TrackerStore: NSObject {
         return fetchedResultsController.object(at: indexPath)
     }
     
-    func add(_ tracker: Tracker, _ category: TrackerCategoryCoreData) {
+    func add(_ tracker: Tracker, _ category: TrackerCategory) {
         let object = TrackerCoreData(context: coreDataManager.context)
         object.id = tracker.id
         object.name = tracker.name
         object.trackerType = Int16(tracker.trackerType.rawValue)
         object.color = tracker.color
         object.emoji = tracker.emoji
-        object.category = category
+        object.category = TrackerCategoryStore.shared.object(category)
         for shedule in tracker.schedule {
             let scheduleEntity = ScheduleCoreData(context: coreDataManager.context)
             scheduleEntity.dayOfWeek = Int16(shedule.rawValue)

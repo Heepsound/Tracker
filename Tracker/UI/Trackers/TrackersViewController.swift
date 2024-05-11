@@ -255,7 +255,7 @@ extension TrackersViewController: UICollectionViewDelegate {
 // MARK: - NewTrackerViewControllerDelegate
 
 extension TrackersViewController: NewTrackerViewControllerDelegate {
-    func add(_ record: Tracker?, _ category: TrackerCategoryCoreData?) {
+    func add(_ record: Tracker?, _ category: TrackerCategory?) {
         self.dismiss(animated: true)
         guard let record, let category else { return }
         dataStore.add(record, category)
