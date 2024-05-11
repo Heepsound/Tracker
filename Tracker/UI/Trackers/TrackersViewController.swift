@@ -161,7 +161,8 @@ final class TrackersViewController: UIViewController {
     // MARK: - Actions
     
     @objc private func didTapAddButton() {
-        let trackerTypeViewController = TrackerTypeViewController()
+        guard let viewModel else { return }
+        let trackerTypeViewController = TrackerTypeViewController(viewModel: viewModel)
         trackerTypeViewController.delegate = self
         self.present(trackerTypeViewController, animated: true)
     }
@@ -265,10 +266,8 @@ extension TrackersViewController: UICollectionViewDelegate {
 // MARK: - NewTrackerViewControllerDelegate
 
 extension TrackersViewController: NewTrackerViewControllerDelegate {
-    func add(_ tracker: Tracker?, _ category: TrackerCategory?) {
+    func creationСompleted() {
         self.dismiss(animated: true)
-        guard let tracker, let category else { return }
-        viewModel?.add(tracker, category)
     }
 }
 

@@ -17,7 +17,11 @@ final class CategoryViewModel {
     var updateData: Binding<DataStoreUpdate>?
     var allDataEntered: Binding<Bool>?
     
-    var newCategoryName: String?
+    var newCategoryName: String? {
+        didSet {
+            checkNewCategoryData()
+        }
+    }
     
     func hasData() -> Bool {
         return numberOfRowsInSection(0) > 0

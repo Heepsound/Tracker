@@ -108,7 +108,6 @@ final class NewCategoryViewController: UIViewController {
     @objc private func nameTextFieldDidChange(_ sender: UITextField) {
         guard let viewModel else { return }
         viewModel.newCategoryName = sender.text
-        viewModel.checkNewCategoryData()
     }
 }
 

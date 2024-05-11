@@ -7,11 +7,6 @@
 
 import UIKit
 
-protocol TrackerTypeCellDelegate: AnyObject {
-    var newTrackerSchedule: [DaysOfWeek] { get }
-    var newTrackerCategory: TrackerCategory? { get }
-}
-
 final class TrackerTypeCell: UITableViewCell {
     private var titleLabel: UILabel = {
         let label = UILabel()
@@ -44,7 +39,7 @@ final class TrackerTypeCell: UITableViewCell {
                 if isSchedule {
                     titleLabel.text = "Расписание"
                     valueLabel.text = ""
-                    guard let schedule = delegate?.newTrackerSchedule else { return }
+                    guard let schedule = viewModel?.newTrackerSchedule else { return }
                     if schedule.count == 7 {
                         valueLabel.text = "Каждый день"
                     } else {
@@ -57,7 +52,7 @@ final class TrackerTypeCell: UITableViewCell {
                     }
                 } else {
                     titleLabel.text = "Категория"
-                    valueLabel.text = delegate?.newTrackerCategory?.name ?? ""
+                    valueLabel.text = viewModel?.newTrackerCategory?.name ?? ""
                 }
             } else {
                 titleLabel.text = "Неопределено"
@@ -66,7 +61,7 @@ final class TrackerTypeCell: UITableViewCell {
         }
     }
     
-    weak var delegate: TrackerTypeCellDelegate?
+    var viewModel: TrackerViewModel?
     
     static let reuseIdentifier = "trackerTypeCell"
     
