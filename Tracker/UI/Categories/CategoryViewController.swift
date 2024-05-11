@@ -146,8 +146,8 @@ final class CategoryViewController: UIViewController {
     // MARK: - Actions
     
     @objc private func didTapAddCategoryButton() {
-        let newCategoryViewController = NewCategoryViewController()
-        newCategoryViewController.delegate = self
+        guard let viewModel else { return }
+        let newCategoryViewController = NewCategoryViewController(viewModel: viewModel)
         self.present(newCategoryViewController, animated: true)
     }
 }
@@ -191,11 +191,4 @@ extension CategoryViewController: UITableViewDelegate {
     }
 }
 
-// MARK: - NewCategoryViewControllerDelegate
-
-extension CategoryViewController: NewCategoryViewControllerDelegate {
-    func add(_ model: TrackerCategory) {
-        viewModel?.add(model)
-    }
-}
 
