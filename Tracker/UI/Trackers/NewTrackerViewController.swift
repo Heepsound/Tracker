@@ -8,7 +8,7 @@
 import UIKit
 
 protocol NewTrackerViewControllerDelegate: AnyObject {
-    func add(_ record: Tracker?, _ category: TrackerCategory?)
+    func add(_ tracker: Tracker?, _ category: TrackerCategory?)
 }
 
 final class NewTrackerViewController: UIViewController, TrackerTypeCellDelegate {

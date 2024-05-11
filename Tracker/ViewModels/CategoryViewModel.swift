@@ -7,8 +7,6 @@
 
 import Foundation
 
-typealias Binding<T> = (T) -> Void
-
 final class CategoryViewModel {
     private lazy var dataStore: TrackerCategoryStore = {
         let dataStore = TrackerCategoryStore.shared
@@ -19,7 +17,7 @@ final class CategoryViewModel {
     var updateData: Binding<DataStoreUpdate>?
     
     func hasData() -> Bool {
-        return numberOfRowsInSection(0) == 0
+        return numberOfRowsInSection(0) > 0
     }
     
     func numberOfSections() -> Int {

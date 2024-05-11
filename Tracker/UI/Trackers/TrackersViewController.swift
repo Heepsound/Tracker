@@ -63,12 +63,6 @@ final class TrackersViewController: UIViewController {
         return collectionView
     }()
         
-    private lazy var dataStore: TrackerStore = {
-        let dataStore = TrackerStore.shared
-        dataStore.delegate = self
-        return dataStore
-    }()
-    
     private var currentDate: Date? {
         didSet {
             guard let currentDate else { return }
@@ -76,7 +70,15 @@ final class TrackersViewController: UIViewController {
         }
     }
     
+    private var viewModel: TrackerViewModel?
+    
     // MARK: - Lifecycle
+    
+    convenience init(viewModel: TrackerViewModel) {
+        self.init()
+        self.viewModel = viewModel
+        bind()
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -141,11 +143,19 @@ final class TrackersViewController: UIViewController {
         ])
     }
     
+    private func bind() {
+        guard let viewModel else { return }
+        viewModel.updateData = { [weak self] update in
+            self?.updateTrackers()
+        }
+    }
+    
     func updateTrackers() {
         guard let currentDate else { return }
-        dataStore.getOnDate(date: currentDate)
+        viewModel?.getOnDate(date: currentDate)
         collectionView.reloadData()
-        collectionView.isHidden = dataStore.numberOfRowsInSection(0) == 0
+        guard let hasData = viewModel?.hasData() else { return }
+        collectionView.isHidden = !hasData
     }
     
     // MARK: - Actions
@@ -166,11 +176,11 @@ final class TrackersViewController: UIViewController {
 
 extension TrackersViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return dataStore.numberOfSections
+        return viewModel?.numberOfSections() ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return dataStore.numberOfRowsInSection(section)
+        return viewModel?.numberOfItemsInSection(section) ?? 0
     }
     
     func collectionView(
@@ -178,12 +188,12 @@ extension TrackersViewController: UICollectionViewDataSource {
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCell.reuseIdentifier, for: indexPath)
-        guard let cell = cell as? TrackerCell, let record = dataStore.object(at: indexPath), let currentDate else {
+        guard let cell = cell as? TrackerCell, let model = viewModel?.model(at: indexPath), let currentDate else {
             return UICollectionViewCell()
         }
         cell.trackerDate = currentDate
         cell.indexPath = indexPath
-        cell.tracker = Tracker(trackerCoreData: record)
+        cell.tracker = model
         return cell
     }
     
@@ -198,7 +208,7 @@ extension TrackersViewController: UICollectionViewDataSource {
             guard let view = view as? TrackerHeaderView else {
                 return UICollectionViewCell()
             }
-            view.title = dataStore.object(at: indexPath)?.category?.name ?? ""
+            view.title = viewModel?.categoryName(at: indexPath) ?? ""
             return view
         case UICollectionView.elementKindSectionFooter:
             return UICollectionReusableView()
@@ -255,18 +265,11 @@ extension TrackersViewController: UICollectionViewDelegate {
 // MARK: - NewTrackerViewControllerDelegate
 
 extension TrackersViewController: NewTrackerViewControllerDelegate {
-    func add(_ record: Tracker?, _ category: TrackerCategory?) {
+    func add(_ tracker: Tracker?, _ category: TrackerCategory?) {
         self.dismiss(animated: true)
-        guard let record, let category else { return }
-        dataStore.add(record, category)
+        guard let tracker, let category else { return }
+        viewModel?.add(tracker, category)
     }
 }
 
-// MARK: - DataStoreDelegate
-
-extension TrackersViewController: DataStoreDelegate {
-    func didUpdate(_ update: DataStoreUpdate) {
-        updateTrackers()
-    }
-}
 

@@ -72,7 +72,10 @@ extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
     }
     
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<any NSFetchRequestResult>) {
-        delegate?.didUpdate(DataStoreUpdate(insertedIndexPaths: insertedIndexPaths, deletedIndexPaths: deletedIndexPaths))
+        delegate?.didUpdate(DataStoreUpdate(
+            insertedIndexPaths: insertedIndexPaths,
+            deletedIndexPaths: deletedIndexPaths
+        ))
         insertedIndexPaths = []
         deletedIndexPaths = []
     }

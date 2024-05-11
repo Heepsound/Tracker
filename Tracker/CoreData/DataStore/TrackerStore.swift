@@ -32,7 +32,7 @@ final class TrackerStore: NSObject {
         super.init()
     }
     
-    func numberOfRowsInSection(_ section: Int) -> Int {
+    func numberOfItemsInSection(_ section: Int) -> Int {
         guard let sections = fetchedResultsController.sections else { return .zero }
         return sections.isEmpty ? .zero : sections[section].numberOfObjects
     }
@@ -55,7 +55,6 @@ final class TrackerStore: NSObject {
             scheduleEntity.tracker = object
         }
         coreDataManager.saveContext()
-        delegate?.didUpdate(DataStoreUpdate(insertedIndexPaths: [], deletedIndexPaths: []))
     }
     
     func delete(at indexPath: IndexPath) {
@@ -92,7 +91,10 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
     }
     
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<any NSFetchRequestResult>) {
-        delegate?.didUpdate(DataStoreUpdate(insertedIndexPaths: insertedIndexPaths, deletedIndexPaths: deletedIndexPaths))
+        delegate?.didUpdate(DataStoreUpdate(
+            insertedIndexPaths: insertedIndexPaths,
+            deletedIndexPaths: deletedIndexPaths
+        ))
         insertedIndexPaths = []
         deletedIndexPaths = []
     }

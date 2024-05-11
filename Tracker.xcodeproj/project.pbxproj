@@ -41,6 +41,9 @@
 		E7AB0A582BEF65A4006F8805 /* OnboardingPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7AB0A572BEF65A4006F8805 /* OnboardingPageViewController.swift */; };
 		E7AB0A5F2BEF7A54006F8805 /* UserDefaultsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7AB0A5E2BEF7A54006F8805 /* UserDefaultsService.swift */; };
 		E7AB0A622BEF933D006F8805 /* CategoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7AB0A612BEF933D006F8805 /* CategoryViewModel.swift */; };
+		E7AB0A662BEFB96E006F8805 /* DefinableTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7AB0A652BEFB96E006F8805 /* DefinableTypes.swift */; };
+		E7AB0A6A2BEFBA7D006F8805 /* TrackerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7AB0A692BEFBA7D006F8805 /* TrackerViewModel.swift */; };
+		E7AB0A6E2BEFD3E6006F8805 /* DataStoreUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7AB0A6D2BEFD3E6006F8805 /* DataStoreUpdate.swift */; };
 		E7B8A0E92BCC11F100E8BC11 /* ScheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7B8A0E82BCC11F100E8BC11 /* ScheduleViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -81,6 +84,9 @@
 		E7AB0A572BEF65A4006F8805 /* OnboardingPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingPageViewController.swift; sourceTree = "<group>"; };
 		E7AB0A5E2BEF7A54006F8805 /* UserDefaultsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsService.swift; sourceTree = "<group>"; };
 		E7AB0A612BEF933D006F8805 /* CategoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryViewModel.swift; sourceTree = "<group>"; };
+		E7AB0A652BEFB96E006F8805 /* DefinableTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefinableTypes.swift; sourceTree = "<group>"; };
+		E7AB0A692BEFBA7D006F8805 /* TrackerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerViewModel.swift; sourceTree = "<group>"; };
+		E7AB0A6D2BEFD3E6006F8805 /* DataStoreUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStoreUpdate.swift; sourceTree = "<group>"; };
 		E7B8A0E82BCC11F100E8BC11 /* ScheduleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -154,6 +160,7 @@
 		E73160872BC1430300960D97 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				E7AB0A652BEFB96E006F8805 /* DefinableTypes.swift */,
 				E73160882BC1432800960D97 /* UIView+Extensions.swift */,
 				E7663B502BD1B6AE001D6AAE /* UIColor+Extensions.swift */,
 			);
@@ -174,6 +181,7 @@
 		E73B351B2BDCE87B000FD1A4 /* DataStore */ = {
 			isa = PBXGroup;
 			children = (
+				E7AB0A6D2BEFD3E6006F8805 /* DataStoreUpdate.swift */,
 				E73B351C2BDCE8B0000FD1A4 /* TrackerStore.swift */,
 				E73B351E2BDCE8BD000FD1A4 /* TrackerCategoryStore.swift */,
 				E73B35202BDCE8CA000FD1A4 /* TrackerRecordStore.swift */,
@@ -254,6 +262,7 @@
 			isa = PBXGroup;
 			children = (
 				E7AB0A612BEF933D006F8805 /* CategoryViewModel.swift */,
+				E7AB0A692BEFBA7D006F8805 /* TrackerViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -329,6 +338,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				E78AFD842BCD6CAD00D47122 /* TrackerCell.swift in Sources */,
+				E7AB0A6A2BEFBA7D006F8805 /* TrackerViewModel.swift in Sources */,
+				E7AB0A6E2BEFD3E6006F8805 /* DataStoreUpdate.swift in Sources */,
 				E7AB0A5F2BEF7A54006F8805 /* UserDefaultsService.swift in Sources */,
 				E78AFD822BCD4C5700D47122 /* CategoryCell.swift in Sources */,
 				E73160892BC1432800960D97 /* UIView+Extensions.swift in Sources */,
@@ -350,6 +361,7 @@
 				E78AFD862BCD6FAC00D47122 /* TrackerHeaderView.swift in Sources */,
 				E73160862BC1347800960D97 /* StatisticsViewController.swift in Sources */,
 				E78FA0EA2BDD446B006A74FA /* NewCategoryViewController.swift in Sources */,
+				E7AB0A662BEFB96E006F8805 /* DefinableTypes.swift in Sources */,
 				E7663B552BD1BCB2001D6AAE /* ColorCell.swift in Sources */,
 				E73160672BC129D400960D97 /* AppDelegate.swift in Sources */,
 				E73160692BC129D400960D97 /* SceneDelegate.swift in Sources */,

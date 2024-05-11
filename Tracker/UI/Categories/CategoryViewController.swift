@@ -138,9 +138,9 @@ final class CategoryViewController: UIViewController {
     
     func updateCategories() {
         guard let hasData = viewModel?.hasData() else { return }
-        tableView.isHidden = hasData
-        noCategoryLabel.isHidden = !hasData
-        noCategoryImageView.isHidden = !hasData
+        tableView.isHidden = !hasData
+        noCategoryLabel.isHidden = hasData
+        noCategoryImageView.isHidden = hasData
     }
     
     // MARK: - Actions
