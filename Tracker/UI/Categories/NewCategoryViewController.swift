@@ -65,9 +65,9 @@ final class NewCategoryViewController: UIViewController {
     }
     
     private func addSubViews() {
-        view.addSubviewWithoutAutoresizingMask(titleLabel)
-        view.addSubviewWithoutAutoresizingMask(nameTextField)
-        view.addSubviewWithoutAutoresizingMask(addButton)
+        [titleLabel, nameTextField, addButton].forEach { subview in
+            view.addSubviewWithoutAutoresizingMask(subview)
+        }
     }
 
     private func applyConstraints() {

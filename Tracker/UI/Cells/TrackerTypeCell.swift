@@ -90,10 +90,12 @@ final class TrackerTypeCell: UITableViewCell {
     }
     
     private func addSubViews() {
-        self.addSubviewWithoutAutoresizingMask(buttonImageView)
-        self.addSubviewWithoutAutoresizingMask(workAreaStackView)
-        workAreaStackView.addArrangedSubview(titleLabel)
-        workAreaStackView.addArrangedSubview(valueLabel)
+        [buttonImageView, workAreaStackView].forEach { subview in
+            self.addSubviewWithoutAutoresizingMask(subview)
+        }
+        [titleLabel, valueLabel].forEach { subview in
+            workAreaStackView.addArrangedSubview(subview)
+        }
     }
     
     private func applyConstraints() {

@@ -60,9 +60,9 @@ final class ScheduleViewController: UIViewController {
     }
     
     private func addSubViews() {
-        view.addSubviewWithoutAutoresizingMask(titleLabel)
-        view.addSubviewWithoutAutoresizingMask(tableView)
-        view.addSubviewWithoutAutoresizingMask(confirmButton)
+        [titleLabel, tableView, confirmButton].forEach { subview in
+            view.addSubviewWithoutAutoresizingMask(subview)
+        }
     }
 
     private func applyConstraints() {

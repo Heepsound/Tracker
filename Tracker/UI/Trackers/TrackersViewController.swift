@@ -95,14 +95,12 @@ final class TrackersViewController: UIViewController {
     }
     
     private func addSubViews() {
-        view.addSubviewWithoutAutoresizingMask(addButton)
-        view.addSubviewWithoutAutoresizingMask(datePicker)
-        view.addSubviewWithoutAutoresizingMask(titleLabel)
-        view.addSubviewWithoutAutoresizingMask(searchBar)
-        view.addSubviewWithoutAutoresizingMask(workAreaStackView)
-        workAreaStackView.addSubviewWithoutAutoresizingMask(noTrackersImageView)
-        workAreaStackView.addSubviewWithoutAutoresizingMask(noTrackersLabel)
-        workAreaStackView.addSubviewWithoutAutoresizingMask(collectionView)
+        [addButton, datePicker, titleLabel, searchBar, workAreaStackView].forEach { subview in
+            view.addSubviewWithoutAutoresizingMask(subview)
+        }
+        [noTrackersImageView, noTrackersLabel, collectionView].forEach { subview in
+            workAreaStackView.addSubviewWithoutAutoresizingMask(subview)
+        }
     }
 
     private func applyConstraints() {

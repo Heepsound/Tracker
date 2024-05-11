@@ -79,12 +79,12 @@ final class CategoryViewController: UIViewController {
     }
     
     private func addSubViews() {
-        view.addSubviewWithoutAutoresizingMask(titleLabel)
-        view.addSubviewWithoutAutoresizingMask(addCategoryButton)
-        view.addSubviewWithoutAutoresizingMask(workAreaStackView)
-        workAreaStackView.addSubviewWithoutAutoresizingMask(noCategoryImageView)
-        workAreaStackView.addSubviewWithoutAutoresizingMask(noCategoryLabel)
-        workAreaStackView.addSubviewWithoutAutoresizingMask(tableView)
+        [titleLabel, addCategoryButton, workAreaStackView].forEach { subview in
+            view.addSubviewWithoutAutoresizingMask(subview)
+        }
+        [noCategoryImageView, noCategoryLabel, tableView].forEach { subview in
+            workAreaStackView.addSubviewWithoutAutoresizingMask(subview)
+        }
     }
 
     private func applyConstraints() {

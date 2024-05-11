@@ -188,15 +188,15 @@ final class NewTrackerViewController: UIViewController, TrackerTypeCellDelegate 
     }
     
     private func addSubViews() {
-        view.addSubviewWithoutAutoresizingMask(titleLabel)
-        view.addSubviewWithoutAutoresizingMask(scrollView)
-        scrollView.addSubviewWithoutAutoresizingMask(nameTextField)
-        scrollView.addSubviewWithoutAutoresizingMask(tableView)
-        scrollView.addSubviewWithoutAutoresizingMask(emojisCollectionView)
-        scrollView.addSubviewWithoutAutoresizingMask(colorsCollectionView)
-        scrollView.addSubviewWithoutAutoresizingMask(buttonsStackView)
-        buttonsStackView.addArrangedSubview(cancelButton)
-        buttonsStackView.addArrangedSubview(addButton)
+        [titleLabel, scrollView].forEach { subview in
+            view.addSubviewWithoutAutoresizingMask(subview)
+        }
+        [nameTextField, tableView, emojisCollectionView, colorsCollectionView, buttonsStackView].forEach { subview in
+            scrollView.addSubviewWithoutAutoresizingMask(subview)
+        }
+        [cancelButton, addButton].forEach { subview in
+            buttonsStackView.addArrangedSubview(subview)
+        }
     }
 
     private func applyConstraints() {

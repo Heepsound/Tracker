@@ -58,8 +58,9 @@ final class ColorCell: UICollectionViewCell {
     }
     
     private func addSubViews() {
-        contentView.addSubviewWithoutAutoresizingMask(selectedLabel)
-        contentView.addSubviewWithoutAutoresizingMask(colorLabel)
+        [selectedLabel, colorLabel].forEach { subview in
+            contentView.addSubviewWithoutAutoresizingMask(subview)
+        }
     }
     
     private func applyConstraints() {

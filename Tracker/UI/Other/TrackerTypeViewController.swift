@@ -61,10 +61,12 @@ final class TrackerTypeViewController: UIViewController {
     }
     
     private func addSubViews() {
-        view.addSubviewWithoutAutoresizingMask(titleLabel)
-        view.addSubviewWithoutAutoresizingMask(workAreaStackView)
-        workAreaStackView.addArrangedSubview(addHabitButton)
-        workAreaStackView.addArrangedSubview(addIrregularEventButton)
+        [titleLabel, workAreaStackView].forEach { subview in
+            view.addSubviewWithoutAutoresizingMask(subview)
+        }
+        [addHabitButton, addIrregularEventButton].forEach { subview in
+            workAreaStackView.addArrangedSubview(subview)
+        }
     }
 
     private func applyConstraints() {
