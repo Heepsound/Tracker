@@ -63,13 +63,6 @@ final class TrackersViewController: UIViewController {
         return collectionView
     }()
         
-    private var currentDate: Date? {
-        didSet {
-            guard let currentDate else { return }
-            self.currentDate = Calendar.current.startOfDay(for: currentDate)
-        }
-    }
-    
     private var viewModel: TrackerViewModel?
     
     // MARK: - Lifecycle
@@ -84,8 +77,7 @@ final class TrackersViewController: UIViewController {
         super.viewDidLoad()
         setupTrackerViewController()
         datePicker.date = Date()
-        currentDate = datePicker.date
-        updateTrackers()
+        viewModel?.trackersDate = datePicker.date
     }
     
     private func setupTrackerViewController() {
@@ -151,8 +143,6 @@ final class TrackersViewController: UIViewController {
     }
     
     func updateTrackers() {
-        guard let currentDate else { return }
-        viewModel?.getOnDate(date: currentDate)
         collectionView.reloadData()
         guard let hasData = viewModel?.hasData() else { return }
         collectionView.isHidden = !hasData
@@ -168,8 +158,7 @@ final class TrackersViewController: UIViewController {
     }
     
     @objc private func datePickerValueChanged(_ sender: UIDatePicker) {
-        currentDate = sender.date
-        updateTrackers()
+        viewModel?.trackersDate = sender.date
     }
 }
 
@@ -189,10 +178,10 @@ extension TrackersViewController: UICollectionViewDataSource {
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCell.reuseIdentifier, for: indexPath)
-        guard let cell = cell as? TrackerCell, let model = viewModel?.model(at: indexPath), let currentDate else {
+        guard let cell = cell as? TrackerCell, let model = viewModel?.model(at: indexPath) else {
             return UICollectionViewCell()
         }
-        cell.trackerDate = currentDate
+        cell.viewModel = viewModel
         cell.indexPath = indexPath
         cell.tracker = model
         return cell

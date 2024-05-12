@@ -25,15 +25,14 @@ final class TrackerRecordStore {
         coreDataManager.saveContext()
     }
     
-    func delete(id: UUID, trackersDate: Date) {
-        let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
-        request.predicate = NSPredicate(format: "%K.id == %@ and %K == %@",
+    func delete(indexPath: IndexPath, trackersDate: Date) {
+        guard let tracker = trackerStore.object(at: indexPath) else { return }
+        let predicate = NSPredicate(format: "%K == %@ and %K == %@",
                                         #keyPath(TrackerRecordCoreData.tracker),
-                                        id as CVarArg,
+                                        tracker,
                                         #keyPath(TrackerRecordCoreData.date),
                                         trackersDate as CVarArg)
-        request.resultType = .managedObjectIDResultType
-        guard let result = try? coreDataManager.context.execute(request) as? NSAsynchronousFetchResult<NSFetchRequestResult>, let result = result.finalResult else { return }
+        guard let result = recordsByPredicate(tracker: tracker, predicate: predicate, resultType: .managedObjectIDResultType) else { return }
         for record in result {
             if let id = record as? NSManagedObjectID, let object = coreDataManager.context.object(with: id) as? TrackerRecordCoreData {
                 coreDataManager.context.delete(object)
@@ -44,15 +43,29 @@ final class TrackerRecordStore {
     
     func recordCount(indexPath: IndexPath) -> Int {
         guard let tracker = trackerStore.object(at: indexPath) else { return .zero }
-        return tracker.records?.count ?? .zero
+        let predicate = NSPredicate(format: "%K == %@", #keyPath(TrackerRecordCoreData.tracker), tracker)
+        guard let result = recordsByPredicate(tracker: tracker, predicate: predicate, resultType: .countResultType), let count = result[0] as? Int else { return 0 }
+        return count
     }
     
     func isDone(indexPath: IndexPath, trackersDate: Date) -> Bool {
-        guard let tracker = trackerStore.object(at: indexPath), let records = tracker.records else {
-            return false
-        }
-        let record = records.first(where: {($0 as? TrackerRecordCoreData)?.date == trackersDate})
-        return record != nil
+        guard let tracker = trackerStore.object(at: indexPath) else { return false }
+        let predicate = NSPredicate(format: "%K == %@ and %K == %@",
+                                    #keyPath(TrackerRecordCoreData.tracker),
+                                    tracker,
+                                    #keyPath(TrackerRecordCoreData.date),
+                                    trackersDate as CVarArg)
+        guard let result = recordsByPredicate(tracker: tracker, predicate: predicate, resultType: .countResultType), let count = result[0] as? Int else { return false }
+        return count > 0
+    }
+    
+    private func recordsByPredicate(tracker: TrackerCoreData, predicate: NSPredicate, resultType: NSFetchRequestResultType) -> [any NSFetchRequestResult]? {
+        let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
+        request.predicate = predicate
+        request.resultType = resultType
+        guard let result = try? coreDataManager.context.execute(request) as? NSAsynchronousFetchResult<NSFetchRequestResult>,
+                let result = result.finalResult else { return nil }
+        return result
     }
 }
 

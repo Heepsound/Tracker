@@ -53,23 +53,21 @@ final class TrackerCell: UICollectionViewCell {
     
     var tracker: Tracker? {
         didSet {
-            guard let tracker else { return }
+            guard let tracker, let trackerDate = viewModel?.trackersDate else { return }
             let color = UIColor(hex: tracker.color)
             titleLabel.text = tracker.name
             cardLabel.backgroundColor = color
             completedButton.backgroundColor = color
             emojiLabel.text = tracker.emoji
             if let indexPath {
-                isDone = trackerRecordStore.isDone(indexPath: indexPath, trackersDate: trackerDate)
-                doneTimes = trackerRecordStore.recordCount(indexPath: indexPath)
+                isDone = viewModel?.isDoneOnDate(indexPath: indexPath) ?? false
+                doneTimes = viewModel?.recordCount(indexPath: indexPath) ?? 0
             }
             let canChangeStatus = trackerDate <= Calendar.current.startOfDay(for: Date())
             completedButton.isEnabled = canChangeStatus
             completedButton.alpha = canChangeStatus ? 1.0 : 0.3
         }
     }
-    var indexPath: IndexPath?
-    var trackerDate: Date = Date()
     
     private var doneTimes: Int = 0 {
         didSet {
@@ -89,7 +87,8 @@ final class TrackerCell: UICollectionViewCell {
         }
     }
     
-    private var trackerRecordStore = TrackerRecordStore.shared
+    var indexPath: IndexPath?
+    var viewModel: TrackerViewModel?
     static let reuseIdentifier = "trackerCell"
     
     // MARK: - Lifecycle
@@ -162,14 +161,14 @@ final class TrackerCell: UICollectionViewCell {
     // MARK: - Actions
     
     @objc private func didTapCompletedButton() {
-        guard let indexPath, let id = tracker?.id else { return }
+        guard let indexPath else { return }
         if isDone {
-            trackerRecordStore.delete(id: id, trackersDate: trackerDate)
+            viewModel?.deleteRecord(indexPath: indexPath)
         } else {
-            trackerRecordStore.add(indexPath: indexPath, onDate: trackerDate )
+            viewModel?.addRecord(indexPath: indexPath)
         }
         isDone = !isDone
-        doneTimes = trackerRecordStore.recordCount(indexPath: indexPath)
+        doneTimes = viewModel?.recordCount(indexPath: indexPath) ?? 0
     }
 }
 

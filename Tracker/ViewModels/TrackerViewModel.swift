@@ -14,8 +14,19 @@ final class TrackerViewModel {
         return dataStore
     }()
     
+    private let recordStore = TrackerRecordStore.shared
+    
     var updateData: Binding<DataStoreUpdate>?
     var allDataEntered: Binding<Bool>?
+    
+    var trackersDate: Date? {
+        didSet {
+            guard let trackersDate else { return }
+            let currentDate = Calendar.current.startOfDay(for: trackersDate)
+            self.trackersDate = currentDate
+            getOnDate()
+        }
+    }
     
     var newTrackerName: String? {
         didSet {
@@ -48,8 +59,12 @@ final class TrackerViewModel {
         }
     }
     
-    func getOnDate(date: Date) {
-        dataStore.getOnDate(date: date)
+    // MARK: - Trackers
+    
+    func getOnDate() {
+        guard let trackersDate else { return }
+        dataStore.getOnDate(date: trackersDate)
+        updateData?(DataStoreUpdate(insertedIndexPaths: [], deletedIndexPaths: []))
     }
     
     func hasData() -> Bool {
@@ -77,6 +92,7 @@ final class TrackerViewModel {
                               schedule: newTrackerSchedule)
         guard let newTrackerCategory else { return }
         dataStore.add(tracker, newTrackerCategory)
+        getOnDate()
     }
     
     func categoryName(at indexPath: IndexPath) -> String? {
@@ -104,6 +120,29 @@ final class TrackerViewModel {
         newTrackerEmoji = nil
         newTrackerCategory = nil
         newTrackerSchedule = []
+    }
+    
+    // MARK: - Records
+    
+    func addRecord(indexPath: IndexPath) {
+        guard let trackersDate else { return }
+        recordStore.add(indexPath: indexPath, onDate: trackersDate)
+        getOnDate()
+    }
+    
+    func deleteRecord(indexPath: IndexPath) {
+        guard let trackersDate else { return }
+        recordStore.delete(indexPath: indexPath, trackersDate: trackersDate)
+        getOnDate()
+    }
+    
+    func recordCount(indexPath: IndexPath) -> Int {
+        return recordStore.recordCount(indexPath: indexPath)
+    }
+    
+    func isDoneOnDate(indexPath: IndexPath) -> Bool {
+        guard let trackersDate else { return false }
+        return recordStore.isDone(indexPath: indexPath, trackersDate: trackersDate)
     }
 }
 

@@ -19,6 +19,7 @@ final class TrackerStore: NSObject {
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCoreData> = {
         let request = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
         request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
+        request.propertiesToFetch = ["name", "color", "emoji", "trackerType", "category"]
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: coreDataManager.context, sectionNameKeyPath: "category", cacheName: nil)
         fetchedResultsController.delegate = self
         return fetchedResultsController
@@ -65,14 +66,11 @@ final class TrackerStore: NSObject {
     
     func getOnDate(date: Date) {
         let weekday = DaysOfWeek.dayByNumber(Calendar.current.component(.weekday, from: date))
-        fetchedResultsController.fetchRequest.predicate = NSPredicate(format: "(any %K.%K == %ld and %K == %ld) or ((any %K.%K == nil or any %K.%K == %@) and %K == %ld)",
+        fetchedResultsController.fetchRequest.predicate = NSPredicate(format: "(any %K.%K == %ld) or ((any %K == nil or any %K.%K == %@) and %K == %ld)",
                                                                       #keyPath(TrackerCoreData.schedule),
                                                                       #keyPath(ScheduleCoreData.dayOfWeek),
                                                                       weekday?.rawValue ?? 1,
-                                                                      #keyPath(TrackerCoreData.trackerType),
-                                                                      TrackerTypes.habit.rawValue,
                                                                       #keyPath(TrackerCoreData.records),
-                                                                      #keyPath(TrackerRecordCoreData.date),
                                                                       #keyPath(TrackerCoreData.records),
                                                                       #keyPath(TrackerRecordCoreData.date),
                                                                       date as CVarArg,
