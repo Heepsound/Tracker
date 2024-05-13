@@ -8,13 +8,13 @@
 import UIKit
 
 final class OnboardingViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
-    lazy var pages: [UIViewController] = {
+    private lazy var pages: [UIViewController] = {
         let page1 = OnboardingPageViewController(backgroundImage: .onboardingPage1Background, title: "Отслеживайте только то, что хотите")
         let page2 = OnboardingPageViewController(backgroundImage: .onboardingPage2Background, title: "Даже если это не литры воды и йога")
         return [page1, page2]
     }()
 
-    lazy var pageControl: UIPageControl = {
+    private lazy var pageControl: UIPageControl = {
         let pageControl = UIPageControl()
         pageControl.numberOfPages = pages.count
         pageControl.currentPage = 0
