@@ -39,7 +39,7 @@ final class TrackerTypeCell: UITableViewCell {
                 if isSchedule {
                     titleLabel.text = "Расписание"
                     valueLabel.text = ""
-                    guard let schedule = viewModel?.newTrackerSchedule else { return }
+                    guard let schedule = viewModel?.trackerSchedule else { return }
                     if schedule.count == 7 {
                         valueLabel.text = "Каждый день"
                     } else {
@@ -52,7 +52,7 @@ final class TrackerTypeCell: UITableViewCell {
                     }
                 } else {
                     titleLabel.text = "Категория"
-                    valueLabel.text = viewModel?.newTrackerCategory?.name ?? ""
+                    valueLabel.text = viewModel?.trackerCategory?.name ?? ""
                 }
             } else {
                 titleLabel.text = "Неопределено"
@@ -61,7 +61,7 @@ final class TrackerTypeCell: UITableViewCell {
         }
     }
     
-    var viewModel: TrackerViewModel?
+    var viewModel: NewTrackerViewModel?
     
     static let reuseIdentifier = "trackerTypeCell"
     

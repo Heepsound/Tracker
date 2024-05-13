@@ -43,14 +43,17 @@ final class NewCategoryViewController: UIViewController {
         return button
     }()
     
-    private var viewModel: CategoryViewModel?
+    private let viewModel: NewCategoryViewModel = NewCategoryViewModel()
     
     // MARK: - Lifecycle
     
-    convenience init(viewModel: CategoryViewModel) {
-        self.init()
-        self.viewModel = viewModel
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         bind()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func viewDidLoad() {
@@ -91,7 +94,6 @@ final class NewCategoryViewController: UIViewController {
     }
     
     private func bind() {
-        guard let viewModel else { return }
         viewModel.allDataEntered = { [weak self] allDataEntered in
             self?.addButton.isEnabled = allDataEntered
             self?.addButton.backgroundColor = allDataEntered ? UIColor.trackerBlack : UIColor.trackerGray
@@ -101,13 +103,12 @@ final class NewCategoryViewController: UIViewController {
     // MARK: - Actions
     
     @objc private func didTapAddButton() {
-        viewModel?.add()
+        viewModel.add()
         self.dismiss(animated: true)
     }
     
     @objc private func nameTextFieldDidChange(_ sender: UITextField) {
-        guard let viewModel else { return }
-        viewModel.newCategoryName = sender.text
+        viewModel.categoryName = sender.text
     }
 }
 

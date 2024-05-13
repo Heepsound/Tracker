@@ -15,19 +15,12 @@ final class CategoryViewModel {
     }()
     
     var updateData: Binding<DataStoreUpdate>?
-    var allDataEntered: Binding<Bool>?
     
-    var newCategoryName: String? {
-        didSet {
-            checkNewCategoryData()
-        }
-    }
-    
-    func hasData() -> Bool {
+    var hasData: Bool {
         return numberOfRowsInSection(0) > 0
     }
     
-    func numberOfSections() -> Int {
+    var numberOfSections: Int {
         return dataStore.numberOfSections
     }
     
@@ -40,22 +33,8 @@ final class CategoryViewModel {
         return TrackerCategory(trackerCategoryCoreData: record)
     }
     
-    func add() {
-        let model = TrackerCategory(name: newCategoryName ?? "Untitled", trackers: [])
-        dataStore.add(model)
-        newCategoryName = nil
-    }
-    
     func delete(at indexPath: IndexPath) {
         dataStore.delete(at: indexPath)
-    }
-    
-    func checkNewCategoryData() {
-        var result = false
-        if let newCategoryName, !newCategoryName.isEmpty {
-            result = true
-        }
-        allDataEntered?(result)
     }
 }
 

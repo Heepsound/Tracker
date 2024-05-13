@@ -98,28 +98,22 @@ final class NewTrackerViewController: UIViewController {
         return scroll
     }()
     
-    private let emojis = [
-        "🙂", "😻", "🌺", "🐶", "❤️", "😱",
-        "😇", "😡", "🥶", "🤔", "🙌", "🍔",
-        "🥦", "🏓", "🥇", "🎸", "🏝", "😪"
-    ]
-    
-    private let colors = [
-        "FD4C49", "FF881E", "007BFA", "6E44FE", "33CF69", "E66DD4",
-        "F9D4D4", "34A7FE", "46E69D", "35347C", "FF674D", "FF99CC",
-        "F6C48B", "7994F5", "832CF1", "AD56DA", "8D72E6", "2FD058"
-    ]
-    
-    private var categoryRowsCount: Int = 0
     weak var delegate: NewTrackerViewControllerDelegate?
-    private var viewModel: TrackerViewModel?
+    private let viewModel: NewTrackerViewModel = NewTrackerViewModel()
     
     // MARK: - Lifecycle
     
-    convenience init(viewModel: TrackerViewModel) {
-        self.init()
-        self.viewModel = viewModel
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         bind()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func initialize(trackerType: TrackerTypes) {
+        viewModel.trackerType = trackerType
     }
     
     override func viewDidLoad() {
@@ -128,6 +122,7 @@ final class NewTrackerViewController: UIViewController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         let contentRect: CGRect = scrollView.subviews.reduce(into: .zero) { rect, view in
             rect = rect.union(view.frame)
         }
@@ -135,19 +130,18 @@ final class NewTrackerViewController: UIViewController {
     }
     
     override func viewDidDisappear(_ animated: Bool) {
-        viewModel?.clearNewTrackerData()
+        super.viewDidDisappear(animated)
+        viewModel.clearNewTrackerData()
     }
     
     private func setupNewTrackerViewController() {
         view.backgroundColor = .trackerWhite
-        if let isIrregularEvent = viewModel?.isIrregularEvent() {
+        if let isIrregularEvent = viewModel.isIrregularEvent {
             titleLabel.text = isIrregularEvent ? "Новое нерегулярное событие" : "Новая привычка"
-            categoryRowsCount = isIrregularEvent ? 1 : 2
         } else {
             titleLabel.text = "Новое нерегулярное событие"
-            categoryRowsCount = 0
         }
-        let indexPaths = (0..<categoryRowsCount).map { i in
+        let indexPaths = (0..<viewModel.categoryRowsCount).map { i in
             IndexPath(row: i, section: 0)
         }
         tableView.insertRows(at: indexPaths, with: .automatic)
@@ -187,7 +181,7 @@ final class NewTrackerViewController: UIViewController {
         ])
         NSLayoutConstraint.activate([
             tableView.widthAnchor.constraint(equalToConstant: 343),
-            tableView.heightAnchor.constraint(equalToConstant: CGFloat(categoryRowsCount * 75)),
+            tableView.heightAnchor.constraint(equalToConstant: CGFloat(viewModel.categoryRowsCount * 75)),
             tableView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             tableView.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: 24)
         ])
@@ -218,7 +212,6 @@ final class NewTrackerViewController: UIViewController {
     }
     
     private func bind() {
-        guard let viewModel else { return }
         viewModel.allDataEntered = { [weak self] allDataEntered in
             self?.addButton.isEnabled = allDataEntered
             self?.addButton.backgroundColor = allDataEntered ? UIColor.trackerBlack : UIColor.trackerGray
@@ -228,7 +221,7 @@ final class NewTrackerViewController: UIViewController {
     // MARK: - Actions
     
     @objc private func didTapAddButton() {
-        viewModel?.add()
+        viewModel.add()
         delegate?.creationСompleted()
     }
     
@@ -237,7 +230,7 @@ final class NewTrackerViewController: UIViewController {
     }
     
     @objc private func nameTextFieldDidChange(_ sender: UITextField) {
-        viewModel?.newTrackerName = sender.text
+        viewModel.trackerName = sender.text
     }
 }
 
@@ -261,7 +254,7 @@ extension NewTrackerViewController: UITextFieldDelegate {
 
 extension NewTrackerViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return categoryRowsCount
+        return viewModel.categoryRowsCount
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -271,7 +264,7 @@ extension NewTrackerViewController: UITableViewDataSource {
         }
         cell.viewModel = viewModel
         cell.isSchedule = indexPath.row == 1
-        if indexPath.row == categoryRowsCount - 1 {
+        if indexPath.row == viewModel.categoryRowsCount - 1 {
             cell.separatorInset.left = 1000
         } else {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
@@ -285,19 +278,17 @@ extension NewTrackerViewController: UITableViewDataSource {
 extension NewTrackerViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == 0 {
-            let categoryViewController = CategoryViewController(viewModel: CategoryViewModel())
+            let categoryViewController = CategoryViewController()
             categoryViewController.dismissClosure = { category in
-                self.viewModel?.newTrackerCategory = category
+                self.viewModel.trackerCategory = category
                 self.tableView.reloadData()
             }
             self.present(categoryViewController, animated: true)
         } else {
-            guard let newTrackerSchedule = viewModel?.newTrackerSchedule else { return }
             let scheduleViewController = ScheduleViewController()
-            scheduleViewController.schedule = newTrackerSchedule
+            scheduleViewController.schedule = viewModel.trackerSchedule
             scheduleViewController.dismissClosure = { schedule in
-                self.viewModel?.newTrackerSchedule = schedule
-                self.viewModel?.newTrackerSchedule.sort(by: {$0.dayNumber < $1.dayNumber})
+                self.viewModel.trackerSchedule = schedule
                 self.tableView.reloadData()
             }
             self.present(scheduleViewController, animated: true)
@@ -322,14 +313,14 @@ extension NewTrackerViewController: UICollectionViewDataSource {
             guard let cell = cell as? EmojiCell else {
                 return UICollectionViewCell()
             }
-            cell.emoji = emojis[indexPath.row]
+            cell.emoji = viewModel.emojis[indexPath.row]
             return cell
         } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ColorCell.reuseIdentifier, for: indexPath)
             guard let cell = cell as? ColorCell else {
                 return UICollectionViewCell()
             }
-            cell.hexColor = colors[indexPath.row]
+            cell.hexColor = viewModel.colors[indexPath.row]
             return cell
         }
     }
@@ -397,10 +388,10 @@ extension NewTrackerViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView == emojisCollectionView {
             let cell = collectionView.cellForItem(at: indexPath) as? EmojiCell
-            viewModel?.newTrackerEmoji = cell?.emoji
+            viewModel.trackerEmoji = cell?.emoji
         } else {
             let cell = collectionView.cellForItem(at: indexPath) as? ColorCell
-            viewModel?.newTrackerColor = cell?.hexColor
+            viewModel.trackerColor = cell?.hexColor
         }
     }
     

@@ -57,14 +57,17 @@ final class CategoryViewController: UIViewController {
     }()
     
     var dismissClosure: ((_ category: TrackerCategory?) -> Void)?
-    private var viewModel: CategoryViewModel?
+    private let viewModel: CategoryViewModel = CategoryViewModel()
     
     // MARK: - Lifecycle
     
-    convenience init(viewModel: CategoryViewModel) {
-        self.init()
-        self.viewModel = viewModel
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         bind()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func viewDidLoad() {
@@ -126,7 +129,6 @@ final class CategoryViewController: UIViewController {
     }
     
     private func bind() {
-        guard let viewModel else { return }
         viewModel.updateData = { [weak self] update in
             self?.tableView.performBatchUpdates {
                 self?.tableView.insertRows(at: update.insertedIndexPaths, with: .automatic)
@@ -137,7 +139,7 @@ final class CategoryViewController: UIViewController {
     }
     
     func updateCategories() {
-        guard let hasData = viewModel?.hasData() else { return }
+        let hasData = viewModel.hasData
         tableView.isHidden = !hasData
         noCategoryLabel.isHidden = hasData
         noCategoryImageView.isHidden = hasData
@@ -146,8 +148,7 @@ final class CategoryViewController: UIViewController {
     // MARK: - Actions
     
     @objc private func didTapAddCategoryButton() {
-        guard let viewModel else { return }
-        let newCategoryViewController = NewCategoryViewController(viewModel: viewModel)
+        let newCategoryViewController = NewCategoryViewController()
         self.present(newCategoryViewController, animated: true)
     }
 }
@@ -156,16 +157,16 @@ final class CategoryViewController: UIViewController {
 
 extension CategoryViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        return viewModel?.numberOfSections() ?? 0
+        return viewModel.numberOfSections
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel?.numberOfRowsInSection(section) ?? 0
+        return viewModel.numberOfRowsInSection(section)
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: CategoryCell.reuseIdentifier, for: indexPath)
-        guard let cell = cell as? CategoryCell, let model = viewModel?.model(at: indexPath) else {
+        guard let cell = cell as? CategoryCell, let model = viewModel.model(at: indexPath) else {
             return UITableViewCell()
         }
         cell.categoryName = model.name
@@ -174,7 +175,7 @@ extension CategoryViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         guard editingStyle == .delete else { return }
-        viewModel?.delete(at: indexPath)
+        viewModel.delete(at: indexPath)
     }
 }
 
@@ -182,7 +183,7 @@ extension CategoryViewController: UITableViewDataSource {
 
 extension CategoryViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        dismissClosure?(viewModel?.model(at: indexPath))
+        dismissClosure?(viewModel.model(at: indexPath))
         dismiss(animated: true)
     }
     
