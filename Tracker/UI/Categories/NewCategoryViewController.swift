@@ -7,10 +7,6 @@
 
 import UIKit
 
-protocol NewCategoryViewControllerDelegate: AnyObject {
-    func add(_ record: TrackerCategory)
-}
-
 final class NewCategoryViewController: UIViewController {
     private var titleLabel: UILabel = {
         let label = UILabel()
@@ -47,11 +43,15 @@ final class NewCategoryViewController: UIViewController {
         return button
     }()
     
-    var newCategoryName: String?
-    
-    weak var delegate: NewCategoryViewControllerDelegate?
+    private var viewModel: CategoryViewModel?
     
     // MARK: - Lifecycle
+    
+    convenience init(viewModel: CategoryViewModel) {
+        self.init()
+        self.viewModel = viewModel
+        bind()
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -65,9 +65,9 @@ final class NewCategoryViewController: UIViewController {
     }
     
     private func addSubViews() {
-        view.addSubviewWithoutAutoresizingMask(titleLabel)
-        view.addSubviewWithoutAutoresizingMask(nameTextField)
-        view.addSubviewWithoutAutoresizingMask(addButton)
+        [titleLabel, nameTextField, addButton].forEach { subview in
+            view.addSubviewWithoutAutoresizingMask(subview)
+        }
     }
 
     private func applyConstraints() {
@@ -90,25 +90,24 @@ final class NewCategoryViewController: UIViewController {
         ])
     }
     
-    private func checkNewCategoryData() {
-        var allDataEntered = false
-        if let newCategoryName, !newCategoryName.isEmpty {
-            allDataEntered = true
+    private func bind() {
+        guard let viewModel else { return }
+        viewModel.allDataEntered = { [weak self] allDataEntered in
+            self?.addButton.isEnabled = allDataEntered
+            self?.addButton.backgroundColor = allDataEntered ? UIColor.trackerBlack : UIColor.trackerGray
         }
-        addButton.isEnabled = allDataEntered
-        addButton.backgroundColor = allDataEntered ? UIColor.trackerBlack : UIColor.trackerGray
     }
     
     // MARK: - Actions
     
     @objc private func didTapAddButton() {
-        delegate?.add(TrackerCategory(name: newCategoryName ?? "Untitled", trackers: []))
+        viewModel?.add()
         self.dismiss(animated: true)
     }
     
     @objc private func nameTextFieldDidChange(_ sender: UITextField) {
-        newCategoryName = sender.text
-        checkNewCategoryData()
+        guard let viewModel else { return }
+        viewModel.newCategoryName = sender.text
     }
 }
 

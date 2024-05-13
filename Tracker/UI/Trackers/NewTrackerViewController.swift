@@ -8,10 +8,10 @@
 import UIKit
 
 protocol NewTrackerViewControllerDelegate: AnyObject {
-    func add(_ record: Tracker?, _ category: TrackerCategoryCoreData?)
+    func creationСompleted()
 }
 
-final class NewTrackerViewController: UIViewController, TrackerTypeCellDelegate {
+final class NewTrackerViewController: UIViewController {
     private var titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .trackerBlack
@@ -110,42 +110,17 @@ final class NewTrackerViewController: UIViewController, TrackerTypeCellDelegate 
         "F6C48B", "7994F5", "832CF1", "AD56DA", "8D72E6", "2FD058"
     ]
     
-    private var newTrackerName: String? {
-        didSet {
-            checkNewTrackerData()
-        }
-    }
-    var newTrackerType: TrackerTypes? {
-        didSet {
-            checkNewTrackerData()
-        }
-    }
-    private var newTrackerColor: String? {
-        didSet {
-            checkNewTrackerData()
-        }
-    }
-    private var newTrackerEmoji: String? {
-        didSet {
-            checkNewTrackerData()
-        }
-    }
-    var newTrackerCategory: String? {
-        didSet {
-            checkNewTrackerData()
-        }
-    }
-    private var newTrackerCategoryCoreData: NSObject?
-    var newTrackerSchedule: [DaysOfWeek] = [] {
-        didSet {
-            checkNewTrackerData()
-        }
-    }
-
     private var categoryRowsCount: Int = 0
     weak var delegate: NewTrackerViewControllerDelegate?
+    private var viewModel: TrackerViewModel?
     
     // MARK: - Lifecycle
+    
+    convenience init(viewModel: TrackerViewModel) {
+        self.init()
+        self.viewModel = viewModel
+        bind()
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -159,24 +134,18 @@ final class NewTrackerViewController: UIViewController, TrackerTypeCellDelegate 
         scrollView.contentSize = CGSize(width: self.view.frame.size.width, height: contentRect.height)
     }
     
-    private func checkNewTrackerData() {
-        var allDataEntered = false
-        if let newTrackerType, let newTrackerName, let _ = newTrackerEmoji, let _ = newTrackerColor, let _ = newTrackerCategory {
-            allDataEntered = !(newTrackerName.isEmpty || (newTrackerType == .habit && newTrackerSchedule.isEmpty))
-        }
-        addButton.isEnabled = allDataEntered
-        addButton.backgroundColor = allDataEntered ? UIColor.trackerBlack : UIColor.trackerGray
+    override func viewDidDisappear(_ animated: Bool) {
+        viewModel?.clearNewTrackerData()
     }
     
     private func setupNewTrackerViewController() {
         view.backgroundColor = .trackerWhite
-        if newTrackerType == .habit {
-            titleLabel.text = "Новая привычка"
+        if let isIrregularEvent = viewModel?.isIrregularEvent() {
+            titleLabel.text = isIrregularEvent ? "Новое нерегулярное событие" : "Новая привычка"
+            categoryRowsCount = isIrregularEvent ? 1 : 2
         } else {
             titleLabel.text = "Новое нерегулярное событие"
-        }
-        if let trackerType = newTrackerType {
-            categoryRowsCount = trackerType == .irregularEvent ? 1 : 2
+            categoryRowsCount = 0
         }
         let indexPaths = (0..<categoryRowsCount).map { i in
             IndexPath(row: i, section: 0)
@@ -188,15 +157,15 @@ final class NewTrackerViewController: UIViewController, TrackerTypeCellDelegate 
     }
     
     private func addSubViews() {
-        view.addSubviewWithoutAutoresizingMask(titleLabel)
-        view.addSubviewWithoutAutoresizingMask(scrollView)
-        scrollView.addSubviewWithoutAutoresizingMask(nameTextField)
-        scrollView.addSubviewWithoutAutoresizingMask(tableView)
-        scrollView.addSubviewWithoutAutoresizingMask(emojisCollectionView)
-        scrollView.addSubviewWithoutAutoresizingMask(colorsCollectionView)
-        scrollView.addSubviewWithoutAutoresizingMask(buttonsStackView)
-        buttonsStackView.addArrangedSubview(cancelButton)
-        buttonsStackView.addArrangedSubview(addButton)
+        [titleLabel, scrollView].forEach { subview in
+            view.addSubviewWithoutAutoresizingMask(subview)
+        }
+        [nameTextField, tableView, emojisCollectionView, colorsCollectionView, buttonsStackView].forEach { subview in
+            scrollView.addSubviewWithoutAutoresizingMask(subview)
+        }
+        [cancelButton, addButton].forEach { subview in
+            buttonsStackView.addArrangedSubview(subview)
+        }
     }
 
     private func applyConstraints() {
@@ -248,23 +217,27 @@ final class NewTrackerViewController: UIViewController, TrackerTypeCellDelegate 
         ])
     }
     
+    private func bind() {
+        guard let viewModel else { return }
+        viewModel.allDataEntered = { [weak self] allDataEntered in
+            self?.addButton.isEnabled = allDataEntered
+            self?.addButton.backgroundColor = allDataEntered ? UIColor.trackerBlack : UIColor.trackerGray
+        }
+    }
+    
     // MARK: - Actions
     
     @objc private func didTapAddButton() {
-        let tracker = Tracker(name: newTrackerName ?? "",
-                              trackerType: newTrackerType ?? .irregularEvent,
-                              color: newTrackerColor ?? "7994F5",
-                              emoji: newTrackerEmoji ?? "🤔",
-                              schedule: newTrackerSchedule)
-        delegate?.add(tracker, newTrackerCategoryCoreData as? TrackerCategoryCoreData)
+        viewModel?.add()
+        delegate?.creationСompleted()
     }
     
     @objc private func didTapCancelButton() {
-        delegate?.add(nil, nil)
+        delegate?.creationСompleted()
     }
     
     @objc private func nameTextFieldDidChange(_ sender: UITextField) {
-        newTrackerName = sender.text
+        viewModel?.newTrackerName = sender.text
     }
 }
 
@@ -296,7 +269,7 @@ extension NewTrackerViewController: UITableViewDataSource {
         guard let cell = cell as? TrackerTypeCell else {
             return UITableViewCell()
         }
-        cell.delegate = self
+        cell.viewModel = viewModel
         cell.isSchedule = indexPath.row == 1
         if indexPath.row == categoryRowsCount - 1 {
             cell.separatorInset.left = 1000
@@ -312,19 +285,19 @@ extension NewTrackerViewController: UITableViewDataSource {
 extension NewTrackerViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == 0 {
-            let categoryViewController = CategoryViewController()
+            let categoryViewController = CategoryViewController(viewModel: CategoryViewModel())
             categoryViewController.dismissClosure = { category in
-                self.newTrackerCategoryCoreData = category
-                self.newTrackerCategory = category?.name
+                self.viewModel?.newTrackerCategory = category
                 self.tableView.reloadData()
             }
             self.present(categoryViewController, animated: true)
         } else {
+            guard let newTrackerSchedule = viewModel?.newTrackerSchedule else { return }
             let scheduleViewController = ScheduleViewController()
             scheduleViewController.schedule = newTrackerSchedule
             scheduleViewController.dismissClosure = { schedule in
-                self.newTrackerSchedule = schedule
-                self.newTrackerSchedule.sort(by: {$0.dayNumber < $1.dayNumber})
+                self.viewModel?.newTrackerSchedule = schedule
+                self.viewModel?.newTrackerSchedule.sort(by: {$0.dayNumber < $1.dayNumber})
                 self.tableView.reloadData()
             }
             self.present(scheduleViewController, animated: true)
@@ -424,10 +397,10 @@ extension NewTrackerViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView == emojisCollectionView {
             let cell = collectionView.cellForItem(at: indexPath) as? EmojiCell
-            newTrackerEmoji = cell?.emoji
+            viewModel?.newTrackerEmoji = cell?.emoji
         } else {
             let cell = collectionView.cellForItem(at: indexPath) as? ColorCell
-            newTrackerColor = cell?.hexColor
+            viewModel?.newTrackerColor = cell?.hexColor
         }
     }
     

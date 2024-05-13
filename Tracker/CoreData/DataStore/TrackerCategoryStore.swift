@@ -8,6 +8,8 @@
 import CoreData
 
 final class TrackerCategoryStore: NSObject {
+    static let shared = TrackerCategoryStore()
+    
     private var coreDataManager = CoreDataManager.shared
     
     weak var delegate: DataStoreDelegate?
@@ -15,9 +17,9 @@ final class TrackerCategoryStore: NSObject {
     private var deletedIndexPaths: [IndexPath] = []
     
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCategoryCoreData> = {
-        let fetchRequest = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
-        let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: coreDataManager.context, sectionNameKeyPath: nil, cacheName: nil)
+        let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
+        request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
+        let fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: coreDataManager.context, sectionNameKeyPath: nil, cacheName: nil)
         fetchedResultsController.delegate = self
         try? fetchedResultsController.performFetch()
         return fetchedResultsController
@@ -27,6 +29,10 @@ final class TrackerCategoryStore: NSObject {
         return fetchedResultsController.sections?.count ?? .zero
     }
     
+    private override init() {
+        super.init()
+    }
+    
     func numberOfRowsInSection(_ section: Int) -> Int {
         guard let sections = fetchedResultsController.sections else { return .zero }
         return sections.isEmpty ? .zero : sections[section].numberOfObjects
@@ -34,6 +40,13 @@ final class TrackerCategoryStore: NSObject {
     
     func object(at indexPath: IndexPath) -> TrackerCategoryCoreData? {
         return fetchedResultsController.object(at: indexPath)
+    }
+    
+    func object(_ model: TrackerCategory) -> TrackerCategoryCoreData? {
+        let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
+        request.predicate = NSPredicate(format: "id == %@", model.id as CVarArg)
+        guard let result = try? coreDataManager.context.fetch(request) else { return nil }
+        return result[0]
     }
     
     func add(_ trackerCategory: TrackerCategory) {
@@ -59,7 +72,10 @@ extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
     }
     
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<any NSFetchRequestResult>) {
-        delegate?.didUpdate(DataStoreUpdate(insertedIndexPaths: insertedIndexPaths, deletedIndexPaths: deletedIndexPaths))
+        delegate?.didUpdate(DataStoreUpdate(
+            insertedIndexPaths: insertedIndexPaths,
+            deletedIndexPaths: deletedIndexPaths
+        ))
         insertedIndexPaths = []
         deletedIndexPaths = []
     }

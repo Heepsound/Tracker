@@ -19,7 +19,7 @@ final class TabBarController: UITabBarController {
         tabBar.backgroundColor = .trackerWhite
         tabBar.tintColor = .trackerBlue
 
-        let trackersViewController = TrackersViewController()
+        let trackersViewController = TrackersViewController(viewModel: TrackerViewModel())
         let trackersNavigationController = UINavigationController(rootViewController: trackersViewController)
         trackersNavigationController.modalPresentationStyle = .overCurrentContext
         trackersNavigationController.tabBarItem = UITabBarItem(title: "Трекеры", image: UIImage(named: "TabTrackers"), selectedImage: nil)

@@ -19,6 +19,7 @@ final class TrackerStore: NSObject {
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCoreData> = {
         let request = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
         request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
+        request.propertiesToFetch = ["name", "color", "emoji", "trackerType", "category"]
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: coreDataManager.context, sectionNameKeyPath: "category", cacheName: nil)
         fetchedResultsController.delegate = self
         return fetchedResultsController
@@ -32,7 +33,7 @@ final class TrackerStore: NSObject {
         super.init()
     }
     
-    func numberOfRowsInSection(_ section: Int) -> Int {
+    func numberOfItemsInSection(_ section: Int) -> Int {
         guard let sections = fetchedResultsController.sections else { return .zero }
         return sections.isEmpty ? .zero : sections[section].numberOfObjects
     }
@@ -41,21 +42,20 @@ final class TrackerStore: NSObject {
         return fetchedResultsController.object(at: indexPath)
     }
     
-    func add(_ tracker: Tracker, _ category: TrackerCategoryCoreData) {
+    func add(_ tracker: Tracker, _ category: TrackerCategory) {
         let object = TrackerCoreData(context: coreDataManager.context)
         object.id = tracker.id
         object.name = tracker.name
         object.trackerType = Int16(tracker.trackerType.rawValue)
         object.color = tracker.color
         object.emoji = tracker.emoji
-        object.category = category
+        object.category = TrackerCategoryStore.shared.object(category)
         for shedule in tracker.schedule {
             let scheduleEntity = ScheduleCoreData(context: coreDataManager.context)
             scheduleEntity.dayOfWeek = Int16(shedule.rawValue)
             scheduleEntity.tracker = object
         }
         coreDataManager.saveContext()
-        delegate?.didUpdate(DataStoreUpdate(insertedIndexPaths: [], deletedIndexPaths: []))
     }
     
     func delete(at indexPath: IndexPath) {
@@ -66,14 +66,11 @@ final class TrackerStore: NSObject {
     
     func getOnDate(date: Date) {
         let weekday = DaysOfWeek.dayByNumber(Calendar.current.component(.weekday, from: date))
-        fetchedResultsController.fetchRequest.predicate = NSPredicate(format: "(any %K.%K == %ld and %K == %ld) or ((any %K.%K == nil or any %K.%K == %@) and %K == %ld)",
+        fetchedResultsController.fetchRequest.predicate = NSPredicate(format: "(any %K.%K == %ld) or ((any %K == nil or any %K.%K == %@) and %K == %ld)",
                                                                       #keyPath(TrackerCoreData.schedule),
                                                                       #keyPath(ScheduleCoreData.dayOfWeek),
                                                                       weekday?.rawValue ?? 1,
-                                                                      #keyPath(TrackerCoreData.trackerType),
-                                                                      TrackerTypes.habit.rawValue,
                                                                       #keyPath(TrackerCoreData.records),
-                                                                      #keyPath(TrackerRecordCoreData.date),
                                                                       #keyPath(TrackerCoreData.records),
                                                                       #keyPath(TrackerRecordCoreData.date),
                                                                       date as CVarArg,
@@ -92,7 +89,10 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
     }
     
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<any NSFetchRequestResult>) {
-        delegate?.didUpdate(DataStoreUpdate(insertedIndexPaths: insertedIndexPaths, deletedIndexPaths: deletedIndexPaths))
+        delegate?.didUpdate(DataStoreUpdate(
+            insertedIndexPaths: insertedIndexPaths,
+            deletedIndexPaths: deletedIndexPaths
+        ))
         insertedIndexPaths = []
         deletedIndexPaths = []
     }

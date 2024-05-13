@@ -7,11 +7,6 @@
 
 import UIKit
 
-protocol TrackerTypeCellDelegate: AnyObject {
-    var newTrackerSchedule: [DaysOfWeek] { get }
-    var newTrackerCategory: String? { get }
-}
-
 final class TrackerTypeCell: UITableViewCell {
     private var titleLabel: UILabel = {
         let label = UILabel()
@@ -44,7 +39,7 @@ final class TrackerTypeCell: UITableViewCell {
                 if isSchedule {
                     titleLabel.text = "Расписание"
                     valueLabel.text = ""
-                    guard let schedule = delegate?.newTrackerSchedule else { return }
+                    guard let schedule = viewModel?.newTrackerSchedule else { return }
                     if schedule.count == 7 {
                         valueLabel.text = "Каждый день"
                     } else {
@@ -57,7 +52,7 @@ final class TrackerTypeCell: UITableViewCell {
                     }
                 } else {
                     titleLabel.text = "Категория"
-                    valueLabel.text = delegate?.newTrackerCategory ?? ""
+                    valueLabel.text = viewModel?.newTrackerCategory?.name ?? ""
                 }
             } else {
                 titleLabel.text = "Неопределено"
@@ -66,7 +61,7 @@ final class TrackerTypeCell: UITableViewCell {
         }
     }
     
-    weak var delegate: TrackerTypeCellDelegate?
+    var viewModel: TrackerViewModel?
     
     static let reuseIdentifier = "trackerTypeCell"
     
@@ -90,10 +85,12 @@ final class TrackerTypeCell: UITableViewCell {
     }
     
     private func addSubViews() {
-        self.addSubviewWithoutAutoresizingMask(buttonImageView)
-        self.addSubviewWithoutAutoresizingMask(workAreaStackView)
-        workAreaStackView.addArrangedSubview(titleLabel)
-        workAreaStackView.addArrangedSubview(valueLabel)
+        [buttonImageView, workAreaStackView].forEach { subview in
+            self.addSubviewWithoutAutoresizingMask(subview)
+        }
+        [titleLabel, valueLabel].forEach { subview in
+            workAreaStackView.addArrangedSubview(subview)
+        }
     }
     
     private func applyConstraints() {

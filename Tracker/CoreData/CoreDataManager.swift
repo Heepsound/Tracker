@@ -7,11 +7,6 @@
 
 import CoreData
 
-struct DataStoreUpdate {
-    let insertedIndexPaths: [IndexPath]
-    let deletedIndexPaths: [IndexPath]
-}
-
 protocol DataStoreDelegate: AnyObject {
     func didUpdate(_ update: DataStoreUpdate)
 }

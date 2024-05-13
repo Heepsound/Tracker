@@ -46,8 +46,14 @@ final class TrackerTypeViewController: UIViewController {
     }()
     
     weak var delegate: NewTrackerViewControllerDelegate?
+    private var viewModel: TrackerViewModel?
     
     // MARK: - Lifecycle
+    
+    convenience init(viewModel: TrackerViewModel) {
+        self.init()
+        self.viewModel = viewModel
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -61,10 +67,12 @@ final class TrackerTypeViewController: UIViewController {
     }
     
     private func addSubViews() {
-        view.addSubviewWithoutAutoresizingMask(titleLabel)
-        view.addSubviewWithoutAutoresizingMask(workAreaStackView)
-        workAreaStackView.addArrangedSubview(addHabitButton)
-        workAreaStackView.addArrangedSubview(addIrregularEventButton)
+        [titleLabel, workAreaStackView].forEach { subview in
+            view.addSubviewWithoutAutoresizingMask(subview)
+        }
+        [addHabitButton, addIrregularEventButton].forEach { subview in
+            workAreaStackView.addArrangedSubview(subview)
+        }
     }
 
     private func applyConstraints() {
@@ -88,8 +96,9 @@ final class TrackerTypeViewController: UIViewController {
     }
     
     func showNewTrackerViewController(trackerType: TrackerTypes) {
-        let newTrackerViewController = NewTrackerViewController()
-        newTrackerViewController.newTrackerType = trackerType
+        guard let viewModel else { return }
+        viewModel.newTrackerType = trackerType
+        let newTrackerViewController = NewTrackerViewController(viewModel: viewModel)
         newTrackerViewController.delegate = self.delegate
         self.present(newTrackerViewController, animated: true)
     }

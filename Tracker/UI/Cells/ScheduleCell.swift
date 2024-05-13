@@ -64,8 +64,9 @@ final class ScheduleCell: UITableViewCell {
     }
     
     private func addSubViews() {
-        self.addSubviewWithoutAutoresizingMask(titleLabel)
-        self.addSubviewWithoutAutoresizingMask(scheduleSwitch)
+        [titleLabel, scheduleSwitch].forEach { subview in
+            self.addSubviewWithoutAutoresizingMask(subview)
+        }
     }
     
     private func applyConstraints() {
