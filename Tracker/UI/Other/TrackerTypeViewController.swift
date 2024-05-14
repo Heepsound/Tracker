@@ -46,14 +46,8 @@ final class TrackerTypeViewController: UIViewController {
     }()
     
     weak var delegate: NewTrackerViewControllerDelegate?
-    private var viewModel: TrackerViewModel?
     
     // MARK: - Lifecycle
-    
-    convenience init(viewModel: TrackerViewModel) {
-        self.init()
-        self.viewModel = viewModel
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -96,9 +90,8 @@ final class TrackerTypeViewController: UIViewController {
     }
     
     func showNewTrackerViewController(trackerType: TrackerTypes) {
-        guard let viewModel else { return }
-        viewModel.newTrackerType = trackerType
-        let newTrackerViewController = NewTrackerViewController(viewModel: viewModel)
+        let newTrackerViewController = NewTrackerViewController()
+        newTrackerViewController.initialize(trackerType: trackerType)
         newTrackerViewController.delegate = self.delegate
         self.present(newTrackerViewController, animated: true)
     }

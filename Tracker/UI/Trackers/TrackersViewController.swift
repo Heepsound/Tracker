@@ -63,21 +63,24 @@ final class TrackersViewController: UIViewController {
         return collectionView
     }()
         
-    private var viewModel: TrackerViewModel?
+    private let viewModel: TrackerViewModel = TrackerViewModel()
     
     // MARK: - Lifecycle
     
-    convenience init(viewModel: TrackerViewModel) {
-        self.init()
-        self.viewModel = viewModel
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         bind()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupTrackerViewController()
         datePicker.date = Date()
-        viewModel?.trackersDate = datePicker.date
+        viewModel.trackersDate = datePicker.date
     }
     
     private func setupTrackerViewController() {
@@ -136,7 +139,6 @@ final class TrackersViewController: UIViewController {
     }
     
     private func bind() {
-        guard let viewModel else { return }
         viewModel.updateData = { [weak self] update in
             self?.updateTrackers()
         }
@@ -144,21 +146,20 @@ final class TrackersViewController: UIViewController {
     
     func updateTrackers() {
         collectionView.reloadData()
-        guard let hasData = viewModel?.hasData() else { return }
+        let hasData = viewModel.hasData
         collectionView.isHidden = !hasData
     }
     
     // MARK: - Actions
     
     @objc private func didTapAddButton() {
-        guard let viewModel else { return }
-        let trackerTypeViewController = TrackerTypeViewController(viewModel: viewModel)
+        let trackerTypeViewController = TrackerTypeViewController()
         trackerTypeViewController.delegate = self
         self.present(trackerTypeViewController, animated: true)
     }
     
     @objc private func datePickerValueChanged(_ sender: UIDatePicker) {
-        viewModel?.trackersDate = sender.date
+        viewModel.trackersDate = sender.date
     }
 }
 
@@ -166,11 +167,11 @@ final class TrackersViewController: UIViewController {
 
 extension TrackersViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return viewModel?.numberOfSections() ?? 0
+        return viewModel.numberOfSections
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return viewModel?.numberOfItemsInSection(section) ?? 0
+        return viewModel.numberOfItemsInSection(section)
     }
     
     func collectionView(
@@ -178,7 +179,7 @@ extension TrackersViewController: UICollectionViewDataSource {
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCell.reuseIdentifier, for: indexPath)
-        guard let cell = cell as? TrackerCell, let model = viewModel?.model(at: indexPath) else {
+        guard let cell = cell as? TrackerCell, let model = viewModel.model(at: indexPath) else {
             return UICollectionViewCell()
         }
         cell.viewModel = viewModel
@@ -198,7 +199,7 @@ extension TrackersViewController: UICollectionViewDataSource {
             guard let view = view as? TrackerHeaderView else {
                 return UICollectionViewCell()
             }
-            view.title = viewModel?.categoryName(at: indexPath) ?? ""
+            view.title = viewModel.categoryName(at: indexPath)
             return view
         case UICollectionView.elementKindSectionFooter:
             return UICollectionReusableView()
@@ -256,6 +257,8 @@ extension TrackersViewController: UICollectionViewDelegate {
 
 extension TrackersViewController: NewTrackerViewControllerDelegate {
     func creationСompleted() {
+        viewModel.getOnDate()
+        updateTrackers()
         self.dismiss(animated: true)
     }
 }
