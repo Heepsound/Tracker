@@ -39,6 +39,7 @@
 		E78C9D9F2BCBE305004FB5DF /* TrackerTypeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E78C9D9E2BCBE305004FB5DF /* TrackerTypeCell.swift */; };
 		E78C9DA12BCBE317004FB5DF /* ScheduleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E78C9DA02BCBE317004FB5DF /* ScheduleCell.swift */; };
 		E78FA0EA2BDD446B006A74FA /* NewCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E78FA0E92BDD446B006A74FA /* NewCategoryViewController.swift */; };
+		E79D8B062BF89F32005B798A /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = E79D8B042BF89F32005B798A /* Localizable.stringsdict */; };
 		E7AB0A552BEF5F36006F8805 /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7AB0A542BEF5F36006F8805 /* OnboardingViewController.swift */; };
 		E7AB0A582BEF65A4006F8805 /* OnboardingPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7AB0A572BEF65A4006F8805 /* OnboardingPageViewController.swift */; };
 		E7AB0A5F2BEF7A54006F8805 /* UserDefaultsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7AB0A5E2BEF7A54006F8805 /* UserDefaultsService.swift */; };
@@ -84,6 +85,8 @@
 		E78C9D9E2BCBE305004FB5DF /* TrackerTypeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerTypeCell.swift; sourceTree = "<group>"; };
 		E78C9DA02BCBE317004FB5DF /* ScheduleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleCell.swift; sourceTree = "<group>"; };
 		E78FA0E92BDD446B006A74FA /* NewCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewCategoryViewController.swift; sourceTree = "<group>"; };
+		E79D8B032BF89EDC005B798A /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		E79D8B072BF89F38005B798A /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ru; path = ru.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		E7AB0A542BEF5F36006F8805 /* OnboardingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewController.swift; sourceTree = "<group>"; };
 		E7AB0A572BEF65A4006F8805 /* OnboardingPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingPageViewController.swift; sourceTree = "<group>"; };
 		E7AB0A5E2BEF7A54006F8805 /* UserDefaultsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsService.swift; sourceTree = "<group>"; };
@@ -142,8 +145,9 @@
 				E743E01C2BEA0F2E005FA94D /* Enumerations */,
 				E7AB0A5D2BEF7A27006F8805 /* Services */,
 				E73160872BC1430300960D97 /* Helpers */,
-				E73160722BC129D500960D97 /* Assets.xcassets */,
 				E73160742BC129D500960D97 /* LaunchScreen.storyboard */,
+				E73160722BC129D500960D97 /* Assets.xcassets */,
+				E79D8B042BF89F32005B798A /* Localizable.stringsdict */,
 				E73160772BC129D500960D97 /* Info.plist */,
 			);
 			path = Tracker;
@@ -315,6 +319,7 @@
 			knownRegions = (
 				en,
 				Base,
+				ru,
 			);
 			mainGroup = E731605A2BC129D400960D97;
 			productRefGroup = E73160642BC129D400960D97 /* Products */;
@@ -333,6 +338,7 @@
 			files = (
 				E73160732BC129D500960D97 /* Assets.xcassets in Resources */,
 				E73160762BC129D500960D97 /* Base in Resources */,
+				E79D8B062BF89F32005B798A /* Localizable.stringsdict in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -391,8 +397,17 @@
 			isa = PBXVariantGroup;
 			children = (
 				E73160752BC129D500960D97 /* Base */,
+				E79D8B032BF89EDC005B798A /* ru */,
 			);
 			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		E79D8B042BF89F32005B798A /* Localizable.stringsdict */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E79D8B072BF89F38005B798A /* ru */,
+			);
+			name = Localizable.stringsdict;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -403,6 +418,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -466,6 +482,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
