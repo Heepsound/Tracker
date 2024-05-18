@@ -9,8 +9,10 @@ import UIKit
 
 final class OnboardingViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
     private lazy var pages: [UIViewController] = {
-        let page1 = OnboardingPageViewController(backgroundImage: .onboardingPage1Background, title: "Отслеживайте только то, что хотите")
-        let page2 = OnboardingPageViewController(backgroundImage: .onboardingPage2Background, title: "Даже если это не литры воды и йога")
+        let page1Title = NSLocalizedString("onboarding.page1.title", comment: "Текст первой страницы онбординга")
+        let page1 = OnboardingPageViewController(backgroundImage: .onboardingPage1Background, title: page1Title)
+        let page2Title = NSLocalizedString("onboarding.page2.title", comment: "Текст второй страницы онбординга")
+        let page2 = OnboardingPageViewController(backgroundImage: .onboardingPage2Background, title: page2Title)
         return [page1, page2]
     }()
 

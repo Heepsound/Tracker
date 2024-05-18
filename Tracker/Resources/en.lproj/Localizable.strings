@@ -1,0 +1,46 @@
+/* 
+  Localizable.strings
+  Tracker
+
+  Created by Владимир Горбачев on 18.05.2024.
+  
+*/
+
+habit = "Habit";
+irregularEvent = "Irregular event";
+
+category = "Category";
+schedule = "Schedule";
+
+undefined = "Undefined";
+
+onboarding.page1.title = "Track only what you want";
+onboarding.page2.title = "Even if it's not liters of water and yoga";
+onboarding.confirmButton.title = "These are technologies!";
+
+trackers.title = "Trackers";
+trackers.searchBar.placeholder = "Search";
+trackers.noTrackersLabel = "What are we going to track?";
+
+tabBar.trackers.title = "Trackers";
+tabBar.statistics.title = "Statistics";
+
+newTracker.trackerName.placeholder = "Enter tracker name";
+newTracker.addButton.title = "Create";
+newTracker.cancelButton.title = "Cancel";
+newTracker.newIrregularEvent = "New irregular event";
+newTracker.newHabit = "New habit";
+newTracker.colorCollection.title = "Color";
+
+trackerType.title = "Creating a tracker";
+trackerTypeCell.schedule.everyDay = "Every day";
+
+categories.noCategoryLabel = "Habits and events can be \ncombined by meaning";
+categories.addButton.title = "Add category";
+
+newCategory.title = "New category";
+newCategory.categoryName.placeholder = "Enter category name";
+newCategory.addButton.title = "Done";
+
+schedule.title = "Schedule";
+schedule.confirmButton.title = "Done";

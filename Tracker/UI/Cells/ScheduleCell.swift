@@ -37,7 +37,7 @@ final class ScheduleCell: UITableViewCell {
                     scheduleSwitch.isOn = true
                 }
             } else {
-                titleLabel.text = "Неопределено"
+                titleLabel.text = NSLocalizedString("undefined", comment: "Значение неопределено")
             }
         }
     }

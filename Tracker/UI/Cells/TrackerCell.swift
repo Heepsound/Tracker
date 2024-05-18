@@ -72,7 +72,7 @@ final class TrackerCell: UICollectionViewCell {
     private var doneTimes: Int = 0 {
         didSet {
             counterLabel.text = String.localizedStringWithFormat(
-                NSLocalizedString("recordsCount", comment: "Number of completed trackers"),
+                NSLocalizedString("recordsCount", comment: "Количество завершённых трекеров"),
                 doneTimes
             )
         }

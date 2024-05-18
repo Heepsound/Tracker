@@ -10,7 +10,7 @@ import UIKit
 final class CategoryViewController: UIViewController {
     private var titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Категория"
+        label.text = NSLocalizedString("category", comment: "Заголовок категория")
         label.textColor = .trackerBlack
         label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         return label
@@ -27,7 +27,7 @@ final class CategoryViewController: UIViewController {
     }()
     private var noCategoryLabel: UILabel = {
         let label = UILabel()
-        label.text = "Привычки и события можно \nобъединить по смыслу"
+        label.text = NSLocalizedString("categories.noCategoryLabel", comment: "Текст при отсутствии категорий")
         label.textColor = .trackerBlack
         label.font = UIFont.systemFont(ofSize: 12)
         label.numberOfLines = 0
@@ -47,7 +47,8 @@ final class CategoryViewController: UIViewController {
     private lazy var addCategoryButton: UIButton = {
         let button = UIButton(type: .custom)
         button.backgroundColor = .trackerBlack
-        button.setTitle("Добавить категорию", for: .normal)
+        let buttonTitle = NSLocalizedString("categories.addButton.title", comment: "Заголовок кнопки создания новой категории")
+        button.setTitle(buttonTitle, for: .normal)
         button.setTitleColor(.trackerWhite, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16

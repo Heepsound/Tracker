@@ -22,10 +22,13 @@ final class TabBarController: UITabBarController {
         let trackersViewController = TrackersViewController()
         let trackersNavigationController = UINavigationController(rootViewController: trackersViewController)
         trackersNavigationController.modalPresentationStyle = .overCurrentContext
-        trackersNavigationController.tabBarItem = UITabBarItem(title: "Трекеры", image: UIImage(named: "TabTrackers"), selectedImage: nil)
         
+        let tabTrackersTitle = NSLocalizedString("tabBar.trackers.title", comment: "Заголовок вкладки с трекерами")
+        trackersNavigationController.tabBarItem = UITabBarItem(title: tabTrackersTitle, image: UIImage(named: "TabTrackers"), selectedImage: nil)
+        
+        let tabStatisticsTitle = NSLocalizedString("tabBar.statistics.title", comment: "Заголовок вкладки со статистикой")
         let statisticsViewController = StatisticsViewController()
-        statisticsViewController.tabBarItem = UITabBarItem(title: "Статистика", image: UIImage(named: "TabStatistics"), selectedImage: nil)
+        statisticsViewController.tabBarItem = UITabBarItem(title: tabStatisticsTitle, image: UIImage(named: "TabStatistics"), selectedImage: nil)
         
         self.viewControllers = [trackersNavigationController, statisticsViewController]
     }

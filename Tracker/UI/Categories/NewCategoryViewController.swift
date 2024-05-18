@@ -10,7 +10,7 @@ import UIKit
 final class NewCategoryViewController: UIViewController {
     private var titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Новая категория"
+        label.text = NSLocalizedString("newCategory.title", comment: "Заголовок экрана")
         label.textColor = .trackerBlack
         label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         return label
@@ -19,7 +19,7 @@ final class NewCategoryViewController: UIViewController {
         let textField = UITextField()
         textField.textColor = .trackerBlack
         textField.borderStyle = .none
-        textField.placeholder = "Введите название категории"
+        textField.placeholder = NSLocalizedString("newCategory.categoryName.placeholder", comment: "Подсказка ввода названия категории")
         textField.backgroundColor = .trackerFieldAlpha30
         textField.layer.cornerRadius = 16
         textField.layer.masksToBounds = true
@@ -34,7 +34,8 @@ final class NewCategoryViewController: UIViewController {
         let button = UIButton(type: .custom)
         button.backgroundColor = .trackerGray
         button.isEnabled = false
-        button.setTitle("Готово", for: .normal)
+        let buttonTitle = NSLocalizedString("newCategory.addButton.title", comment: "Заголовок кнопки подтверждения создания новой категории")
+        button.setTitle(buttonTitle, for: .normal)
         button.setTitleColor(.trackerWhite, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16

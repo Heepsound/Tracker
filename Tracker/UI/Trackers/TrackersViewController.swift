@@ -24,14 +24,14 @@ final class TrackersViewController: UIViewController {
     }()
     private var titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Трекеры"
+        label.text = NSLocalizedString("trackers.title", comment: "Заголовок экрана")
         label.textColor = .trackerBlack
         label.font = UIFont.boldSystemFont(ofSize: 34)
         return label
     }()
     private var searchBar: UISearchBar = {
         let searchBar = UISearchBar()
-        searchBar.placeholder = "Поиск"
+        searchBar.placeholder = NSLocalizedString("trackers.searchBar.placeholder", comment: "Подсказка поиска")
         searchBar.searchBarStyle = .minimal
         return searchBar
     }()
@@ -47,7 +47,7 @@ final class TrackersViewController: UIViewController {
     }()
     private var noTrackersLabel: UILabel = {
         let label = UILabel()
-        label.text = "Что будем отслеживать?"
+        label.text = NSLocalizedString("trackers.noTrackersLabel", comment: "Текст при отсутствии трекеров")
         label.textColor = .trackerBlack
         label.font = UIFont.systemFont(ofSize: 12)
         return label

@@ -39,7 +39,7 @@ final class NewTrackerViewModel {
     }
     var trackerSchedule: [DaysOfWeek] = [] {
         didSet {
-            trackerSchedule.sort(by: {$0.dayNumber < $1.dayNumber})
+            trackerSchedule.sort(by: {$0.rawValue < $1.rawValue})
             checkNewTrackerData()
         }
     }

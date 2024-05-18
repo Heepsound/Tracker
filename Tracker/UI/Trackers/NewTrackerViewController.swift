@@ -22,7 +22,7 @@ final class NewTrackerViewController: UIViewController {
         let textField = UITextField()
         textField.textColor = .trackerBlack
         textField.borderStyle = .none
-        textField.placeholder = "Введите название трекера"
+        textField.placeholder = NSLocalizedString("newTracker.trackerName.placeholder", comment: "Подсказка ввода названия трекера")
         textField.backgroundColor = .trackerFieldAlpha30
         textField.layer.cornerRadius = 16
         textField.layer.masksToBounds = true
@@ -65,7 +65,8 @@ final class NewTrackerViewController: UIViewController {
         let button = UIButton(type: .custom)
         button.backgroundColor = .trackerGray
         button.isEnabled = false
-        button.setTitle("Создать", for: .normal)
+        let buttonTitle = NSLocalizedString("newTracker.addButton.title", comment: "Заголовок кнопки подтверждения создания нового трекера")
+        button.setTitle(buttonTitle, for: .normal)
         button.setTitleColor(.trackerWhite, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
@@ -76,7 +77,8 @@ final class NewTrackerViewController: UIViewController {
     private lazy var cancelButton: UIButton = {
         let button = UIButton(type: .custom)
         button.backgroundColor = .trackerWhite
-        button.setTitle("Отменить", for: .normal)
+        let buttonTitle = NSLocalizedString("newTracker.cancelButton.title", comment: "Заголовок кнопки отмены создания нового трекера")
+        button.setTitle(buttonTitle, for: .normal)
         button.setTitleColor(.trackerPink, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
@@ -136,10 +138,12 @@ final class NewTrackerViewController: UIViewController {
     
     private func setupNewTrackerViewController() {
         view.backgroundColor = .trackerWhite
+        let newIrregularEvent = NSLocalizedString("newTracker.newIrregularEvent", comment: "Текст заголовка формы создания трекера с нерегулярным событием")
+        let newHabit = NSLocalizedString("newTracker.newHabit", comment: "Текст заголовка формы создания трекера с привычкой")
         if let isIrregularEvent = viewModel.isIrregularEvent {
-            titleLabel.text = isIrregularEvent ? "Новое нерегулярное событие" : "Новая привычка"
+            titleLabel.text = isIrregularEvent ? newIrregularEvent : newHabit
         } else {
-            titleLabel.text = "Новое нерегулярное событие"
+            titleLabel.text = newIrregularEvent
         }
         let indexPaths = (0..<viewModel.categoryRowsCount).map { i in
             IndexPath(row: i, section: 0)
@@ -339,7 +343,7 @@ extension NewTrackerViewController: UICollectionViewDataSource {
             if collectionView == emojisCollectionView {
                 view.title = "Emoji"
             } else {
-                view.title = "Цвет"
+                view.title = NSLocalizedString("newTracker.colorCollection.title", comment: "Текст заголовка коллекции цветов")
             }
             return view
         case UICollectionView.elementKindSectionFooter:

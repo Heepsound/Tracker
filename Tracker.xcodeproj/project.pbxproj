@@ -39,7 +39,9 @@
 		E78C9D9F2BCBE305004FB5DF /* TrackerTypeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E78C9D9E2BCBE305004FB5DF /* TrackerTypeCell.swift */; };
 		E78C9DA12BCBE317004FB5DF /* ScheduleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E78C9DA02BCBE317004FB5DF /* ScheduleCell.swift */; };
 		E78FA0EA2BDD446B006A74FA /* NewCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E78FA0E92BDD446B006A74FA /* NewCategoryViewController.swift */; };
+		E79CAEC22BF8F468000E11C2 /* DateFormatManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79CAEC12BF8F468000E11C2 /* DateFormatManager.swift */; };
 		E79D8B062BF89F32005B798A /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = E79D8B042BF89F32005B798A /* Localizable.stringsdict */; };
+		E79D8B0B2BF8AB13005B798A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = E79D8B092BF8AB13005B798A /* Localizable.strings */; };
 		E7AB0A552BEF5F36006F8805 /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7AB0A542BEF5F36006F8805 /* OnboardingViewController.swift */; };
 		E7AB0A582BEF65A4006F8805 /* OnboardingPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7AB0A572BEF65A4006F8805 /* OnboardingPageViewController.swift */; };
 		E7AB0A5F2BEF7A54006F8805 /* UserDefaultsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7AB0A5E2BEF7A54006F8805 /* UserDefaultsService.swift */; };
@@ -85,8 +87,13 @@
 		E78C9D9E2BCBE305004FB5DF /* TrackerTypeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerTypeCell.swift; sourceTree = "<group>"; };
 		E78C9DA02BCBE317004FB5DF /* ScheduleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleCell.swift; sourceTree = "<group>"; };
 		E78FA0E92BDD446B006A74FA /* NewCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewCategoryViewController.swift; sourceTree = "<group>"; };
+		E79CAEC12BF8F468000E11C2 /* DateFormatManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatManager.swift; sourceTree = "<group>"; };
 		E79D8B032BF89EDC005B798A /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		E79D8B072BF89F38005B798A /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ru; path = ru.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		E79D8B082BF8A8E7005B798A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		E79D8B0A2BF8AB13005B798A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		E79D8B0C2BF8AB61005B798A /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
+		E79D8B0E2BF8AB82005B798A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		E7AB0A542BEF5F36006F8805 /* OnboardingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewController.swift; sourceTree = "<group>"; };
 		E7AB0A572BEF65A4006F8805 /* OnboardingPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingPageViewController.swift; sourceTree = "<group>"; };
 		E7AB0A5E2BEF7A54006F8805 /* UserDefaultsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsService.swift; sourceTree = "<group>"; };
@@ -145,9 +152,8 @@
 				E743E01C2BEA0F2E005FA94D /* Enumerations */,
 				E7AB0A5D2BEF7A27006F8805 /* Services */,
 				E73160872BC1430300960D97 /* Helpers */,
+				E79D8B0F2BF8ABA4005B798A /* Resources */,
 				E73160742BC129D500960D97 /* LaunchScreen.storyboard */,
-				E73160722BC129D500960D97 /* Assets.xcassets */,
-				E79D8B042BF89F32005B798A /* Localizable.stringsdict */,
 				E73160772BC129D500960D97 /* Info.plist */,
 			);
 			path = Tracker;
@@ -249,6 +255,16 @@
 			path = Trackers;
 			sourceTree = "<group>";
 		};
+		E79D8B0F2BF8ABA4005B798A /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				E73160722BC129D500960D97 /* Assets.xcassets */,
+				E79D8B042BF89F32005B798A /* Localizable.stringsdict */,
+				E79D8B092BF8AB13005B798A /* Localizable.strings */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		E7AB0A562BEF6544006F8805 /* Onboarding */ = {
 			isa = PBXGroup;
 			children = (
@@ -261,6 +277,7 @@
 		E7AB0A5D2BEF7A27006F8805 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				E79CAEC12BF8F468000E11C2 /* DateFormatManager.swift */,
 				E7AB0A5E2BEF7A54006F8805 /* UserDefaultsService.swift */,
 			);
 			path = Services;
@@ -337,6 +354,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E73160732BC129D500960D97 /* Assets.xcassets in Resources */,
+				E79D8B0B2BF8AB13005B798A /* Localizable.strings in Resources */,
 				E73160762BC129D500960D97 /* Base in Resources */,
 				E79D8B062BF89F32005B798A /* Localizable.stringsdict in Resources */,
 			);
@@ -368,6 +386,7 @@
 				E743E01E2BEA0F60005FA94D /* TrackerTypes.swift in Sources */,
 				E73160842BC1342C00960D97 /* TrackersViewController.swift in Sources */,
 				E78C9D982BCBBCDD004FB5DF /* TrackerTypeViewController.swift in Sources */,
+				E79CAEC22BF8F468000E11C2 /* DateFormatManager.swift in Sources */,
 				E73B351D2BDCE8B0000FD1A4 /* TrackerStore.swift in Sources */,
 				E78C9D9A2BCBD0C6004FB5DF /* NewTrackerViewController.swift in Sources */,
 				E78AFD862BCD6FAC00D47122 /* TrackerHeaderView.swift in Sources */,
@@ -398,6 +417,7 @@
 			children = (
 				E73160752BC129D500960D97 /* Base */,
 				E79D8B032BF89EDC005B798A /* ru */,
+				E79D8B0E2BF8AB82005B798A /* en */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
@@ -406,8 +426,18 @@
 			isa = PBXVariantGroup;
 			children = (
 				E79D8B072BF89F38005B798A /* ru */,
+				E79D8B082BF8A8E7005B798A /* en */,
 			);
 			name = Localizable.stringsdict;
+			sourceTree = "<group>";
+		};
+		E79D8B092BF8AB13005B798A /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E79D8B0A2BF8AB13005B798A /* en */,
+				E79D8B0C2BF8AB61005B798A /* ru */,
+			);
+			name = Localizable.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -528,6 +558,7 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;

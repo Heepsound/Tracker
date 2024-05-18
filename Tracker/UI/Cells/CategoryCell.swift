@@ -20,7 +20,7 @@ final class CategoryCell: UITableViewCell {
             if let categoryName {
                 titleLabel.text = categoryName
             } else {
-                titleLabel.text = "Неопределено"
+                titleLabel.text = NSLocalizedString("undefined", comment: "Значение неопределено")
             }
         }
     }

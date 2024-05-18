@@ -10,7 +10,7 @@ import UIKit
 final class TrackerTypeViewController: UIViewController {
     private var titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Создание трекера"
+        label.text = NSLocalizedString("trackerType.title" , comment: "Заголовок формы выбора типа трекера")
         label.textColor = .trackerBlack
         label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         return label
@@ -18,7 +18,8 @@ final class TrackerTypeViewController: UIViewController {
     private lazy var addHabitButton: UIButton = {
         let button = UIButton(type: .custom)
         button.backgroundColor = .trackerBlack
-        button.setTitle("Привычка", for: .normal)
+        let buttonTitle = NSLocalizedString("habit" , comment: "Заголовок кнопки привычки")
+        button.setTitle(buttonTitle, for: .normal)
         button.setTitleColor(.trackerWhite, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
@@ -29,7 +30,8 @@ final class TrackerTypeViewController: UIViewController {
     private lazy var addIrregularEventButton: UIButton = {
         let button = UIButton(type: .custom)
         button.backgroundColor = .trackerBlack
-        button.setTitle("Нерегулярное событие", for: .normal)
+        let buttonTitle = NSLocalizedString("irregularEvent" , comment: "Заголовок кнопки нерегулярного события")
+        button.setTitle(buttonTitle, for: .normal)
         button.setTitleColor(.trackerWhite, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16

@@ -20,7 +20,7 @@ final class TrackerHeaderView: UICollectionReusableView {
             if let title {
                 titleLabel.text = title
             } else {
-                titleLabel.text = "Неопределено"
+                titleLabel.text = NSLocalizedString("undefined", comment: "Значение неопределено")
             }
         }
     }
