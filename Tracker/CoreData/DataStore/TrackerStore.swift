@@ -64,18 +64,26 @@ final class TrackerStore: NSObject {
         coreDataManager.saveContext()
     }
     
-    func getOnDate(date: Date) {
+    func getOnDate(date: Date, filter: String) {
         let weekday = DaysOfWeek.dayByNumber(Calendar.current.component(.weekday, from: date))
-        fetchedResultsController.fetchRequest.predicate = NSPredicate(format: "(any %K.%K == %ld) or ((any %K == nil or any %K.%K == %@) and %K == %ld)",
-                                                                      #keyPath(TrackerCoreData.schedule),
-                                                                      #keyPath(ScheduleCoreData.dayOfWeek),
-                                                                      weekday?.rawValue ?? 1,
-                                                                      #keyPath(TrackerCoreData.records),
-                                                                      #keyPath(TrackerCoreData.records),
-                                                                      #keyPath(TrackerRecordCoreData.date),
-                                                                      date as CVarArg,
-                                                                      #keyPath(TrackerCoreData.trackerType),
-                                                                      TrackerTypes.irregularEvent.rawValue)
+        var requestText = "((any %K.%K == %ld) or ((any %K == nil or any %K.%K == %@) and %K == %ld))"
+        if !filter.isEmpty {
+            requestText.append(" and name CONTAINS[cd] %@")
+        }
+        let predicate = NSPredicate(
+            format: requestText,
+            #keyPath(TrackerCoreData.schedule),
+            #keyPath(ScheduleCoreData.dayOfWeek),
+            weekday?.rawValue ?? 1,
+            #keyPath(TrackerCoreData.records),
+            #keyPath(TrackerCoreData.records),
+            #keyPath(TrackerRecordCoreData.date),
+            date as CVarArg,
+            #keyPath(TrackerCoreData.trackerType),
+            TrackerTypes.irregularEvent.rawValue,
+            filter as CVarArg
+        )
+        fetchedResultsController.fetchRequest.predicate = predicate
         try? fetchedResultsController.performFetch()
     }
 }

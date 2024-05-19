@@ -27,11 +27,17 @@ final class TrackerViewModel {
         }
     }
     
+    var trackersFilter: String = "" {
+        didSet {
+            getOnDate()
+        }
+    }
+    
     // MARK: - Trackers
     
     func getOnDate() {
         guard let trackersDate else { return }
-        dataStore.getOnDate(date: trackersDate)
+        dataStore.getOnDate(date: trackersDate, filter: trackersFilter)
         updateData?(DataStoreUpdate(insertedIndexPaths: [], deletedIndexPaths: []))
     }
     

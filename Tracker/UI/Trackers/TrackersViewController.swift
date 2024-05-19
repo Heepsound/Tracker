@@ -16,6 +16,9 @@ final class TrackersViewController: UIViewController {
     }()
     private lazy var datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
+        datePicker.backgroundColor = .datePickerBackground
+        datePicker.layer.cornerRadius = 8
+        datePicker.layer.masksToBounds = true
         datePicker.datePickerMode = .date
         datePicker.preferredDatePickerStyle = .compact
         datePicker.timeZone = NSTimeZone.local
@@ -29,11 +32,12 @@ final class TrackersViewController: UIViewController {
         label.font = UIFont.boldSystemFont(ofSize: 34)
         return label
     }()
-    private var searchBar: UISearchBar = {
-        let searchBar = UISearchBar()
-        searchBar.placeholder = NSLocalizedString("trackers.searchBar.placeholder", comment: "Подсказка поиска")
-        searchBar.searchBarStyle = .minimal
-        return searchBar
+    private lazy var searchTextField: UISearchTextField = {
+        let searchTextField = UISearchTextField()
+        searchTextField.backgroundColor = .searchFieldBackground
+        searchTextField.placeholder = NSLocalizedString("trackers.searchBar.placeholder", comment: "Подсказка поиска")
+        searchTextField.addTarget(self, action: #selector(textDidChange), for: .editingChanged)
+        return searchTextField
     }()
     private var workAreaStackView: UIStackView = {
         let stackView = UIStackView()
@@ -92,7 +96,7 @@ final class TrackersViewController: UIViewController {
     }
     
     private func addSubViews() {
-        [addButton, datePicker, titleLabel, searchBar, workAreaStackView].forEach { subview in
+        [addButton, datePicker, titleLabel, searchTextField, workAreaStackView].forEach { subview in
             view.addSubviewWithoutAutoresizingMask(subview)
         }
         [noTrackersImageView, noTrackersLabel, collectionView].forEach { subview in
@@ -108,13 +112,13 @@ final class TrackersViewController: UIViewController {
             titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
         ])
         NSLayoutConstraint.activate([
-            searchBar.heightAnchor.constraint(equalToConstant: 36),
-            searchBar.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 7),
-            searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
-            searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8)
+            searchTextField.heightAnchor.constraint(equalToConstant: 36),
+            searchTextField.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 7),
+            searchTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            searchTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
         ])
         NSLayoutConstraint.activate([
-            workAreaStackView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 10),
+            workAreaStackView.topAnchor.constraint(equalTo: searchTextField.bottomAnchor, constant: 10),
             workAreaStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             workAreaStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             workAreaStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
@@ -160,6 +164,14 @@ final class TrackersViewController: UIViewController {
     
     @objc private func datePickerValueChanged(_ sender: UIDatePicker) {
         viewModel.trackersDate = sender.date
+    }
+    
+    @objc func textDidChange(_ searchField: UISearchTextField) {
+        if let searchText = searchField.text, !searchText.isEmpty {
+            viewModel.trackersFilter = searchText
+        } else {
+            viewModel.trackersFilter = ""
+        }
     }
 }
 
