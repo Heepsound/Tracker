@@ -191,12 +191,12 @@ extension TrackersViewController: UICollectionViewDataSource {
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCell.reuseIdentifier, for: indexPath)
-        guard let cell = cell as? TrackerCell, let model = viewModel.model(at: indexPath) else {
+        guard let cell = cell as? TrackerCell else {
             return UICollectionViewCell()
         }
         cell.viewModel = viewModel
         cell.indexPath = indexPath
-        cell.tracker = model
+        cell.tracker = viewModel.model(at: indexPath)
         return cell
     }
     
@@ -256,12 +256,38 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
 // MARK: - UICollectionViewDelegate
 
 extension TrackersViewController: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        contextMenuConfigurationForItemsAt indexPaths: [IndexPath],
+        point: CGPoint) -> UIContextMenuConfiguration?
+    {
+        guard indexPaths.count > 0 else { return nil }
+        let indexPath = indexPaths[0]
         
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        let pinTitle = NSLocalizedString("trackers.menu.pin", comment: "Заголовок действия - Прикрепить")
+        let unpinTitle = NSLocalizedString("trackers.menu.unpin", comment: "Заголовок действия - Открепить")
+        let editTitle = NSLocalizedString("trackers.menu.edit", comment: "Заголовок действия - Редактировать")
+        let deleteTitle = NSLocalizedString("deleteButton.title", comment: "Заголовок действия - Удалить")
         
+        return UIContextMenuConfiguration(actionProvider: { actions in
+            return UIMenu(children: [
+                UIAction(title: pinTitle) { [weak self] _ in
+                    // TODO: - Реализовать прикрепление
+                },
+                UIAction(title: editTitle) { [weak self] _ in
+                    let newTrackerViewController = NewTrackerViewController()
+                    newTrackerViewController.initialize(indexPath: indexPath)
+                    newTrackerViewController.delegate = self
+                    self?.present(newTrackerViewController, animated: true)
+                },
+                UIAction(title: deleteTitle, attributes: [.destructive]) { [weak self] _ in
+                    let alertTitle = NSLocalizedString("trackers.deleteAlert.title", comment: "Заголовок подтверждения удаления трекера")
+                    AlertPresenter.confirmDelete(title: alertTitle, delegate: self) {
+                        self?.viewModel.delete(indexPath: indexPath)
+                    }
+                }
+            ])
+        })
     }
 }
 

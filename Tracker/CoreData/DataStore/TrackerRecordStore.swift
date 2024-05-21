@@ -18,7 +18,7 @@ final class TrackerRecordStore {
     private init() {}
     
     func add(indexPath: IndexPath, onDate: Date) {
-        guard let tracker = trackerStore.object(at: indexPath) else { return }
+        let tracker = trackerStore.object(at: indexPath)
         let record = TrackerRecordCoreData(context: coreDataManager.context)
         record.tracker = tracker
         record.date = onDate
@@ -26,7 +26,7 @@ final class TrackerRecordStore {
     }
     
     func delete(indexPath: IndexPath, trackersDate: Date) {
-        guard let tracker = trackerStore.object(at: indexPath) else { return }
+        let tracker = trackerStore.object(at: indexPath)
         let predicate = NSPredicate(format: "%K == %@ and %K == %@",
                                         #keyPath(TrackerRecordCoreData.tracker),
                                         tracker,
@@ -42,14 +42,14 @@ final class TrackerRecordStore {
     }
     
     func recordCount(indexPath: IndexPath) -> Int {
-        guard let tracker = trackerStore.object(at: indexPath) else { return .zero }
+        let tracker = trackerStore.object(at: indexPath)
         let predicate = NSPredicate(format: "%K == %@", #keyPath(TrackerRecordCoreData.tracker), tracker)
         guard let result = recordsByPredicate(tracker: tracker, predicate: predicate, resultType: .countResultType), let count = result[0] as? Int else { return 0 }
         return count
     }
     
     func isDone(indexPath: IndexPath, trackersDate: Date) -> Bool {
-        guard let tracker = trackerStore.object(at: indexPath) else { return false }
+        let tracker = trackerStore.object(at: indexPath)
         let predicate = NSPredicate(format: "%K == %@ and %K == %@",
                                     #keyPath(TrackerRecordCoreData.tracker),
                                     tracker,

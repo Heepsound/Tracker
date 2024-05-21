@@ -65,7 +65,9 @@ final class NewTrackerViewController: UIViewController {
         let button = UIButton(type: .custom)
         button.backgroundColor = .trackerGray
         button.isEnabled = false
-        let buttonTitle = NSLocalizedString("newTracker.addButton.title", comment: "Заголовок кнопки подтверждения создания нового трекера")
+        let buttonTitle = viewModel.isEditMode ?
+            NSLocalizedString("newTracker.saveButton.title", comment: "Заголовок кнопки сохранения отредактированного трекера") :
+            NSLocalizedString("newTracker.addButton.title", comment: "Заголовок кнопки подтверждения создания нового трекера")
         button.setTitle(buttonTitle, for: .normal)
         button.setTitleColor(.trackerWhite, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
@@ -77,7 +79,7 @@ final class NewTrackerViewController: UIViewController {
     private lazy var cancelButton: UIButton = {
         let button = UIButton(type: .custom)
         button.backgroundColor = .trackerWhite
-        let buttonTitle = NSLocalizedString("newTracker.cancelButton.title", comment: "Заголовок кнопки отмены создания нового трекера")
+        let buttonTitle = NSLocalizedString("cancelButton.title", comment: "Заголовок кнопки отмены создания нового трекера")
         button.setTitle(buttonTitle, for: .normal)
         button.setTitleColor(.trackerPink, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
@@ -118,6 +120,10 @@ final class NewTrackerViewController: UIViewController {
         viewModel.trackerType = trackerType
     }
     
+    func initialize(indexPath: IndexPath) {
+        viewModel.indexPath = indexPath
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNewTrackerViewController()
@@ -125,10 +131,15 @@ final class NewTrackerViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        if viewModel.isEditMode {
+            emojisCollectionView.selectItem(at: viewModel.emojiIndexPath, animated: true, scrollPosition: .centeredVertically)
+            colorsCollectionView.selectItem(at: viewModel.colorIndexPath, animated: true, scrollPosition: .centeredVertically)
+        }
         let contentRect: CGRect = scrollView.subviews.reduce(into: .zero) { rect, view in
             rect = rect.union(view.frame)
         }
         scrollView.contentSize = CGSize(width: self.view.frame.size.width, height: contentRect.height)
+        
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -138,8 +149,15 @@ final class NewTrackerViewController: UIViewController {
     
     private func setupNewTrackerViewController() {
         view.backgroundColor = .trackerWhite
-        let newIrregularEvent = NSLocalizedString("newTracker.newIrregularEvent", comment: "Текст заголовка формы создания трекера с нерегулярным событием")
-        let newHabit = NSLocalizedString("newTracker.newHabit", comment: "Текст заголовка формы создания трекера с привычкой")
+        if let trackerName = viewModel.trackerName {
+            nameTextField.text = trackerName
+        }
+        let newIrregularEvent = viewModel.isEditMode ?
+            NSLocalizedString("newTracker.editIrregularEvent", comment: "Текст заголовка формы редактирования трекера с нерегулярным событием") :
+            NSLocalizedString("newTracker.newIrregularEvent", comment: "Текст заголовка формы создания трекера с нерегулярным событием")
+        let newHabit = viewModel.isEditMode ?
+            NSLocalizedString("newTracker.editHabit", comment: "Текст заголовка формы редактирования трекера с привычкой") :
+            NSLocalizedString("newTracker.newHabit", comment: "Текст заголовка формы создания трекера с привычкой")
         if let isIrregularEvent = viewModel.isIrregularEvent {
             titleLabel.text = isIrregularEvent ? newIrregularEvent : newHabit
         } else {
@@ -225,7 +243,7 @@ final class NewTrackerViewController: UIViewController {
     // MARK: - Actions
     
     @objc private func didTapAddButton() {
-        viewModel.add()
+        viewModel.save()
         delegate?.creationСompleted()
     }
     
@@ -397,10 +415,6 @@ extension NewTrackerViewController: UICollectionViewDelegate {
             let cell = collectionView.cellForItem(at: indexPath) as? ColorCell
             viewModel.trackerColor = cell?.hexColor
         }
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        
     }
 }
 

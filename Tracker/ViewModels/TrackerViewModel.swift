@@ -53,14 +53,18 @@ final class TrackerViewModel {
         return dataStore.numberOfItemsInSection(section)
     }
     
-    func model(at indexPath: IndexPath) -> Tracker? {
-        guard let record = dataStore.object(at: indexPath) else { return nil }
+    func model(at indexPath: IndexPath) -> Tracker {
+        let record = dataStore.object(at: indexPath)
         return Tracker(trackerCoreData: record)
     }
     
     func categoryName(at indexPath: IndexPath) -> String? {
-        guard let record = dataStore.object(at: indexPath) else { return nil }
+        let record = dataStore.object(at: indexPath)
         return record.category?.name
+    }
+    
+    func delete(indexPath: IndexPath) {
+        dataStore.delete(at: indexPath)
     }
     
     // MARK: - Records

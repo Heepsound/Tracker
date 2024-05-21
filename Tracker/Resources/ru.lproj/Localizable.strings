@@ -14,6 +14,9 @@ schedule = "Расписание";
 
 undefined = "Неопределено";
 
+deleteButton.title = "Удалить";
+cancelButton.title = "Отменить";
+
 onboarding.page1.title = "Отслеживайте только то, что хотите";
 onboarding.page2.title = "Даже если это не литры воды и йога";
 onboarding.confirmButton.title = "Вот это технологии!";
@@ -21,15 +24,23 @@ onboarding.confirmButton.title = "Вот это технологии!";
 trackers.title = "Трекеры";
 trackers.searchBar.placeholder = "Поиск";
 trackers.noTrackersLabel = "Что будем отслеживать?";
+trackers.menu.pin = "Закрепить";
+trackers.menu.unpin = "Открепить";
+trackers.menu.edit = "Редактировать";
+trackers.deleteAlert.title = "Уверены что хотите удалить трекер?";
 
 tabBar.trackers.title = "Трекеры";
 tabBar.statistics.title = "Статистика";
 
 newTracker.trackerName.placeholder = "Введите название трекера";
 newTracker.addButton.title = "Создать";
-newTracker.cancelButton.title = "Отменить";
+newTracker.saveButton.title = "Сохранить";
+
 newTracker.newIrregularEvent = "Новое нерегулярное событие";
 newTracker.newHabit = "Новая привычка";
+newTracker.editIrregularEvent = "Редактирование нерегулярного события";
+newTracker.editHabit = "Редактирование привычки";
+
 newTracker.colorCollection.title = "Цвет";
 
 trackerType.title = "Создание трекера";

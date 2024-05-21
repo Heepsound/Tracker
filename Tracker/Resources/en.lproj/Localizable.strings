@@ -14,6 +14,9 @@ schedule = "Schedule";
 
 undefined = "Undefined";
 
+deleteButton.title = "Delete";
+cancelButton.title = "Cancel";
+
 onboarding.page1.title = "Track only what you want";
 onboarding.page2.title = "Even if it's not liters of water and yoga";
 onboarding.confirmButton.title = "These are technologies!";
@@ -21,15 +24,23 @@ onboarding.confirmButton.title = "These are technologies!";
 trackers.title = "Trackers";
 trackers.searchBar.placeholder = "Search";
 trackers.noTrackersLabel = "What are we going to track?";
+trackers.menu.pin = "Pin";
+trackers.menu.unpin = "Unpin";
+trackers.menu.edit = "Edit";
+trackers.deleteAlert.title = "Are you sure you want to delete the tracker?";
 
 tabBar.trackers.title = "Trackers";
 tabBar.statistics.title = "Statistics";
 
 newTracker.trackerName.placeholder = "Enter tracker name";
 newTracker.addButton.title = "Create";
-newTracker.cancelButton.title = "Cancel";
+newTracker.saveButton.title = "Save";
+
 newTracker.newIrregularEvent = "New irregular event";
 newTracker.newHabit = "New habit";
+newTracker.editIrregularEvent = "Editing a irregular event";
+newTracker.editHabit = "Editing a habit";
+
 newTracker.colorCollection.title = "Color";
 
 trackerType.title = "Creating a tracker";

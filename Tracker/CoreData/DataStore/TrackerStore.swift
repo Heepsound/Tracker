@@ -38,24 +38,41 @@ final class TrackerStore: NSObject {
         return sections.isEmpty ? .zero : sections[section].numberOfObjects
     }
     
-    func object(at indexPath: IndexPath) -> TrackerCoreData? {
+    func object(at indexPath: IndexPath) -> TrackerCoreData {
         return fetchedResultsController.object(at: indexPath)
     }
     
-    func add(_ tracker: Tracker, _ category: TrackerCategory) {
-        let object = TrackerCoreData(context: coreDataManager.context)
-        object.id = tracker.id
+    func save(_ tracker: Tracker, _ category: TrackerCategory, indexPath: IndexPath?) {
+        if let indexPath {
+            let object = object(at: indexPath)
+            fillData(object: object, tracker, category)
+            coreDataManager.saveContext()
+        } else {
+            let object = TrackerCoreData(context: coreDataManager.context)
+            object.id = tracker.id
+            fillData(object: object, tracker, category)
+            coreDataManager.saveContext()
+        }
+    }
+    
+    private func fillData(object: TrackerCoreData, _ tracker: Tracker, _ category: TrackerCategory) {
         object.name = tracker.name
         object.trackerType = Int16(tracker.trackerType.rawValue)
         object.color = tracker.color
         object.emoji = tracker.emoji
         object.category = TrackerCategoryStore.shared.object(category)
-        for shedule in tracker.schedule {
-            let scheduleEntity = ScheduleCoreData(context: coreDataManager.context)
-            scheduleEntity.dayOfWeek = Int16(shedule.rawValue)
-            scheduleEntity.tracker = object
+        if let schedule = object.schedule?.allObjects {
+            for item in schedule {
+                if let scheduleObject = item as? ScheduleCoreData {
+                    coreDataManager.context.delete(scheduleObject)
+                }
+            }
         }
-        coreDataManager.saveContext()
+        for item in tracker.schedule {
+            let schedule = ScheduleCoreData(context: coreDataManager.context)
+            schedule.dayOfWeek = Int16(item.rawValue)
+            schedule.tracker = object
+        }
     }
     
     func delete(at indexPath: IndexPath) {

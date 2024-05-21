@@ -10,7 +10,34 @@ import Foundation
 final class NewTrackerViewModel {
     private let dataStore = TrackerStore.shared
     
+    let emojis = [
+        "🙂", "😻", "🌺", "🐶", "❤️", "😱",
+        "😇", "😡", "🥶", "🤔", "🙌", "🍔",
+        "🥦", "🏓", "🥇", "🎸", "🏝", "😪"
+    ]
+    
+    let colors = [
+        "FD4C49", "FF881E", "007BFA", "6E44FE", "33CF69", "E66DD4",
+        "F9D4D4", "34A7FE", "46E69D", "35347C", "FF674D", "FF99CC",
+        "F6C48B", "7994F5", "832CF1", "AD56DA", "8D72E6", "2FD058"
+    ]
+    
     var allDataEntered: Binding<Bool>?
+    
+    var indexPath: IndexPath? {
+        didSet {
+            guard let indexPath else { return }
+            let object = dataStore.object(at: indexPath)
+            guard let category = object.category else { return }
+            let tracker = Tracker(trackerCoreData: object)
+            trackerName = tracker.name
+            trackerType = tracker.trackerType
+            trackerColor = tracker.color
+            trackerEmoji = tracker.emoji
+            trackerSchedule = tracker.schedule
+            trackerCategory = TrackerCategory(trackerCategoryCoreData: category)
+        }
+    }
     
     var trackerName: String? {
         didSet {
@@ -43,19 +70,7 @@ final class NewTrackerViewModel {
             checkNewTrackerData()
         }
     }
-    
-    let emojis = [
-        "🙂", "😻", "🌺", "🐶", "❤️", "😱",
-        "😇", "😡", "🥶", "🤔", "🙌", "🍔",
-        "🥦", "🏓", "🥇", "🎸", "🏝", "😪"
-    ]
-    
-    let colors = [
-        "FD4C49", "FF881E", "007BFA", "6E44FE", "33CF69", "E66DD4",
-        "F9D4D4", "34A7FE", "46E69D", "35347C", "FF674D", "FF99CC",
-        "F6C48B", "7994F5", "832CF1", "AD56DA", "8D72E6", "2FD058"
-    ]
-    
+        
     var categoryRowsCount: Int {
         if let isIrregularEvent {
             return isIrregularEvent ? 1 : 2
@@ -69,7 +84,23 @@ final class NewTrackerViewModel {
         return trackerType == .irregularEvent
     }
     
+    var isEditMode: Bool {
+        guard let _ = indexPath else { return false }
+        return true
+    }
+    
+    var emojiIndexPath: IndexPath? {
+        guard let trackerEmoji, let index = emojis.firstIndex(of: trackerEmoji) else { return nil }
+        return IndexPath(row: index, section: 0)
+    }
+    
+    var colorIndexPath: IndexPath? {
+        guard let trackerColor, let index = colors.firstIndex(of: trackerColor) else { return nil }
+        return IndexPath(row: index, section: 0)
+    }
+    
     func clearNewTrackerData() {
+        indexPath = nil
         trackerName = nil
         trackerType = nil
         trackerColor = nil
@@ -86,13 +117,13 @@ final class NewTrackerViewModel {
         allDataEntered?(result)
     }
     
-    func add() {
+    func save() {
         let tracker = Tracker(name: trackerName ?? "",
-                              trackerType: trackerType ?? .irregularEvent,
-                              color: trackerColor ?? "7994F5",
-                              emoji: trackerEmoji ?? "🤔",
-                              schedule: trackerSchedule)
+                            trackerType: trackerType ?? .irregularEvent,
+                            color: trackerColor ?? "7994F5",
+                            emoji: trackerEmoji ?? "🤔",
+                            schedule: trackerSchedule)
         guard let trackerCategory else { return }
-        dataStore.add(tracker, trackerCategory)
+        dataStore.save(tracker, trackerCategory, indexPath: indexPath)
     }
 }

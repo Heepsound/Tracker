@@ -29,7 +29,7 @@ final class CategoryViewModel {
     }
     
     func model(at indexPath: IndexPath) -> TrackerCategory? {
-        guard let record = dataStore.object(at: indexPath) else { return nil }
+        let record = dataStore.object(at: indexPath)
         return TrackerCategory(trackerCategoryCoreData: record)
     }
     

@@ -89,7 +89,7 @@ final class TrackerCell: UICollectionViewCell {
             }
         }
     }
-    
+        
     var indexPath: IndexPath?
     var viewModel: TrackerViewModel?
     static let reuseIdentifier = "trackerCell"
@@ -108,6 +108,8 @@ final class TrackerCell: UICollectionViewCell {
     private func setupTrackerCell() {
         addSubViews()
         applyConstraints()
+        layer.cornerRadius = 16
+        layer.masksToBounds = true
     }
     
     private func addSubViews() {

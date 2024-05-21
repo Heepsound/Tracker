@@ -38,7 +38,7 @@ final class TrackerCategoryStore: NSObject {
         return sections.isEmpty ? .zero : sections[section].numberOfObjects
     }
     
-    func object(at indexPath: IndexPath) -> TrackerCategoryCoreData? {
+    func object(at indexPath: IndexPath) -> TrackerCategoryCoreData {
         return fetchedResultsController.object(at: indexPath)
     }
     
