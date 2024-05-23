@@ -58,3 +58,5 @@ newCategory.addButton.title = "Done";
 
 schedule.title = "Schedule";
 schedule.confirmButton.title = "Done";
+
+statistics.noStatisticsLabel = "There is nothing to analyze yet";

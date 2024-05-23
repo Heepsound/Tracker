@@ -58,3 +58,5 @@ newCategory.addButton.title = "Готово";
 
 schedule.title = "Расписание";
 schedule.confirmButton.title = "Готово";
+
+statistics.noStatisticsLabel = "Анализировать пока нечего";
