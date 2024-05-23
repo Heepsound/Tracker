@@ -24,6 +24,7 @@ onboarding.confirmButton.title = "These are technologies!";
 trackers.title = "Trackers";
 trackers.searchBar.placeholder = "Search";
 trackers.noTrackersLabel = "What are we going to track?";
+trackers.noTrackersFoundLabel = "Nothing was found";
 trackers.menu.pin = "Pin";
 trackers.menu.unpin = "Unpin";
 trackers.menu.edit = "Edit";

@@ -46,12 +46,10 @@ final class TrackersViewController: UIViewController {
     }()
     private var noTrackersImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "TrackerError")
         return imageView
     }()
     private var noTrackersLabel: UILabel = {
         let label = UILabel()
-        label.text = NSLocalizedString("trackers.noTrackersLabel", comment: "Текст при отсутствии трекеров")
         label.textColor = .trackerBlack
         label.font = UIFont.systemFont(ofSize: 12)
         return label
@@ -68,6 +66,18 @@ final class TrackersViewController: UIViewController {
     }()
         
     private let viewModel: TrackerViewModel = TrackerViewModel()
+    
+    private var searchActive: Bool = false {
+        didSet {
+            if searchActive {
+                noTrackersLabel.text = NSLocalizedString("trackers.noTrackersFoundLabel", comment: "Текст при отсутствии трекеров в результате поиска")
+                noTrackersImageView.image = UIImage(named: "SearchError")
+            } else {
+                noTrackersLabel.text = NSLocalizedString("trackers.noTrackersLabel", comment: "Текст при отсутствии трекеров")
+                noTrackersImageView.image = UIImage(named: "TrackerError")
+            }
+        }
+    }
     
     // MARK: - Lifecycle
     
@@ -88,6 +98,7 @@ final class TrackersViewController: UIViewController {
     }
     
     private func setupTrackerViewController() {
+        searchActive = false
         view.backgroundColor = .trackerWhite
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: addButton)
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
@@ -173,8 +184,14 @@ final class TrackersViewController: UIViewController {
     @objc func textDidChange(_ searchField: UISearchTextField) {
         if let searchText = searchField.text, !searchText.isEmpty {
             viewModel.trackersFilter = searchText
+            if searchActive != true {
+                searchActive = true
+            }
         } else {
             viewModel.trackersFilter = ""
+            if searchActive != false {
+                searchActive = false
+            }
         }
     }
 }

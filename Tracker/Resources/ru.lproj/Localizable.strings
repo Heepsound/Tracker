@@ -24,6 +24,7 @@ onboarding.confirmButton.title = "Вот это технологии!";
 trackers.title = "Трекеры";
 trackers.searchBar.placeholder = "Поиск";
 trackers.noTrackersLabel = "Что будем отслеживать?";
+trackers.noTrackersFoundLabel = "Ничего не найдено";
 trackers.menu.pin = "Закрепить";
 trackers.menu.unpin = "Открепить";
 trackers.menu.edit = "Редактировать";
