@@ -152,6 +152,7 @@ final class CategoryViewController: UIViewController {
     
     @objc private func didTapAddCategoryButton() {
         let newCategoryViewController = NewCategoryViewController()
+        newCategoryViewController.delegate = self
         self.present(newCategoryViewController, animated: true)
     }
 }
