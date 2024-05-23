@@ -144,7 +144,11 @@ final class TrackersViewController: UIViewController {
     
     private func bind() {
         viewModel.updateData = { [weak self] update in
-            self?.updateTrackers()
+            if !update.updatedIndexPaths.isEmpty {
+                self?.collectionView.reloadItems(at: update.updatedIndexPaths)
+            } else {
+                self?.updateTrackers()
+            }
         }
     }
     

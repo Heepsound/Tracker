@@ -13,8 +13,7 @@ final class TrackerCategoryStore: NSObject {
     private var coreDataManager = CoreDataManager.shared
     
     weak var delegate: DataStoreDelegate?
-    private var insertedIndexPaths: [IndexPath] = []
-    private var deletedIndexPaths: [IndexPath] = []
+    private var dataStoreUpdate = DataStoreUpdate()
     
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCategoryCoreData> = {
         let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
@@ -73,17 +72,12 @@ final class TrackerCategoryStore: NSObject {
 
 extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
     func controllerWillChangeContent(_ controller: NSFetchedResultsController<any NSFetchRequestResult>) {
-        insertedIndexPaths = []
-        deletedIndexPaths = []
+        dataStoreUpdate.clear()
     }
     
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<any NSFetchRequestResult>) {
-        delegate?.didUpdate(DataStoreUpdate(
-            insertedIndexPaths: insertedIndexPaths,
-            deletedIndexPaths: deletedIndexPaths
-        ))
-        insertedIndexPaths = []
-        deletedIndexPaths = []
+        delegate?.didUpdate(DataStoreUpdate(from: dataStoreUpdate))
+        dataStoreUpdate.clear()
     }
     
     func controller(
@@ -95,17 +89,14 @@ extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
     ) {
         switch type {
         case .delete:
-            if let indexPath {
-                deletedIndexPaths.append(indexPath)
-            }
+            guard let indexPath else { return }
+            dataStoreUpdate.deletedIndexPaths.append(indexPath)
         case .insert:
-            if let newIndexPath {
-                insertedIndexPaths.append(newIndexPath)
-            }
-        //case .update:
-            //if let indexPath {
-                
-            //}
+            guard let newIndexPath else { return }
+            dataStoreUpdate.insertedIndexPaths.append(newIndexPath)
+        case .update:
+            guard let indexPath else { return }
+            dataStoreUpdate.updatedIndexPaths.append(indexPath)
         default:
             break
         }

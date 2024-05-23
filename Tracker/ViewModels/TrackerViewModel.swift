@@ -38,7 +38,7 @@ final class TrackerViewModel {
     func getOnDate() {
         guard let trackersDate else { return }
         dataStore.getOnDate(date: trackersDate, filter: trackersFilter)
-        updateData?(DataStoreUpdate(insertedIndexPaths: [], deletedIndexPaths: []))
+        updateData?(DataStoreUpdate())
     }
     
     var hasData: Bool {

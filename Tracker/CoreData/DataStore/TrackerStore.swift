@@ -13,8 +13,7 @@ final class TrackerStore: NSObject {
     private var coreDataManager = CoreDataManager.shared
     
     weak var delegate: DataStoreDelegate?
-    private var insertedIndexPaths: [IndexPath] = []
-    private var deletedIndexPaths: [IndexPath] = []
+    private var dataStoreUpdate = DataStoreUpdate()
     
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCoreData> = {
         let request = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
@@ -109,17 +108,12 @@ final class TrackerStore: NSObject {
 
 extension TrackerStore: NSFetchedResultsControllerDelegate {
     func controllerWillChangeContent(_ controller: NSFetchedResultsController<any NSFetchRequestResult>) {
-        insertedIndexPaths = []
-        deletedIndexPaths = []
+        dataStoreUpdate.clear()
     }
     
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<any NSFetchRequestResult>) {
-        delegate?.didUpdate(DataStoreUpdate(
-            insertedIndexPaths: insertedIndexPaths,
-            deletedIndexPaths: deletedIndexPaths
-        ))
-        insertedIndexPaths = []
-        deletedIndexPaths = []
+        delegate?.didUpdate(DataStoreUpdate(from: dataStoreUpdate))
+        dataStoreUpdate.clear()
     }
     
     func controller(
@@ -132,10 +126,13 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
         switch type {
         case .delete:
             guard let indexPath else { return }
-            deletedIndexPaths.append(indexPath)
+            dataStoreUpdate.deletedIndexPaths.append(indexPath)
         case .insert:
             guard let newIndexPath else { return }
-            insertedIndexPaths.append(newIndexPath)
+            dataStoreUpdate.insertedIndexPaths.append(newIndexPath)
+        case .update:
+            guard let indexPath else { return }
+            dataStoreUpdate.updatedIndexPaths.append(indexPath)
         default:
             break
         }

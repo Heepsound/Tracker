@@ -135,6 +135,7 @@ final class CategoryViewController: UIViewController {
             self?.tableView.performBatchUpdates {
                 self?.tableView.insertRows(at: update.insertedIndexPaths, with: .automatic)
                 self?.tableView.deleteRows(at: update.deletedIndexPaths, with: .fade)
+                self?.tableView.reloadRows(at: update.updatedIndexPaths, with: .fade)
             }
             self?.updateCategories()
         }
@@ -228,7 +229,6 @@ extension CategoryViewController: UITableViewDelegate {
 
 extension CategoryViewController: EntityEditViewControllerDelegate {
     func editingСompleted() {
-        //viewModel.getOnDate()
         self.dismiss(animated: true)
     }
 }
