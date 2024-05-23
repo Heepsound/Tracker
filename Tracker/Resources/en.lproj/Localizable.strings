@@ -48,8 +48,10 @@ trackerTypeCell.schedule.everyDay = "Every day";
 
 categories.noCategoryLabel = "Habits and events can be \ncombined by meaning";
 categories.addButton.title = "Add category";
+categories.deleteAlert.title = "Are you sure this category is not needed?";
 
 newCategory.title = "New category";
+newCategory.editTitle = "Editing a category";
 newCategory.categoryName.placeholder = "Enter category name";
 newCategory.addButton.title = "Done";
 

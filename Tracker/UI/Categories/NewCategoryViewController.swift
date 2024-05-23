@@ -8,9 +8,11 @@
 import UIKit
 
 final class NewCategoryViewController: UIViewController {
-    private var titleLabel: UILabel = {
+    private lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.text = NSLocalizedString("newCategory.title", comment: "Заголовок экрана")
+        label.text = viewModel.isEditMode ?
+            NSLocalizedString("newCategory.editTitle", comment: "Заголовок экрана редактирования категории") :
+            NSLocalizedString("newCategory.title", comment: "Заголовок экрана создания категории")
         label.textColor = .trackerBlack
         label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         return label
@@ -44,6 +46,7 @@ final class NewCategoryViewController: UIViewController {
         return button
     }()
     
+    weak var delegate: EntityEditViewControllerDelegate?
     private let viewModel: NewCategoryViewModel = NewCategoryViewModel()
     
     // MARK: - Lifecycle
@@ -57,6 +60,10 @@ final class NewCategoryViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func initialize(indexPath: IndexPath) {
+        viewModel.indexPath = indexPath
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNewCategoryViewController()
@@ -64,6 +71,9 @@ final class NewCategoryViewController: UIViewController {
     
     private func setupNewCategoryViewController() {
         view.backgroundColor = .trackerWhite
+        if let categoryName = viewModel.categoryName {
+            nameTextField.text = categoryName
+        }
         addSubViews()
         applyConstraints()
     }
@@ -104,8 +114,8 @@ final class NewCategoryViewController: UIViewController {
     // MARK: - Actions
     
     @objc private func didTapAddButton() {
-        viewModel.add()
-        self.dismiss(animated: true)
+        viewModel.save()
+        delegate?.editingСompleted()
     }
     
     @objc private func nameTextFieldDidChange(_ sender: UITextField) {

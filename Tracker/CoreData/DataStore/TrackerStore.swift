@@ -42,7 +42,7 @@ final class TrackerStore: NSObject {
         return fetchedResultsController.object(at: indexPath)
     }
     
-    func save(_ tracker: Tracker, _ category: TrackerCategory, indexPath: IndexPath?) {
+    func save(_ tracker: Tracker, _ category: TrackerCategory, at indexPath: IndexPath?) {
         if let indexPath {
             let object = object(at: indexPath)
             fillData(object: object, tracker, category)

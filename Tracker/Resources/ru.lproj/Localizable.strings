@@ -48,8 +48,10 @@ trackerTypeCell.schedule.everyDay = "Каждый день";
 
 categories.noCategoryLabel = "Привычки и события можно \nобъединить по смыслу";
 categories.addButton.title = "Добавить категорию";
+categories.deleteAlert.title = "Эта категория точно не нужна?";
 
 newCategory.title = "Новая категория";
+newCategory.editTitle = "Редактирование категории";
 newCategory.categoryName.placeholder = "Введите название категории";
 newCategory.addButton.title = "Готово";
 

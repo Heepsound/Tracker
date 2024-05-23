@@ -124,6 +124,6 @@ final class NewTrackerViewModel {
                             emoji: trackerEmoji ?? "🤔",
                             schedule: trackerSchedule)
         guard let trackerCategory else { return }
-        dataStore.save(tracker, trackerCategory, indexPath: indexPath)
+        dataStore.save(tracker, trackerCategory, at: indexPath)
     }
 }

@@ -47,7 +47,7 @@ final class TrackerTypeViewController: UIViewController {
         return stackView
     }()
     
-    weak var delegate: NewTrackerViewControllerDelegate?
+    weak var delegate: EntityEditViewControllerDelegate?
     
     // MARK: - Lifecycle
     

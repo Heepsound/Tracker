@@ -259,8 +259,8 @@ extension TrackersViewController: UICollectionViewDelegate {
     func collectionView(
         _ collectionView: UICollectionView,
         contextMenuConfigurationForItemsAt indexPaths: [IndexPath],
-        point: CGPoint) -> UIContextMenuConfiguration?
-    {
+        point: CGPoint
+    ) -> UIContextMenuConfiguration? {
         guard indexPaths.count > 0 else { return nil }
         let indexPath = indexPaths[0]
         
@@ -291,12 +291,11 @@ extension TrackersViewController: UICollectionViewDelegate {
     }
 }
 
-// MARK: - NewTrackerViewControllerDelegate
+// MARK: - EntityEditViewControllerDelegate
 
-extension TrackersViewController: NewTrackerViewControllerDelegate {
-    func creationСompleted() {
+extension TrackersViewController: EntityEditViewControllerDelegate {
+    func editingСompleted() {
         viewModel.getOnDate()
-        updateTrackers()
         self.dismiss(animated: true)
     }
 }

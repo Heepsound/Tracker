@@ -49,11 +49,17 @@ final class TrackerCategoryStore: NSObject {
         return result[0]
     }
     
-    func add(_ trackerCategory: TrackerCategory) {
-        let object = TrackerCategoryCoreData(context: coreDataManager.context)
-        object.id = trackerCategory.id
-        object.name = trackerCategory.name
-        coreDataManager.saveContext()
+    func save(_ trackerCategory: TrackerCategory, at indexPath: IndexPath?) {
+        if let indexPath {
+            let object = object(at: indexPath)
+            object.name = trackerCategory.name
+            coreDataManager.saveContext()
+        } else {
+            let object = TrackerCategoryCoreData(context: coreDataManager.context)
+            object.id = trackerCategory.id
+            object.name = trackerCategory.name
+            coreDataManager.saveContext()
+        }
     }
     
     func delete(at indexPath: IndexPath) {
@@ -96,6 +102,10 @@ extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
             if let newIndexPath {
                 insertedIndexPaths.append(newIndexPath)
             }
+        //case .update:
+            //if let indexPath {
+                
+            //}
         default:
             break
         }

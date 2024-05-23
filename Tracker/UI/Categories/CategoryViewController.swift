@@ -41,6 +41,7 @@ final class CategoryViewController: UIViewController {
         tableView.backgroundColor = .clear
         tableView.layer.masksToBounds = true
         tableView.layer.cornerRadius = 16
+        tableView.allowsMultipleSelection = false
         tableView.register(CategoryCell.self, forCellReuseIdentifier: CategoryCell.reuseIdentifier)
         return tableView
     }()
@@ -191,6 +192,43 @@ extension CategoryViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 75
     }
+    
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        return .none
+    }
+    
+    func tableView(
+        _ tableView: UITableView,
+        contextMenuConfigurationForRowAt indexPath: IndexPath,
+        point: CGPoint
+    ) -> UIContextMenuConfiguration? {
+        let editTitle = NSLocalizedString("trackers.menu.edit", comment: "Заголовок действия - Редактировать")
+        let deleteTitle = NSLocalizedString("deleteButton.title", comment: "Заголовок действия - Удалить")
+        
+        return UIContextMenuConfiguration(actionProvider: { actions in
+            return UIMenu(children: [
+                UIAction(title: editTitle) { [weak self] _ in
+                    let newCategoryViewController = NewCategoryViewController()
+                    newCategoryViewController.initialize(indexPath: indexPath)
+                    newCategoryViewController.delegate = self
+                    self?.present(newCategoryViewController, animated: true)
+                },
+                UIAction(title: deleteTitle, attributes: [.destructive]) { [weak self] _ in
+                    let alertTitle = NSLocalizedString("categories.deleteAlert.title", comment: "Заголовок подтверждения удаления категории")
+                    AlertPresenter.confirmDelete(title: alertTitle, delegate: self) {
+                        self?.viewModel.delete(at: indexPath)
+                    }
+                }
+            ])
+        })
+    }
 }
 
+// MARK: - EntityEditViewControllerDelegate
 
+extension CategoryViewController: EntityEditViewControllerDelegate {
+    func editingСompleted() {
+        //viewModel.getOnDate()
+        self.dismiss(animated: true)
+    }
+}

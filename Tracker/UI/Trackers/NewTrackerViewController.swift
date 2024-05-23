@@ -7,10 +7,6 @@
 
 import UIKit
 
-protocol NewTrackerViewControllerDelegate: AnyObject {
-    func creationСompleted()
-}
-
 final class NewTrackerViewController: UIViewController {
     private var titleLabel: UILabel = {
         let label = UILabel()
@@ -102,7 +98,7 @@ final class NewTrackerViewController: UIViewController {
         return scroll
     }()
     
-    weak var delegate: NewTrackerViewControllerDelegate?
+    weak var delegate: EntityEditViewControllerDelegate?
     private let viewModel: NewTrackerViewModel = NewTrackerViewModel()
     
     // MARK: - Lifecycle
@@ -244,11 +240,11 @@ final class NewTrackerViewController: UIViewController {
     
     @objc private func didTapAddButton() {
         viewModel.save()
-        delegate?.creationСompleted()
+        delegate?.editingСompleted()
     }
     
     @objc private func didTapCancelButton() {
-        delegate?.creationСompleted()
+        delegate?.editingСompleted()
     }
     
     @objc private func nameTextFieldDidChange(_ sender: UITextField) {
