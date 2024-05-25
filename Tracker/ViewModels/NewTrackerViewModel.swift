@@ -34,6 +34,7 @@ final class NewTrackerViewModel {
             trackerType = tracker.trackerType
             trackerColor = tracker.color
             trackerEmoji = tracker.emoji
+            trackerPinned = tracker.pinned
             trackerSchedule = tracker.schedule
             trackerCategory = TrackerCategory(trackerCategoryCoreData: category)
         }
@@ -59,6 +60,7 @@ final class NewTrackerViewModel {
             checkNewTrackerData()
         }
     }
+    var trackerPinned: Bool?
     var trackerCategory: TrackerCategory? {
         didSet {
             checkNewTrackerData()
@@ -105,6 +107,7 @@ final class NewTrackerViewModel {
         trackerType = nil
         trackerColor = nil
         trackerEmoji = nil
+        trackerPinned = nil
         trackerCategory = nil
         trackerSchedule = []
     }
@@ -122,6 +125,7 @@ final class NewTrackerViewModel {
                             trackerType: trackerType ?? .irregularEvent,
                             color: trackerColor ?? "7994F5",
                             emoji: trackerEmoji ?? "🤔",
+                            pinned: trackerPinned ?? false,
                             schedule: trackerSchedule)
         guard let trackerCategory else { return }
         dataStore.save(tracker, trackerCategory, at: indexPath)

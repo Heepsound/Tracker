@@ -17,9 +17,11 @@ final class TrackerStore: NSObject {
     
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCoreData> = {
         let request = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
-        request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
-        request.propertiesToFetch = ["name", "color", "emoji", "trackerType", "category"]
-        let fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: coreDataManager.context, sectionNameKeyPath: "category", cacheName: nil)
+        //let pinnedSortDescriptor = NSSortDescriptor(key: "pinned", ascending: false)
+        let categorySortDescriptor = NSSortDescriptor(key: "category.name", ascending: true)
+        let nameSortDescriptor = NSSortDescriptor(key: "name", ascending: true)
+        request.sortDescriptors = [categorySortDescriptor, nameSortDescriptor]
+        let fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: coreDataManager.context, sectionNameKeyPath: "category.name", cacheName: nil)
         fetchedResultsController.delegate = self
         return fetchedResultsController
     }()
@@ -59,6 +61,7 @@ final class TrackerStore: NSObject {
         object.trackerType = Int16(tracker.trackerType.rawValue)
         object.color = tracker.color
         object.emoji = tracker.emoji
+        object.pinned = tracker.pinned
         object.category = TrackerCategoryStore.shared.object(category)
         if let schedule = object.schedule?.allObjects {
             for item in schedule {
@@ -74,6 +77,12 @@ final class TrackerStore: NSObject {
         }
     }
     
+    func setPinned(at indexPath: IndexPath) {
+        let object = object(at: indexPath)
+        object.pinned = !object.pinned
+        coreDataManager.saveContext()
+    }
+    
     func delete(at indexPath: IndexPath) {
         let record = fetchedResultsController.object(at: indexPath)
         coreDataManager.context.delete(record)
@@ -82,12 +91,13 @@ final class TrackerStore: NSObject {
     
     func getOnDate(date: Date, filter: String) {
         let weekday = DaysOfWeek.dayByNumber(Calendar.current.component(.weekday, from: date))
-        var requestText = "((any %K.%K == %ld) or ((any %K == nil or any %K.%K == %@) and %K == %ld))"
+        var requestText = "(%K == true or (any %K.%K == %ld) or ((any %K == nil or any %K.%K == %@) and %K == %ld))"
         if !filter.isEmpty {
             requestText.append(" and name CONTAINS[cd] %@")
         }
         let predicate = NSPredicate(
             format: requestText,
+            #keyPath(TrackerCoreData.pinned),
             #keyPath(TrackerCoreData.schedule),
             #keyPath(ScheduleCoreData.dayOfWeek),
             weekday?.rawValue ?? 1,

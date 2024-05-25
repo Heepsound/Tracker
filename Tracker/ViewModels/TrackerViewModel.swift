@@ -67,6 +67,11 @@ final class TrackerViewModel {
         dataStore.delete(at: indexPath)
     }
     
+    func setPinned(at indexPath: IndexPath)  {
+        dataStore.setPinned(at: indexPath)
+        getOnDate()
+    }
+    
     // MARK: - Records
     
     func addRecord(indexPath: IndexPath) {

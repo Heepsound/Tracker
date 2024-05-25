@@ -65,6 +65,7 @@ final class TrackerCell: UICollectionViewCell {
             cardLabel.backgroundColor = color
             completedButton.backgroundColor = color
             emojiLabel.text = tracker.emoji
+            pinImageView.isHidden = !tracker.pinned
             if let indexPath {
                 isDone = viewModel?.isDoneOnDate(indexPath: indexPath) ?? false
                 doneTimes = viewModel?.recordCount(indexPath: indexPath) ?? 0
@@ -95,13 +96,7 @@ final class TrackerCell: UICollectionViewCell {
             }
         }
     }
-     
-    var isPinned: Bool = false {
-        didSet {
-            pinImageView.isHidden = !isPinned
-        }
-    }
-    
+ 
     var indexPath: IndexPath?
     var viewModel: TrackerViewModel?
     static let reuseIdentifier = "trackerCell"
@@ -122,7 +117,6 @@ final class TrackerCell: UICollectionViewCell {
         applyConstraints()
         layer.cornerRadius = 16
         layer.masksToBounds = true
-        isPinned = false
     }
     
     private func addSubViews() {
