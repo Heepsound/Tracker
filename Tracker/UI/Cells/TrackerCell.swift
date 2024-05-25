@@ -27,6 +27,12 @@ final class TrackerCell: UICollectionViewCell {
         label.backgroundColor = .clear
         return label
     }()
+    private var pinImageView: UIImageView = {
+        let imageView = UIImageView(image: .pin)
+        imageView.backgroundColor = .clear
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
     private var cardLabel: UILabel = {
         let label = UILabel()
         label.layer.cornerRadius = 16
@@ -89,7 +95,13 @@ final class TrackerCell: UICollectionViewCell {
             }
         }
     }
-        
+     
+    var isPinned: Bool = false {
+        didSet {
+            pinImageView.isHidden = !isPinned
+        }
+    }
+    
     var indexPath: IndexPath?
     var viewModel: TrackerViewModel?
     static let reuseIdentifier = "trackerCell"
@@ -110,15 +122,17 @@ final class TrackerCell: UICollectionViewCell {
         applyConstraints()
         layer.cornerRadius = 16
         layer.masksToBounds = true
+        isPinned = false
     }
     
     private func addSubViews() {
-        contentView.addSubviewWithoutAutoresizingMask(cardLabel)
-        cardLabel.addSubviewWithoutAutoresizingMask(emojiBackgroundLabel)
         emojiBackgroundLabel.addSubviewWithoutAutoresizingMask(emojiLabel)
-        cardLabel.addSubviewWithoutAutoresizingMask(titleLabel)
-        contentView.addSubviewWithoutAutoresizingMask(counterLabel)
-        contentView.addSubviewWithoutAutoresizingMask(completedButton)
+        [emojiBackgroundLabel, titleLabel, pinImageView].forEach { subview in
+            cardLabel.addSubviewWithoutAutoresizingMask(subview)
+        }
+        [cardLabel, counterLabel, completedButton].forEach { subview in
+            contentView.addSubviewWithoutAutoresizingMask(subview)
+        }
     }
     
     private func applyConstraints() {
@@ -147,6 +161,13 @@ final class TrackerCell: UICollectionViewCell {
             titleLabel.leadingAnchor.constraint(equalTo: cardLabel.leadingAnchor, constant: 12),
             titleLabel.bottomAnchor.constraint(equalTo: cardLabel.bottomAnchor, constant: -12),
             titleLabel.trailingAnchor.constraint(equalTo: cardLabel.trailingAnchor, constant: -12)
+        ])
+        
+        NSLayoutConstraint.activate([
+            pinImageView.widthAnchor.constraint(equalToConstant: 24),
+            pinImageView.heightAnchor.constraint(equalToConstant: 24),
+            pinImageView.topAnchor.constraint(equalTo: cardLabel.topAnchor, constant: 12),
+            pinImageView.trailingAnchor.constraint(equalTo: cardLabel.trailingAnchor, constant: -4)
         ])
         
         NSLayoutConstraint.activate([

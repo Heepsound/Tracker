@@ -284,6 +284,7 @@ extension TrackersViewController: UICollectionViewDelegate {
     ) -> UIContextMenuConfiguration? {
         guard indexPaths.count > 0 else { return nil }
         let indexPath = indexPaths[0]
+        guard let cell = collectionView.cellForItem(at: indexPath) as? TrackerCell else { return nil }
         
         let pinTitle = NSLocalizedString("trackers.menu.pin", comment: "Заголовок действия - Прикрепить")
         let unpinTitle = NSLocalizedString("trackers.menu.unpin", comment: "Заголовок действия - Открепить")
@@ -292,8 +293,9 @@ extension TrackersViewController: UICollectionViewDelegate {
         
         return UIContextMenuConfiguration(actionProvider: { actions in
             return UIMenu(children: [
-                UIAction(title: pinTitle) { [weak self] _ in
-                    // TODO: - Реализовать прикрепление
+                UIAction(title: cell.isPinned ? unpinTitle : pinTitle) { [weak self] _ in
+                    cell.isPinned = !cell.isPinned
+                    self?.viewModel.getOnDate()
                 },
                 UIAction(title: editTitle) { [weak self] _ in
                     let newTrackerViewController = NewTrackerViewController()
