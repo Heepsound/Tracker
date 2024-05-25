@@ -9,6 +9,7 @@ import Foundation
 
 final class NewTrackerViewModel {
     private let dataStore = TrackerStore.shared
+    private let recordStore = TrackerRecordStore.shared
     
     let emojis = [
         "🙂", "😻", "🌺", "🐶", "❤️", "😱",
@@ -129,5 +130,11 @@ final class NewTrackerViewModel {
                             schedule: trackerSchedule)
         guard let trackerCategory else { return }
         dataStore.save(tracker, trackerCategory, at: indexPath)
+    }
+    
+    // MARK: - Records
+    
+    func recordCount(indexPath: IndexPath) -> Int {
+        return recordStore.recordCount(indexPath: indexPath)
     }
 }

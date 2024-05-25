@@ -14,6 +14,13 @@ final class NewTrackerViewController: UIViewController {
         label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         return label
     }()
+    private var counterLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .trackerBlack
+        label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
+        label.textAlignment = .center
+        return label
+    }()
     private lazy var nameTextField: UITextField = {
         let textField = UITextField()
         textField.textColor = .trackerBlack
@@ -114,10 +121,15 @@ final class NewTrackerViewController: UIViewController {
     
     func initialize(trackerType: TrackerTypes) {
         viewModel.trackerType = trackerType
+        counterLabel.isHidden = true
     }
     
     func initialize(indexPath: IndexPath) {
         viewModel.indexPath = indexPath
+        counterLabel.text = String.localizedStringWithFormat(
+            NSLocalizedString("recordsCount", comment: "Количество завершённых трекеров"),
+            viewModel.recordCount(indexPath: indexPath)
+        )
     }
     
     override func viewDidLoad() {
@@ -172,7 +184,7 @@ final class NewTrackerViewController: UIViewController {
         [titleLabel, scrollView].forEach { subview in
             view.addSubviewWithoutAutoresizingMask(subview)
         }
-        [nameTextField, tableView, emojisCollectionView, colorsCollectionView, buttonsStackView].forEach { subview in
+        [counterLabel, nameTextField, tableView, emojisCollectionView, colorsCollectionView, buttonsStackView].forEach { subview in
             scrollView.addSubviewWithoutAutoresizingMask(subview)
         }
         [cancelButton, addButton].forEach { subview in
@@ -192,10 +204,15 @@ final class NewTrackerViewController: UIViewController {
             scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
         NSLayoutConstraint.activate([
+            counterLabel.widthAnchor.constraint(equalToConstant: 343),
+            counterLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            counterLabel.topAnchor.constraint(equalTo: scrollView.topAnchor)
+        ])
+        NSLayoutConstraint.activate([
             nameTextField.widthAnchor.constraint(equalToConstant: 343),
             nameTextField.heightAnchor.constraint(equalToConstant: 75),
             nameTextField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            nameTextField.topAnchor.constraint(equalTo: scrollView.topAnchor)
+            nameTextField.topAnchor.constraint(equalTo: counterLabel.bottomAnchor, constant: counterLabel.isHidden ? 0 : 38)
         ])
         NSLayoutConstraint.activate([
             tableView.widthAnchor.constraint(equalToConstant: 343),
