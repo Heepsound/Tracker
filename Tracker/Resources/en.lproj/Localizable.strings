@@ -28,6 +28,7 @@ trackers.noTrackersFoundLabel = "Nothing was found";
 trackers.menu.pin = "Pin";
 trackers.menu.unpin = "Unpin";
 trackers.menu.edit = "Edit";
+trackers.filtersButton.title = "Filters";
 trackers.deleteAlert.title = "Are you sure you want to delete the tracker?";
 
 tabBar.trackers.title = "Trackers";
@@ -46,6 +47,8 @@ newTracker.colorCollection.title = "Color";
 
 trackerType.title = "Creating a tracker";
 trackerTypeCell.schedule.everyDay = "Every day";
+
+filters.title = "Filters";
 
 categories.noCategoryLabel = "Habits and events can be \ncombined by meaning";
 categories.addButton.title = "Add category";

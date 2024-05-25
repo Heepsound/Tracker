@@ -84,12 +84,12 @@ final class NewTrackerViewController: UIViewController {
         button.backgroundColor = .trackerWhite
         let buttonTitle = NSLocalizedString("cancelButton.title", comment: "Заголовок кнопки отмены создания нового трекера")
         button.setTitle(buttonTitle, for: .normal)
-        button.setTitleColor(.trackerPink, for: .normal)
+        button.setTitleColor(.trackerRed, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
         button.layer.borderWidth = 1
-        button.layer.borderColor = UIColor.trackerPink.cgColor
+        button.layer.borderColor = UIColor.trackerRed.cgColor
         button.addTarget(self, action: #selector(didTapCancelButton), for: .touchUpInside)
         return button
     }()

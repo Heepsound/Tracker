@@ -27,7 +27,7 @@ final class TrackerViewModel {
         }
     }
     
-    var trackersFilter: String = "" {
+    var searchedText: String = "" {
         didSet {
             getOnDate()
         }
@@ -37,7 +37,7 @@ final class TrackerViewModel {
     
     func getOnDate() {
         guard let trackersDate else { return }
-        dataStore.getOnDate(date: trackersDate, filter: trackersFilter)
+        dataStore.getOnDate(date: trackersDate, searchBy: searchedText)
         updateData?(DataStoreUpdate())
     }
     

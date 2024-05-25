@@ -17,7 +17,6 @@ final class TrackerStore: NSObject {
     
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCoreData> = {
         let request = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
-        //let pinnedSortDescriptor = NSSortDescriptor(key: "pinned", ascending: false)
         let categorySortDescriptor = NSSortDescriptor(key: "category.name", ascending: true)
         let nameSortDescriptor = NSSortDescriptor(key: "name", ascending: true)
         request.sortDescriptors = [categorySortDescriptor, nameSortDescriptor]
@@ -89,26 +88,40 @@ final class TrackerStore: NSObject {
         coreDataManager.saveContext()
     }
     
-    func getOnDate(date: Date, filter: String) {
+    func getOnDate(date: Date, searchBy searchedText: String) {
         let weekday = DaysOfWeek.dayByNumber(Calendar.current.component(.weekday, from: date))
-        var requestText = "(%K == true or (any %K.%K == %ld) or ((any %K == nil or any %K.%K == %@) and %K == %ld))"
-        if !filter.isEmpty {
-            requestText.append(" and name CONTAINS[cd] %@")
+        let filter = FilterTypes(rawValue: UserDefaultsService.currentTrackerFilter)
+        var requestText = "((any %K.%K == %ld or (%K == %ld"
+        var argumentsArray: [Any] = []
+        argumentsArray.append(#keyPath(TrackerCoreData.schedule))
+        argumentsArray.append(#keyPath(ScheduleCoreData.dayOfWeek))
+        argumentsArray.append(weekday?.rawValue ?? 1)
+        argumentsArray.append(#keyPath(TrackerCoreData.trackerType))
+        argumentsArray.append(TrackerTypes.irregularEvent.rawValue)
+        if filter == .completed {
+            requestText.append(")) and any %K.%K == %@)")
+            argumentsArray.append(#keyPath(TrackerCoreData.records))
+            argumentsArray.append(#keyPath(TrackerRecordCoreData.date))
+            argumentsArray.append(date as CVarArg)
+        } else if filter == .notCompleted {
+            requestText.append(")) and (any %K == nil or NOT (%K.%K CONTAINS %@)))")
+            argumentsArray.append(#keyPath(TrackerCoreData.records))
+            argumentsArray.append(#keyPath(TrackerCoreData.records))
+            argumentsArray.append(#keyPath(TrackerRecordCoreData.date))
+            argumentsArray.append(date as CVarArg)
+        } else {
+            requestText.append(" and (any %K == nil or any %K.%K == %@))) or %K = true)")
+            argumentsArray.append(#keyPath(TrackerCoreData.records))
+            argumentsArray.append(#keyPath(TrackerCoreData.records))
+            argumentsArray.append(#keyPath(TrackerRecordCoreData.date))
+            argumentsArray.append(date as CVarArg)
+            argumentsArray.append(#keyPath(TrackerCoreData.pinned))
         }
-        let predicate = NSPredicate(
-            format: requestText,
-            #keyPath(TrackerCoreData.pinned),
-            #keyPath(TrackerCoreData.schedule),
-            #keyPath(ScheduleCoreData.dayOfWeek),
-            weekday?.rawValue ?? 1,
-            #keyPath(TrackerCoreData.records),
-            #keyPath(TrackerCoreData.records),
-            #keyPath(TrackerRecordCoreData.date),
-            date as CVarArg,
-            #keyPath(TrackerCoreData.trackerType),
-            TrackerTypes.irregularEvent.rawValue,
-            filter as CVarArg
-        )
+        if !searchedText.isEmpty {
+            requestText.append(" and name CONTAINS[cd] %@")
+            argumentsArray.append(searchedText as CVarArg)
+        }
+        let predicate = NSPredicate(format: requestText, argumentArray: argumentsArray)
         fetchedResultsController.fetchRequest.predicate = predicate
         try? fetchedResultsController.performFetch()
     }

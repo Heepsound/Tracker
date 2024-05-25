@@ -28,6 +28,7 @@ trackers.noTrackersFoundLabel = "Ничего не найдено";
 trackers.menu.pin = "Закрепить";
 trackers.menu.unpin = "Открепить";
 trackers.menu.edit = "Редактировать";
+trackers.filtersButton.title = "Фильтры";
 trackers.deleteAlert.title = "Уверены что хотите удалить трекер?";
 
 tabBar.trackers.title = "Трекеры";
@@ -46,6 +47,8 @@ newTracker.colorCollection.title = "Цвет";
 
 trackerType.title = "Создание трекера";
 trackerTypeCell.schedule.everyDay = "Каждый день";
+
+filters.title = "Фильтры";
 
 categories.noCategoryLabel = "Привычки и события можно \nобъединить по смыслу";
 categories.addButton.title = "Добавить категорию";
