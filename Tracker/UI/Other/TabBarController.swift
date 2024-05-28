@@ -16,7 +16,7 @@ final class TabBarController: UITabBarController {
 
     private func setupTabBar() {
         tabBar.barStyle = .default
-        tabBar.backgroundColor = .trackerWhite
+        tabBar.backgroundColor = .trackerBackground
         tabBar.tintColor = .trackerBlue
 
         let trackersViewController = TrackersViewController()

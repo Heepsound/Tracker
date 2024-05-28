@@ -11,16 +11,16 @@ final class TrackerTypeViewController: UIViewController {
     private var titleLabel: UILabel = {
         let label = UILabel()
         label.text = NSLocalizedString("trackerType.title" , comment: "Заголовок формы выбора типа трекера")
-        label.textColor = .trackerBlack
+        label.textColor = .trackerText
         label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         return label
     }()
     private lazy var addHabitButton: UIButton = {
         let button = UIButton(type: .custom)
-        button.backgroundColor = .trackerBlack
+        button.backgroundColor = .trackerButtonBackground
         let buttonTitle = NSLocalizedString("habit" , comment: "Заголовок кнопки привычки")
         button.setTitle(buttonTitle, for: .normal)
-        button.setTitleColor(.trackerWhite, for: .normal)
+        button.setTitleColor(.trackerButtonText, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
@@ -29,10 +29,10 @@ final class TrackerTypeViewController: UIViewController {
     }()
     private lazy var addIrregularEventButton: UIButton = {
         let button = UIButton(type: .custom)
-        button.backgroundColor = .trackerBlack
+        button.backgroundColor = .trackerButtonBackground
         let buttonTitle = NSLocalizedString("irregularEvent" , comment: "Заголовок кнопки нерегулярного события")
         button.setTitle(buttonTitle, for: .normal)
-        button.setTitleColor(.trackerWhite, for: .normal)
+        button.setTitleColor(.trackerButtonText, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
@@ -57,7 +57,7 @@ final class TrackerTypeViewController: UIViewController {
     }
     
     private func setupTrackerTypeViewController() {
-        view.backgroundColor = .trackerWhite
+        view.backgroundColor = .trackerBackground
         addSubViews()
         applyConstraints()
     }

@@ -39,7 +39,7 @@ final class StatisticsViewController: UIViewController {
     }
     
     private func setupViewController() {
-        view.backgroundColor = .trackerWhite
+        view.backgroundColor = .trackerBackground
         addSubViews()
         applyConstraints()
     }

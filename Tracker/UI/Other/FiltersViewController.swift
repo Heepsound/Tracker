@@ -11,7 +11,7 @@ final class FiltersViewController: UIViewController {
     private var titleLabel: UILabel = {
         let label = UILabel()
         label.text = NSLocalizedString("filters.title" , comment: "Заголовок формы выбора фильтра")
-        label.textColor = .trackerBlack
+        label.textColor = .trackerText
         label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         return label
     }()
@@ -20,6 +20,8 @@ final class FiltersViewController: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.backgroundColor = .clear
+        tableView.separatorColor = .trackerSeparator
+        tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         tableView.layer.masksToBounds = true
         tableView.layer.cornerRadius = 16
         tableView.allowsMultipleSelection = false
@@ -39,7 +41,7 @@ final class FiltersViewController: UIViewController {
     }
     
     private func setupViewController() {
-        view.backgroundColor = .trackerWhite
+        view.backgroundColor = .trackerBackground
         addSubViews()
         applyConstraints()
     }

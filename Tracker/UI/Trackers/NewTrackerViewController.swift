@@ -10,23 +10,23 @@ import UIKit
 final class NewTrackerViewController: UIViewController {
     private var titleLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .trackerBlack
+        label.textColor = .trackerText
         label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         return label
     }()
     private var counterLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .trackerBlack
+        label.textColor = .trackerText
         label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
         label.textAlignment = .center
         return label
     }()
     private lazy var nameTextField: UITextField = {
         let textField = UITextField()
-        textField.textColor = .trackerBlack
+        textField.textColor = .trackerText
         textField.borderStyle = .none
         textField.placeholder = NSLocalizedString("newTracker.trackerName.placeholder", comment: "Подсказка ввода названия трекера")
-        textField.backgroundColor = .trackerFieldAlpha30
+        textField.backgroundColor = .trackerTextField
         textField.layer.cornerRadius = 16
         textField.layer.masksToBounds = true
         textField.font = UIFont.systemFont(ofSize: 17, weight: .regular)
@@ -40,7 +40,9 @@ final class NewTrackerViewController: UIViewController {
         let tableView = UITableView.init(frame: .zero, style: .plain)
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.backgroundColor = .trackerFieldAlpha30
+        tableView.backgroundColor = .clear
+        tableView.separatorColor = .trackerSeparator
+        tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         tableView.layer.masksToBounds = true
         tableView.layer.cornerRadius = 16
         tableView.register(TrackerTypeCell.self, forCellReuseIdentifier: TrackerTypeCell.reuseIdentifier)
@@ -72,7 +74,7 @@ final class NewTrackerViewController: UIViewController {
             NSLocalizedString("newTracker.saveButton.title", comment: "Заголовок кнопки сохранения отредактированного трекера") :
             NSLocalizedString("newTracker.addButton.title", comment: "Заголовок кнопки подтверждения создания нового трекера")
         button.setTitle(buttonTitle, for: .normal)
-        button.setTitleColor(.trackerWhite, for: .normal)
+        button.setTitleColor(.trackerButtonText, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
@@ -81,7 +83,7 @@ final class NewTrackerViewController: UIViewController {
     }()
     private lazy var cancelButton: UIButton = {
         let button = UIButton(type: .custom)
-        button.backgroundColor = .trackerWhite
+        button.backgroundColor = .clear
         let buttonTitle = NSLocalizedString("cancelButton.title", comment: "Заголовок кнопки отмены создания нового трекера")
         button.setTitle(buttonTitle, for: .normal)
         button.setTitleColor(.trackerRed, for: .normal)
@@ -156,7 +158,7 @@ final class NewTrackerViewController: UIViewController {
     }
     
     private func setupNewTrackerViewController() {
-        view.backgroundColor = .trackerWhite
+        view.backgroundColor = .trackerBackground
         if let trackerName = viewModel.trackerName {
             nameTextField.text = trackerName
         }
@@ -249,7 +251,8 @@ final class NewTrackerViewController: UIViewController {
     private func bind() {
         viewModel.allDataEntered = { [weak self] allDataEntered in
             self?.addButton.isEnabled = allDataEntered
-            self?.addButton.backgroundColor = allDataEntered ? UIColor.trackerBlack : UIColor.trackerGray
+            self?.addButton.backgroundColor = allDataEntered ? UIColor.trackerButtonBackground : UIColor.trackerGray
+            self?.addButton.setTitleColor(allDataEntered ? UIColor.trackerButtonText : UIColor.trackerWhite, for: .normal)
         }
     }
     

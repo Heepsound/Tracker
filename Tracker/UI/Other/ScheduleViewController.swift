@@ -11,7 +11,7 @@ final class ScheduleViewController: UIViewController {
     private var titleLabel: UILabel = {
         let label = UILabel()
         label.text = NSLocalizedString("schedule.title", comment: "Заголовок экрана")
-        label.textColor = .trackerBlack
+        label.textColor = .trackerText
         label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         return label
     }()
@@ -19,7 +19,9 @@ final class ScheduleViewController: UIViewController {
         let tableView = UITableView.init(frame: .zero, style: .plain)
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.backgroundColor = .trackerFieldAlpha30
+        tableView.backgroundColor = .clear
+        tableView.separatorColor = .trackerSeparator
+        tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         tableView.layer.masksToBounds = true
         tableView.layer.cornerRadius = 16
         tableView.register(ScheduleCell.self, forCellReuseIdentifier: ScheduleCell.reuseIdentifier)
@@ -27,10 +29,10 @@ final class ScheduleViewController: UIViewController {
     }()
     private lazy var confirmButton: UIButton = {
         let button = UIButton(type: .custom)
-        button.backgroundColor = .trackerBlack
+        button.backgroundColor = .trackerButtonBackground
         let buttonTitle = NSLocalizedString("schedule.confirmButton.title", comment: "Заголовок кнопки подтверждения расписания")
         button.setTitle(buttonTitle, for: .normal)
-        button.setTitleColor(.trackerWhite, for: .normal)
+        button.setTitleColor(.trackerButtonText, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
@@ -50,7 +52,7 @@ final class ScheduleViewController: UIViewController {
     }
     
     private func setupScheduleViewController() {
-        view.backgroundColor = .trackerWhite
+        view.backgroundColor = .trackerBackground
         let indexPaths = (0...6).map { i in
             IndexPath(row: i, section: 0)
         }

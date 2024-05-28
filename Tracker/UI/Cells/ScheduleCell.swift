@@ -16,7 +16,7 @@ protocol ScheduleCellDelegate: AnyObject {
 final class ScheduleCell: UITableViewCell {
     private var titleLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .trackerBlack
+        label.textColor = .trackerText
         label.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         return label
     }()
@@ -56,7 +56,7 @@ final class ScheduleCell: UITableViewCell {
     }
     
     private func setupScheduleCell() {
-        backgroundColor = .clear
+        backgroundColor = .trackerTextField
         contentView.backgroundColor = .clear
         selectionStyle = .none
         addSubViews()

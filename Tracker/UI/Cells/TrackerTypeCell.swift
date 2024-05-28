@@ -10,7 +10,7 @@ import UIKit
 final class TrackerTypeCell: UITableViewCell {
     private var titleLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .trackerBlack
+        label.textColor = .trackerText
         label.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         return label
     }()
@@ -77,8 +77,7 @@ final class TrackerTypeCell: UITableViewCell {
     }
     
     private func setupCategoryCell() {
-        backgroundColor = .clear
-        contentView.backgroundColor = .clear
+        backgroundColor = .trackerTextField
         selectionStyle = .none
         addSubViews()
         applyConstraints()

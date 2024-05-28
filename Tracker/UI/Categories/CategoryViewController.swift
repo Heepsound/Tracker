@@ -11,7 +11,7 @@ final class CategoryViewController: UIViewController {
     private var titleLabel: UILabel = {
         let label = UILabel()
         label.text = NSLocalizedString("category", comment: "Заголовок категория")
-        label.textColor = .trackerBlack
+        label.textColor = .trackerText
         label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         return label
     }()
@@ -28,7 +28,7 @@ final class CategoryViewController: UIViewController {
     private var noCategoryLabel: UILabel = {
         let label = UILabel()
         label.text = NSLocalizedString("categories.noCategoryLabel", comment: "Текст при отсутствии категорий")
-        label.textColor = .trackerBlack
+        label.textColor = .trackerText
         label.font = UIFont.systemFont(ofSize: 12)
         label.numberOfLines = 0
         label.textAlignment = .center
@@ -39,6 +39,8 @@ final class CategoryViewController: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.backgroundColor = .clear
+        tableView.separatorColor = .trackerSeparator
+        tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         tableView.layer.masksToBounds = true
         tableView.layer.cornerRadius = 16
         tableView.allowsMultipleSelection = false
@@ -47,10 +49,10 @@ final class CategoryViewController: UIViewController {
     }()
     private lazy var addCategoryButton: UIButton = {
         let button = UIButton(type: .custom)
-        button.backgroundColor = .trackerBlack
+        button.backgroundColor = .trackerButtonBackground
         let buttonTitle = NSLocalizedString("categories.addButton.title", comment: "Заголовок кнопки создания новой категории")
         button.setTitle(buttonTitle, for: .normal)
-        button.setTitleColor(.trackerWhite, for: .normal)
+        button.setTitleColor(.trackerButtonText, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
@@ -80,7 +82,7 @@ final class CategoryViewController: UIViewController {
     }
     
     private func setupCategoryViewController() {
-        view.backgroundColor = .trackerWhite
+        view.backgroundColor = .trackerBackground
         addSubViews()
         applyConstraints()
     }

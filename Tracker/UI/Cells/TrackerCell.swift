@@ -42,7 +42,7 @@ final class TrackerCell: UICollectionViewCell {
     }()
     private var counterLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .trackerBlack
+        label.textColor = .trackerText
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         return label
     }()

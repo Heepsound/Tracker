@@ -28,7 +28,7 @@ final class TrackersViewController: UIViewController {
     private var titleLabel: UILabel = {
         let label = UILabel()
         label.text = NSLocalizedString("trackers.title", comment: "Заголовок экрана")
-        label.textColor = .trackerBlack
+        label.textColor = .trackerText
         label.font = UIFont.boldSystemFont(ofSize: 34)
         return label
     }()
@@ -50,12 +50,13 @@ final class TrackersViewController: UIViewController {
     }()
     private var noTrackersLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .trackerBlack
+        label.textColor = .trackerText
         label.font = UIFont.systemFont(ofSize: 12)
         return label
     }()
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+        collectionView.backgroundColor = .clear
         collectionView.allowsMultipleSelection = false
         collectionView.contentInset = UIEdgeInsets(top: 0, left: 16, bottom: 64, right: 16)
         collectionView.register(TrackerCell.self, forCellWithReuseIdentifier: TrackerCell.reuseIdentifier)
@@ -64,7 +65,6 @@ final class TrackersViewController: UIViewController {
         collectionView.delegate = self
         return collectionView
     }()
-    
     private lazy var filtersButton: UIButton = {
         let button = UIButton(type: .custom)
         button.backgroundColor = .trackerBlue
@@ -97,7 +97,7 @@ final class TrackersViewController: UIViewController {
     }
     
     private func setupTrackerViewController() {
-        view.backgroundColor = .trackerWhite
+        view.backgroundColor = .trackerBackground
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: addButton)
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
         addSubViews()
@@ -165,6 +165,8 @@ final class TrackersViewController: UIViewController {
             } else {
                 self.collectionView.reloadData()
                 self.collectionView.isHidden = !self.viewModel.hasData
+                self.noTrackersLabel.isHidden = self.viewModel.hasData
+                self.noTrackersImageView.isHidden = self.viewModel.hasData
             }
         }
         

@@ -13,16 +13,16 @@ final class NewCategoryViewController: UIViewController {
         label.text = viewModel.isEditMode ?
             NSLocalizedString("newCategory.editTitle", comment: "Заголовок экрана редактирования категории") :
             NSLocalizedString("newCategory.title", comment: "Заголовок экрана создания категории")
-        label.textColor = .trackerBlack
+        label.textColor = .trackerText
         label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         return label
     }()
     private lazy var nameTextField: UITextField = {
         let textField = UITextField()
-        textField.textColor = .trackerBlack
+        textField.textColor = .trackerText
         textField.borderStyle = .none
         textField.placeholder = NSLocalizedString("newCategory.categoryName.placeholder", comment: "Подсказка ввода названия категории")
-        textField.backgroundColor = .trackerFieldAlpha30
+        textField.backgroundColor = .trackerTextField
         textField.layer.cornerRadius = 16
         textField.layer.masksToBounds = true
         textField.font = UIFont.systemFont(ofSize: 17, weight: .regular)
@@ -38,7 +38,7 @@ final class NewCategoryViewController: UIViewController {
         button.isEnabled = false
         let buttonTitle = NSLocalizedString("newCategory.addButton.title", comment: "Заголовок кнопки подтверждения создания новой категории")
         button.setTitle(buttonTitle, for: .normal)
-        button.setTitleColor(.trackerWhite, for: .normal)
+        button.setTitleColor(.trackerButtonText, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
@@ -70,9 +70,11 @@ final class NewCategoryViewController: UIViewController {
     }
     
     private func setupNewCategoryViewController() {
-        view.backgroundColor = .trackerWhite
+        view.backgroundColor = .trackerBackground
         if let categoryName = viewModel.categoryName {
             nameTextField.text = categoryName
+        } else {
+            viewModel.categoryName = ""
         }
         addSubViews()
         applyConstraints()
@@ -107,7 +109,8 @@ final class NewCategoryViewController: UIViewController {
     private func bind() {
         viewModel.allDataEntered = { [weak self] allDataEntered in
             self?.addButton.isEnabled = allDataEntered
-            self?.addButton.backgroundColor = allDataEntered ? UIColor.trackerBlack : UIColor.trackerGray
+            self?.addButton.backgroundColor = allDataEntered ? UIColor.trackerButtonBackground : UIColor.trackerGray
+            self?.addButton.setTitleColor(allDataEntered ? UIColor.trackerButtonText : UIColor.trackerWhite, for: .normal)
         }
     }
     
