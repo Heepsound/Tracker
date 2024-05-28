@@ -257,11 +257,11 @@ final class NewTrackerViewController: UIViewController {
     
     @objc private func didTapAddButton() {
         viewModel.save()
-        delegate?.editingСompleted()
+        delegate?.editingСompleted(nil)
     }
     
     @objc private func didTapCancelButton() {
-        delegate?.editingСompleted()
+        delegate?.editingСompleted(nil)
     }
     
     @objc private func nameTextFieldDidChange(_ sender: UITextField) {

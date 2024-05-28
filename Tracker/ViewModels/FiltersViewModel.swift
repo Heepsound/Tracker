@@ -31,9 +31,4 @@ final class FiltersViewModel {
     func model(at indexPath: IndexPath) -> FilterTypes {
         return filterTypes[indexPath.row]
     }
-    
-    func setFilter(at indexPath: IndexPath) {
-        activeFilter = filterTypes[indexPath.row]
-        UserDefaultsService.currentTrackerFilter = activeFilter.rawValue
-    }
 }

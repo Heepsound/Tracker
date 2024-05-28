@@ -8,5 +8,5 @@
 import Foundation
 
 protocol EntityEditViewControllerDelegate: AnyObject {
-    func editingСompleted()
+    func editingСompleted(_ value: Any?)
 }

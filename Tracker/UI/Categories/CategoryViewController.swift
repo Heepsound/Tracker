@@ -229,7 +229,7 @@ extension CategoryViewController: UITableViewDelegate {
 // MARK: - EntityEditViewControllerDelegate
 
 extension CategoryViewController: EntityEditViewControllerDelegate {
-    func editingСompleted() {
+    func editingСompleted(_ value: Any?) {
         self.dismiss(animated: true)
     }
 }

@@ -29,7 +29,7 @@ final class FiltersViewController: UIViewController {
     
     private let viewModel = FiltersViewModel()
     
-    var dismissClosure: (() -> Void)?
+    weak var delegate: EntityEditViewControllerDelegate?
     
     // MARK: - Lifecycle
     
@@ -92,9 +92,7 @@ extension FiltersViewController: UITableViewDataSource {
 
 extension FiltersViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        viewModel.setFilter(at: indexPath)
-        dismissClosure?()
-        dismiss(animated: true)
+        delegate?.editingСompleted(viewModel.model(at: indexPath))
     }
     
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {

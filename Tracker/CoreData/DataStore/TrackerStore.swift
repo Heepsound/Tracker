@@ -88,9 +88,8 @@ final class TrackerStore: NSObject {
         coreDataManager.saveContext()
     }
     
-    func getOnDate(date: Date, searchBy searchedText: String) {
+    func getOnDate(date: Date, searchBy searchedText: String, filterBy filter: FilterTypes) {
         let weekday = DaysOfWeek.dayByNumber(Calendar.current.component(.weekday, from: date))
-        let filter = FilterTypes(rawValue: UserDefaultsService.currentTrackerFilter)
         var requestText = "((any %K.%K == %ld or (%K == %ld"
         var argumentsArray: [Any] = []
         argumentsArray.append(#keyPath(TrackerCoreData.schedule))
@@ -121,8 +120,7 @@ final class TrackerStore: NSObject {
             requestText.append(" and name CONTAINS[cd] %@")
             argumentsArray.append(searchedText as CVarArg)
         }
-        let predicate = NSPredicate(format: requestText, argumentArray: argumentsArray)
-        fetchedResultsController.fetchRequest.predicate = predicate
+        fetchedResultsController.fetchRequest.predicate = NSPredicate(format: requestText, argumentArray: argumentsArray)
         try? fetchedResultsController.performFetch()
     }
 }

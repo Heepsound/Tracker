@@ -115,7 +115,7 @@ final class NewCategoryViewController: UIViewController {
     
     @objc private func didTapAddButton() {
         viewModel.save()
-        delegate?.editingСompleted()
+        delegate?.editingСompleted(nil)
     }
     
     @objc private func nameTextFieldDidChange(_ sender: UITextField) {

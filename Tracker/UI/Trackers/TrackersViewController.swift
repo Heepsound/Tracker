@@ -79,23 +79,12 @@ final class TrackersViewController: UIViewController {
         
     private let viewModel: TrackerViewModel = TrackerViewModel()
     
-    private var searchActive: Bool = false {
-        didSet {
-            if searchActive {
-                noTrackersLabel.text = NSLocalizedString("trackers.noTrackersFoundLabel", comment: "Текст при отсутствии трекеров в результате поиска")
-                noTrackersImageView.image = UIImage(named: "SearchError")
-            } else {
-                noTrackersLabel.text = NSLocalizedString("trackers.noTrackersLabel", comment: "Текст при отсутствии трекеров")
-                noTrackersImageView.image = UIImage(named: "TrackerError")
-            }
-        }
-    }
-    
     // MARK: - Lifecycle
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         bind()
+        viewModel.initialize()
     }
     
     required init?(coder: NSCoder) {
@@ -105,13 +94,9 @@ final class TrackersViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupTrackerViewController()
-        datePicker.date = Date()
-        viewModel.trackersDate = datePicker.date
-        setStatusOfFilterButton()
     }
     
     private func setupTrackerViewController() {
-        searchActive = false
         view.backgroundColor = .trackerWhite
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: addButton)
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
@@ -174,28 +159,39 @@ final class TrackersViewController: UIViewController {
     
     private func bind() {
         viewModel.updateData = { [weak self] update in
-            if !update.updatedIndexPaths.isEmpty {
-                self?.collectionView.reloadItems(at: update.updatedIndexPaths)
+            guard let self else { return }
+            if !update.updatedIndexPaths.isEmpty && !self.viewModel.anyFiltersIsActive {
+                self.collectionView.reloadItems(at: update.updatedIndexPaths)
             } else {
-                self?.updateTrackers()
+                self.collectionView.reloadData()
+                self.collectionView.isHidden = !self.viewModel.hasData
             }
         }
-    }
-    
-    private func updateTrackers() {
-        collectionView.reloadData()
-        let hasData = viewModel.hasData
-        collectionView.isHidden = !hasData
-        filtersButton.isHidden = !hasData
-    }
-    
-    private func setStatusOfFilterButton() {
-        let currentTrackerFilter = FilterTypes(rawValue: UserDefaultsService.currentTrackerFilter)
-        if currentTrackerFilter == .forToday {
-            datePicker.date = Date()
-            viewModel.trackersDate = datePicker.date
+        
+        viewModel.updateTrackersDate = { [weak self] date in
+            self?.datePicker.date = date
         }
-        filtersButton.setTitleColor(currentTrackerFilter == .all ? .trackerWhite : .trackerRed, for: .normal)
+        
+        viewModel.updateSearchIsActive = { [weak self] isActive in
+            self?.setBackground()
+        }
+        
+        viewModel.updateFilterIsActive = { [weak self] isActive in
+            guard let self else { return }
+            self.setBackground()
+            self.filtersButton.setTitleColor(isActive ? .trackerRed : .trackerWhite, for: .normal)
+            self.filtersButton.isHidden = !self.viewModel.hasData && !self.viewModel.anyFiltersIsActive
+        }
+    }
+    
+    private func setBackground() {
+        if viewModel.anyFiltersIsActive {
+            noTrackersLabel.text = NSLocalizedString("trackers.noTrackersFoundLabel", comment: "Текст при отсутствии трекеров в результате поиска")
+            noTrackersImageView.image = UIImage(named: "SearchError")
+        } else {
+            noTrackersLabel.text = NSLocalizedString("trackers.noTrackersLabel", comment: "Текст при отсутствии трекеров")
+            noTrackersImageView.image = UIImage(named: "TrackerError")
+        }
     }
     
     // MARK: - Actions
@@ -208,34 +204,16 @@ final class TrackersViewController: UIViewController {
     
     @objc private func didTapFiltersButton() {
         let filtersViewController = FiltersViewController()
-        filtersViewController.dismissClosure = {
-            self.setStatusOfFilterButton()
-            self.viewModel.getOnDate()
-        }
+        filtersViewController.delegate = self
         self.present(filtersViewController, animated: true)
     }
     
     @objc private func datePickerValueChanged(_ sender: UIDatePicker) {
-        let currentTrackerFilter = FilterTypes(rawValue: UserDefaultsService.currentTrackerFilter)
-        if currentTrackerFilter == .forToday {
-            UserDefaultsService.currentTrackerFilter = FilterTypes.all.rawValue
-            setStatusOfFilterButton()
-        }
         viewModel.trackersDate = sender.date
     }
     
     @objc func textDidChange(_ searchField: UISearchTextField) {
-        if let searchedText = searchField.text, !searchedText.isEmpty {
-            viewModel.searchedText = searchedText
-            if searchActive != true {
-                searchActive = true
-            }
-        } else {
-            viewModel.searchedText = ""
-            if searchActive != false {
-                searchActive = false
-            }
-        }
+        viewModel.searchedText = searchField.text ?? ""
     }
 }
 
@@ -359,9 +337,12 @@ extension TrackersViewController: UICollectionViewDelegate {
 // MARK: - EntityEditViewControllerDelegate
 
 extension TrackersViewController: EntityEditViewControllerDelegate {
-    func editingСompleted() {
-        viewModel.getOnDate()
+    func editingСompleted(_ value: Any?) {
         self.dismiss(animated: true)
+        if let trackerFilter = value as? FilterTypes {
+            viewModel.currentTrackerFilter = trackerFilter
+        }
+        viewModel.getOnDate()
     }
 }
 
