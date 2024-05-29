@@ -41,6 +41,7 @@ struct Tracker {
                 }
             }
         }
+        tempSchedule.sort(by: {$0.sortNumber < $1.sortNumber})
         self.schedule = tempSchedule
     }
 }

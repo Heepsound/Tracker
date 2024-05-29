@@ -16,7 +16,7 @@ final class ScheduleViewController: UIViewController {
         return label
     }()
     private lazy var tableView: UITableView = {
-        let tableView = UITableView.init(frame: .zero, style: .plain)
+        let tableView = UITableView.init(frame: .zero, style: .insetGrouped)
         tableView.dataSource = self
         tableView.delegate = self
         tableView.backgroundColor = .clear
@@ -40,6 +40,8 @@ final class ScheduleViewController: UIViewController {
         return button
     }()
     
+    private let viewModel = ScheduleViewModel()
+    
     var schedule: [DaysOfWeek] = []
     
     var dismissClosure: ((_ schedule: [DaysOfWeek]) -> Void)?
@@ -53,11 +55,6 @@ final class ScheduleViewController: UIViewController {
     
     private func setupScheduleViewController() {
         view.backgroundColor = .trackerBackground
-        let indexPaths = (0...6).map { i in
-            IndexPath(row: i, section: 0)
-        }
-        tableView.insertRows(at: indexPaths, with: .automatic)
-        tableView.reloadData()
         addSubViews()
         applyConstraints()
     }
@@ -75,10 +72,10 @@ final class ScheduleViewController: UIViewController {
             titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 28)
         ])
         NSLayoutConstraint.activate([
-            tableView.widthAnchor.constraint(equalToConstant: 343),
-            tableView.heightAnchor.constraint(equalToConstant: CGFloat(7 * 75)),
-            tableView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            tableView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 30)
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tableView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 30),
+            tableView.bottomAnchor.constraint(equalTo: confirmButton.topAnchor, constant: -30)
         ])
         NSLayoutConstraint.activate([
             confirmButton.widthAnchor.constraint(equalToConstant: 335),
@@ -91,6 +88,7 @@ final class ScheduleViewController: UIViewController {
     // MARK: - Actions
     
     @objc private func didTapConfirmButton() {
+        schedule.sort(by: {$0.sortNumber < $1.sortNumber})
         dismissClosure?(schedule)
         dismiss(animated: true)
     }
@@ -100,7 +98,7 @@ final class ScheduleViewController: UIViewController {
 
 extension ScheduleViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 7
+        return viewModel.numberOfRowsInSection(section)
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -109,12 +107,7 @@ extension ScheduleViewController: UITableViewDataSource {
             return UITableViewCell()
         }
         cell.delegate = self
-        cell.dayOfWeek = DaysOfWeek(rawValue: indexPath.row + 1)
-        if indexPath.row == 6 {
-            cell.separatorInset.left = 1000
-        } else {
-            cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-        }
+        cell.dayOfWeek = viewModel.model(at: indexPath)
         return cell
     }
     

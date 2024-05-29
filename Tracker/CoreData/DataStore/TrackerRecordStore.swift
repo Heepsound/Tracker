@@ -22,6 +22,8 @@ final class TrackerRecordStore {
         let record = TrackerRecordCoreData(context: coreDataManager.context)
         record.tracker = tracker
         record.date = onDate
+        let weekday = Calendar.current.dateComponents([.weekday], from: onDate).weekday ?? 0
+        record.dayOfWeek = Int16(weekday)
         coreDataManager.saveContext()
     }
     

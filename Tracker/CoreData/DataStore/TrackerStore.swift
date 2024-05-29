@@ -89,7 +89,7 @@ final class TrackerStore: NSObject {
     }
     
     func getOnDate(date: Date, searchBy searchedText: String, filterBy filter: FilterTypes) {
-        let weekday = DaysOfWeek.dayByNumber(Calendar.current.component(.weekday, from: date))
+        let weekday = DaysOfWeek(rawValue: Calendar.current.component(.weekday, from: date))
         var requestText = "((any %K.%K == %ld or (%K == %ld"
         var argumentsArray: [Any] = []
         argumentsArray.append(#keyPath(TrackerCoreData.schedule))
