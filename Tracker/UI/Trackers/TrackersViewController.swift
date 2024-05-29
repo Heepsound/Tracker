@@ -79,6 +79,8 @@ final class TrackersViewController: UIViewController {
         
     private let viewModel: TrackerViewModel = TrackerViewModel()
     
+    private let appMetricaScreenName: String = "main"
+    
     // MARK: - Lifecycle
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
@@ -94,6 +96,16 @@ final class TrackersViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupTrackerViewController()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        AppMetrica.sendEvent(event: AppMetricaEvents.open, screen: appMetricaScreenName, item: "")
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        AppMetrica.sendEvent(event: AppMetricaEvents.close, screen: appMetricaScreenName, item: "")
     }
     
     private func setupTrackerViewController() {
@@ -199,12 +211,14 @@ final class TrackersViewController: UIViewController {
     // MARK: - Actions
     
     @objc private func didTapAddButton() {
+        AppMetrica.sendEvent(event: AppMetricaEvents.click, screen: appMetricaScreenName, item: "add_track")
         let trackerTypeViewController = TrackerTypeViewController()
         trackerTypeViewController.delegate = self
         self.present(trackerTypeViewController, animated: true)
     }
     
     @objc private func didTapFiltersButton() {
+        AppMetrica.sendEvent(event: AppMetricaEvents.click, screen: appMetricaScreenName, item: "filter")
         let filtersViewController = FiltersViewController()
         filtersViewController.delegate = self
         self.present(filtersViewController, animated: true)
@@ -320,15 +334,19 @@ extension TrackersViewController: UICollectionViewDelegate {
                     self?.viewModel.setPinned(at: indexPath)
                 },
                 UIAction(title: editTitle) { [weak self] _ in
+                    guard let self else { return }
+                    AppMetrica.sendEvent(event: AppMetricaEvents.click, screen: self.appMetricaScreenName, item: "edit")
                     let newTrackerViewController = NewTrackerViewController()
                     newTrackerViewController.initialize(indexPath: indexPath)
                     newTrackerViewController.delegate = self
-                    self?.present(newTrackerViewController, animated: true)
+                    self.present(newTrackerViewController, animated: true)
                 },
                 UIAction(title: deleteTitle, attributes: [.destructive]) { [weak self] _ in
+                    guard let self else { return }
+                    AppMetrica.sendEvent(event: AppMetricaEvents.click, screen: self.appMetricaScreenName, item: "delete")
                     let alertTitle = NSLocalizedString("trackers.deleteAlert.title", comment: "Заголовок подтверждения удаления трекера")
                     AlertPresenter.confirmDelete(title: alertTitle, delegate: self) {
-                        self?.viewModel.delete(indexPath: indexPath)
+                        self.viewModel.delete(indexPath: indexPath)
                     }
                 }
             ])

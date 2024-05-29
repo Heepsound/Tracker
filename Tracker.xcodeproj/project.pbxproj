@@ -14,6 +14,7 @@
 		E72D0D162BCA90A800D9FA2E /* Tracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E72D0D152BCA90A800D9FA2E /* Tracker.swift */; };
 		E72D0D182BCA90B700D9FA2E /* TrackerCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = E72D0D172BCA90B700D9FA2E /* TrackerCategory.swift */; };
 		E72D0D1A2BCA90C200D9FA2E /* TrackerRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = E72D0D192BCA90C200D9FA2E /* TrackerRecord.swift */; };
+		E72F35FF2C0700FF000006DC /* AppMetrica.swift in Sources */ = {isa = PBXBuildFile; fileRef = E72F35FE2C0700FF000006DC /* AppMetrica.swift */; };
 		E73160672BC129D400960D97 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73160662BC129D400960D97 /* AppDelegate.swift */; };
 		E73160692BC129D400960D97 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73160682BC129D400960D97 /* SceneDelegate.swift */; };
 		E731606B2BC129D400960D97 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E731606A2BC129D400960D97 /* TabBarController.swift */; };
@@ -83,6 +84,7 @@
 		E72D0D152BCA90A800D9FA2E /* Tracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Tracker.swift; path = Tracker/CoreData/Models/Tracker.swift; sourceTree = SOURCE_ROOT; };
 		E72D0D172BCA90B700D9FA2E /* TrackerCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategory.swift; sourceTree = "<group>"; };
 		E72D0D192BCA90C200D9FA2E /* TrackerRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerRecord.swift; sourceTree = "<group>"; };
+		E72F35FE2C0700FF000006DC /* AppMetrica.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppMetrica.swift; sourceTree = "<group>"; };
 		E73160632BC129D400960D97 /* Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E73160662BC129D400960D97 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E73160682BC129D400960D97 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -356,6 +358,7 @@
 		E7AB0A5D2BEF7A27006F8805 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				E72F35FE2C0700FF000006DC /* AppMetrica.swift */,
 				E75787C42BFCFBE600867275 /* AllertPresenter.swift */,
 				E79CAEC12BF8F468000E11C2 /* DateFormatManager.swift */,
 				E7AB0A5E2BEF7A54006F8805 /* UserDefaultsService.swift */,
@@ -592,6 +595,7 @@
 				E73160842BC1342C00960D97 /* TrackersViewController.swift in Sources */,
 				E78C9D982BCBBCDD004FB5DF /* TrackerTypeViewController.swift in Sources */,
 				E79CAEC22BF8F468000E11C2 /* DateFormatManager.swift in Sources */,
+				E72F35FF2C0700FF000006DC /* AppMetrica.swift in Sources */,
 				E73B351D2BDCE8B0000FD1A4 /* TrackerStore.swift in Sources */,
 				E78C9D9A2BCBD0C6004FB5DF /* NewTrackerViewController.swift in Sources */,
 				E78AFD862BCD6FAC00D47122 /* TrackerHeaderView.swift in Sources */,

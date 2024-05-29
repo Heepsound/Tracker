@@ -101,6 +101,8 @@ final class TrackerCell: UICollectionViewCell {
     var viewModel: TrackerViewModel?
     static let reuseIdentifier = "trackerCell"
     
+    private let appMetricaScreenName: String = "main"
+    
     // MARK: - Lifecycle
     
     override init(frame: CGRect) {
@@ -181,6 +183,7 @@ final class TrackerCell: UICollectionViewCell {
     // MARK: - Actions
     
     @objc private func didTapCompletedButton() {
+        AppMetrica.sendEvent(event: AppMetricaEvents.click, screen: appMetricaScreenName, item: "track")
         guard let indexPath else { return }
         if isDone {
             viewModel?.deleteRecord(indexPath: indexPath)
