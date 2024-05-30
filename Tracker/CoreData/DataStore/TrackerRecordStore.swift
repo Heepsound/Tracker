@@ -10,8 +10,8 @@ import CoreData
 final class TrackerRecordStore {
     static let shared = TrackerRecordStore()
     
-    private var coreDataManager = CoreDataManager.shared
-    private var trackerStore = TrackerStore.shared
+    private let coreDataManager = CoreDataManager.shared
+    private let trackerStore = TrackerStore.shared
     
     // MARK: - Lifecycle
     

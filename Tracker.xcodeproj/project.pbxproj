@@ -46,6 +46,7 @@
 		E7663B512BD1B6AE001D6AAE /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7663B502BD1B6AE001D6AAE /* UIColor+Extensions.swift */; };
 		E7663B532BD1BB02001D6AAE /* EmojiCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7663B522BD1BB02001D6AAE /* EmojiCell.swift */; };
 		E7663B552BD1BCB2001D6AAE /* ColorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7663B542BD1BCB2001D6AAE /* ColorCell.swift */; };
+		E7854E002C0850A500E100D5 /* StatisticsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7854DFF2C0850A500E100D5 /* StatisticsStore.swift */; };
 		E78AFD802BCD4AA100D47122 /* CategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E78AFD7F2BCD4AA100D47122 /* CategoryViewController.swift */; };
 		E78AFD822BCD4C5700D47122 /* CategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E78AFD812BCD4C5700D47122 /* CategoryCell.swift */; };
 		E78AFD842BCD6CAD00D47122 /* TrackerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E78AFD832BCD6CAD00D47122 /* TrackerCell.swift */; };
@@ -122,6 +123,7 @@
 		E7663B502BD1B6AE001D6AAE /* UIColor+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
 		E7663B522BD1BB02001D6AAE /* EmojiCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiCell.swift; sourceTree = "<group>"; };
 		E7663B542BD1BCB2001D6AAE /* ColorCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorCell.swift; sourceTree = "<group>"; };
+		E7854DFF2C0850A500E100D5 /* StatisticsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsStore.swift; sourceTree = "<group>"; };
 		E78AFD7F2BCD4AA100D47122 /* CategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryViewController.swift; sourceTree = "<group>"; };
 		E78AFD812BCD4C5700D47122 /* CategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCell.swift; sourceTree = "<group>"; };
 		E78AFD832BCD6CAD00D47122 /* TrackerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCell.swift; sourceTree = "<group>"; };
@@ -282,6 +284,7 @@
 				E73B351C2BDCE8B0000FD1A4 /* TrackerStore.swift */,
 				E73B351E2BDCE8BD000FD1A4 /* TrackerCategoryStore.swift */,
 				E73B35202BDCE8CA000FD1A4 /* TrackerRecordStore.swift */,
+				E7854DFF2C0850A500E100D5 /* StatisticsStore.swift */,
 			);
 			path = DataStore;
 			sourceTree = "<group>";
@@ -605,6 +608,7 @@
 				E743E0202BEA0F8E005FA94D /* DaysOfWeek.swift in Sources */,
 				E73B351F2BDCE8BD000FD1A4 /* TrackerCategoryStore.swift in Sources */,
 				E72D0D162BCA90A800D9FA2E /* Tracker.swift in Sources */,
+				E7854E002C0850A500E100D5 /* StatisticsStore.swift in Sources */,
 				E78C9DA12BCBE317004FB5DF /* ScheduleCell.swift in Sources */,
 				E72D0D182BCA90B700D9FA2E /* TrackerCategory.swift in Sources */,
 				E736E4152C01F3F600D2A22C /* FiltersViewController.swift in Sources */,

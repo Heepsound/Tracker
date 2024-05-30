@@ -8,12 +8,27 @@
 import Foundation
 
 final class StatisticsViewModel {
-    private let statistics: [TrackersStatistics] = [
-        TrackersStatistics(name: "Лучший период", count: 6),
-        TrackersStatistics(name: "Идеальные дни", count: 2),
-        TrackersStatistics(name: "Трекеров завершено", count: 5),
-        TrackersStatistics(name: "Среднее значение", count: 4)
-    ]
+    private let dataStore = StatisticsStore.shared
+    private var statistics: [TrackersStatistics] = []
+    var updateData: Binding<Bool>?
+    
+    func getData() {
+        let bestPeriod = dataStore.bestPeriod()
+        let perfectDays = dataStore.perfectDays()
+        let completedTrackers = dataStore.completedTrackers()
+        let averageValue = dataStore.averageValue()
+        if bestPeriod > 0 || perfectDays > 0 || completedTrackers > 0 || averageValue > 0 {
+            statistics = [
+                TrackersStatistics(name: "Лучший период", count: bestPeriod),
+                TrackersStatistics(name: "Идеальные дни", count: perfectDays),
+                TrackersStatistics(name: "Трекеров завершено", count: completedTrackers),
+                TrackersStatistics(name: "Среднее значение", count: averageValue)
+            ]
+        } else {
+            statistics = []
+        }
+        updateData?(true)
+    }
     
     var hasData: Bool {
         return numberOfRowsInSection(0) > 0
