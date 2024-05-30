@@ -78,7 +78,6 @@ final class CategoryViewController: UIViewController {
         super.viewDidLoad()
         setupCategoryViewController()
         updateCategories()
-        
     }
     
     private func setupCategoryViewController() {

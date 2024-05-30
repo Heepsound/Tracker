@@ -10,8 +10,8 @@ import CoreData
 final class TrackerRecordStore {
     static let shared = TrackerRecordStore()
     
-    private var coreDataManager = CoreDataManager.shared
-    private var trackerStore = TrackerStore.shared
+    private let coreDataManager = CoreDataManager.shared
+    private let trackerStore = TrackerStore.shared
     
     // MARK: - Lifecycle
     
@@ -22,6 +22,8 @@ final class TrackerRecordStore {
         let record = TrackerRecordCoreData(context: coreDataManager.context)
         record.tracker = tracker
         record.date = onDate
+        let weekday = Calendar.current.dateComponents([.weekday], from: onDate).weekday ?? 0
+        record.dayOfWeek = Int16(weekday)
         coreDataManager.saveContext()
     }
     
