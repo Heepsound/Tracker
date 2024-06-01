@@ -97,18 +97,19 @@ final class TrackerStore: NSObject {
         argumentsArray.append(weekday?.rawValue ?? 1)
         argumentsArray.append(#keyPath(TrackerCoreData.trackerType))
         argumentsArray.append(TrackerTypes.irregularEvent.rawValue)
-        if filter == .completed {
+        switch filter {
+        case .completed:
             requestText.append(")) and any %K.%K == %@)")
             argumentsArray.append(#keyPath(TrackerCoreData.records))
             argumentsArray.append(#keyPath(TrackerRecordCoreData.date))
             argumentsArray.append(date as CVarArg)
-        } else if filter == .notCompleted {
+        case .notCompleted:
             requestText.append(")) and (any %K == nil or NOT (%K.%K CONTAINS %@)))")
             argumentsArray.append(#keyPath(TrackerCoreData.records))
             argumentsArray.append(#keyPath(TrackerCoreData.records))
             argumentsArray.append(#keyPath(TrackerRecordCoreData.date))
             argumentsArray.append(date as CVarArg)
-        } else {
+        default:
             requestText.append(" and (any %K == nil or any %K.%K == %@))) or %K = true)")
             argumentsArray.append(#keyPath(TrackerCoreData.records))
             argumentsArray.append(#keyPath(TrackerCoreData.records))
