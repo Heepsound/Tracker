@@ -1,0 +1,65 @@
+/* 
+  Localizable.strings
+  Tracker
+
+  Created by Владимир Горбачев on 18.05.2024.
+  
+*/
+
+habit = "Habit";
+irregularEvent = "Irregular event";
+
+category = "Category";
+schedule = "Schedule";
+
+undefined = "Undefined";
+
+deleteButton.title = "Delete";
+cancelButton.title = "Cancel";
+
+onboarding.page1.title = "Track only what you want";
+onboarding.page2.title = "Even if it's not liters of water and yoga";
+onboarding.confirmButton.title = "These are technologies!";
+
+trackers.title = "Trackers";
+trackers.searchBar.placeholder = "Search";
+trackers.noTrackersLabel = "What are we going to track?";
+trackers.noTrackersFoundLabel = "Nothing was found";
+trackers.menu.pin = "Pin";
+trackers.menu.unpin = "Unpin";
+trackers.menu.edit = "Edit";
+trackers.filtersButton.title = "Filters";
+trackers.deleteAlert.title = "Are you sure you want to delete the tracker?";
+
+tabBar.trackers.title = "Trackers";
+tabBar.statistics.title = "Statistics";
+
+newTracker.trackerName.placeholder = "Enter tracker name";
+newTracker.addButton.title = "Create";
+newTracker.saveButton.title = "Save";
+
+newTracker.newIrregularEvent = "New irregular event";
+newTracker.newHabit = "New habit";
+newTracker.editIrregularEvent = "Editing a irregular event";
+newTracker.editHabit = "Editing a habit";
+
+newTracker.colorCollection.title = "Color";
+
+trackerType.title = "Creating a tracker";
+trackerTypeCell.schedule.everyDay = "Every day";
+
+filters.title = "Filters";
+
+categories.noCategoryLabel = "Habits and events can be \ncombined by meaning";
+categories.addButton.title = "Add category";
+categories.deleteAlert.title = "Are you sure this category is not needed?";
+
+newCategory.title = "New category";
+newCategory.editTitle = "Editing a category";
+newCategory.categoryName.placeholder = "Enter category name";
+newCategory.addButton.title = "Done";
+
+schedule.title = "Schedule";
+schedule.confirmButton.title = "Done";
+
+statistics.noStatisticsLabel = "There is nothing to analyze yet";

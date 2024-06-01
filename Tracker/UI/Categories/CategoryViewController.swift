@@ -10,8 +10,8 @@ import UIKit
 final class CategoryViewController: UIViewController {
     private var titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Категория"
-        label.textColor = .trackerBlack
+        label.text = NSLocalizedString("category", comment: "Заголовок категория")
+        label.textColor = .trackerText
         label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         return label
     }()
@@ -27,8 +27,8 @@ final class CategoryViewController: UIViewController {
     }()
     private var noCategoryLabel: UILabel = {
         let label = UILabel()
-        label.text = "Привычки и события можно \nобъединить по смыслу"
-        label.textColor = .trackerBlack
+        label.text = NSLocalizedString("categories.noCategoryLabel", comment: "Текст при отсутствии категорий")
+        label.textColor = .trackerText
         label.font = UIFont.systemFont(ofSize: 12)
         label.numberOfLines = 0
         label.textAlignment = .center
@@ -39,16 +39,20 @@ final class CategoryViewController: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.backgroundColor = .clear
+        tableView.separatorColor = .trackerSeparator
+        tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         tableView.layer.masksToBounds = true
         tableView.layer.cornerRadius = 16
+        tableView.allowsMultipleSelection = false
         tableView.register(CategoryCell.self, forCellReuseIdentifier: CategoryCell.reuseIdentifier)
         return tableView
     }()
     private lazy var addCategoryButton: UIButton = {
         let button = UIButton(type: .custom)
-        button.backgroundColor = .trackerBlack
-        button.setTitle("Добавить категорию", for: .normal)
-        button.setTitleColor(.trackerWhite, for: .normal)
+        button.backgroundColor = .trackerButtonBackground
+        let buttonTitle = NSLocalizedString("categories.addButton.title", comment: "Заголовок кнопки создания новой категории")
+        button.setTitle(buttonTitle, for: .normal)
+        button.setTitleColor(.trackerButtonText, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
@@ -74,11 +78,10 @@ final class CategoryViewController: UIViewController {
         super.viewDidLoad()
         setupCategoryViewController()
         updateCategories()
-        
     }
     
     private func setupCategoryViewController() {
-        view.backgroundColor = .trackerWhite
+        view.backgroundColor = .trackerBackground
         addSubViews()
         applyConstraints()
     }
@@ -133,6 +136,7 @@ final class CategoryViewController: UIViewController {
             self?.tableView.performBatchUpdates {
                 self?.tableView.insertRows(at: update.insertedIndexPaths, with: .automatic)
                 self?.tableView.deleteRows(at: update.deletedIndexPaths, with: .fade)
+                self?.tableView.reloadRows(at: update.updatedIndexPaths, with: .fade)
             }
             self?.updateCategories()
         }
@@ -149,6 +153,7 @@ final class CategoryViewController: UIViewController {
     
     @objc private func didTapAddCategoryButton() {
         let newCategoryViewController = NewCategoryViewController()
+        newCategoryViewController.delegate = self
         self.present(newCategoryViewController, animated: true)
     }
 }
@@ -190,6 +195,42 @@ extension CategoryViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 75
     }
+    
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        return .none
+    }
+    
+    func tableView(
+        _ tableView: UITableView,
+        contextMenuConfigurationForRowAt indexPath: IndexPath,
+        point: CGPoint
+    ) -> UIContextMenuConfiguration? {
+        let editTitle = NSLocalizedString("trackers.menu.edit", comment: "Заголовок действия - Редактировать")
+        let deleteTitle = NSLocalizedString("deleteButton.title", comment: "Заголовок действия - Удалить")
+        
+        return UIContextMenuConfiguration(actionProvider: { actions in
+            return UIMenu(children: [
+                UIAction(title: editTitle) { [weak self] _ in
+                    let newCategoryViewController = NewCategoryViewController()
+                    newCategoryViewController.initialize(indexPath: indexPath)
+                    newCategoryViewController.delegate = self
+                    self?.present(newCategoryViewController, animated: true)
+                },
+                UIAction(title: deleteTitle, attributes: [.destructive]) { [weak self] _ in
+                    let alertTitle = NSLocalizedString("categories.deleteAlert.title", comment: "Заголовок подтверждения удаления категории")
+                    AlertPresenter.confirmDelete(title: alertTitle, delegate: self) {
+                        self?.viewModel.delete(at: indexPath)
+                    }
+                }
+            ])
+        })
+    }
 }
 
+// MARK: - EntityEditViewControllerDelegate
 
+extension CategoryViewController: EntityEditViewControllerDelegate {
+    func editingСompleted(_ value: Any?) {
+        self.dismiss(animated: true)
+    }
+}

@@ -10,7 +10,7 @@ import UIKit
 final class TrackerHeaderView: UICollectionReusableView {
     private var titleLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .trackerBlack
+        label.textColor = .trackerText
         label.font = UIFont.boldSystemFont(ofSize: 19)
         return label
     }()
@@ -20,7 +20,7 @@ final class TrackerHeaderView: UICollectionReusableView {
             if let title {
                 titleLabel.text = title
             } else {
-                titleLabel.text = "Неопределено"
+                titleLabel.text = NSLocalizedString("undefined", comment: "Значение неопределено")
             }
         }
     }

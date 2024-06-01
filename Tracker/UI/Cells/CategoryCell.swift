@@ -10,9 +10,14 @@ import UIKit
 final class CategoryCell: UITableViewCell {
     private var titleLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .trackerBlack
+        label.textColor = .trackerText
         label.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         return label
+    }()
+    private var markImageView: UIImageView = {
+        let imageView = UIImageView(image: .mark)
+        imageView.isHidden = true
+        return imageView
     }()
     
     var categoryName: String? {
@@ -20,7 +25,17 @@ final class CategoryCell: UITableViewCell {
             if let categoryName {
                 titleLabel.text = categoryName
             } else {
-                titleLabel.text = "Неопределено"
+                titleLabel.text = NSLocalizedString("undefined", comment: "Значение неопределено")
+            }
+        }
+    }
+    
+    var isMarked: Bool? {
+        didSet {
+            if let isMarked {
+                markImageView.isHidden = !isMarked
+            } else {
+                markImageView.isHidden = true
             }
         }
     }
@@ -39,21 +54,29 @@ final class CategoryCell: UITableViewCell {
     }
     
     private func setupCategoryCell() {
-        backgroundColor = .trackerFieldAlpha30
+        backgroundColor = .trackerTextField
         selectionStyle = .none
         addSubViews()
         applyConstraints()
     }
     
     private func addSubViews() {
-        self.addSubviewWithoutAutoresizingMask(titleLabel)
+        [titleLabel, markImageView].forEach { subview in
+            self.addSubviewWithoutAutoresizingMask(subview)
+        }
     }
     
     private func applyConstraints() {
         NSLayoutConstraint.activate([
             titleLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor),
             titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16)
+            titleLabel.trailingAnchor.constraint(equalTo: markImageView.leadingAnchor, constant: -16)
+        ])
+        NSLayoutConstraint.activate([
+            markImageView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
+            markImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            markImageView.widthAnchor.constraint(equalToConstant: 24),
+            markImageView.heightAnchor.constraint(equalToConstant: 24)
         ])
     }
 }

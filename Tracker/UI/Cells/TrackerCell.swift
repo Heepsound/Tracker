@@ -27,6 +27,12 @@ final class TrackerCell: UICollectionViewCell {
         label.backgroundColor = .clear
         return label
     }()
+    private var pinImageView: UIImageView = {
+        let imageView = UIImageView(image: .pin)
+        imageView.backgroundColor = .clear
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
     private var cardLabel: UILabel = {
         let label = UILabel()
         label.layer.cornerRadius = 16
@@ -36,7 +42,7 @@ final class TrackerCell: UICollectionViewCell {
     }()
     private var counterLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .trackerBlack
+        label.textColor = .trackerText
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         return label
     }()
@@ -59,6 +65,7 @@ final class TrackerCell: UICollectionViewCell {
             cardLabel.backgroundColor = color
             completedButton.backgroundColor = color
             emojiLabel.text = tracker.emoji
+            pinImageView.isHidden = !tracker.pinned
             if let indexPath {
                 isDone = viewModel?.isDoneOnDate(indexPath: indexPath) ?? false
                 doneTimes = viewModel?.recordCount(indexPath: indexPath) ?? 0
@@ -71,7 +78,10 @@ final class TrackerCell: UICollectionViewCell {
     
     private var doneTimes: Int = 0 {
         didSet {
-            counterLabel.text = "\(doneTimes) дней"
+            counterLabel.text = String.localizedStringWithFormat(
+                NSLocalizedString("recordsCount", comment: "Количество завершённых трекеров"),
+                doneTimes
+            )
         }
     }
     
@@ -86,10 +96,12 @@ final class TrackerCell: UICollectionViewCell {
             }
         }
     }
-    
+ 
     var indexPath: IndexPath?
     var viewModel: TrackerViewModel?
     static let reuseIdentifier = "trackerCell"
+    
+    private let appMetricaScreenName: String = "main"
     
     // MARK: - Lifecycle
     
@@ -105,15 +117,18 @@ final class TrackerCell: UICollectionViewCell {
     private func setupTrackerCell() {
         addSubViews()
         applyConstraints()
+        layer.cornerRadius = 16
+        layer.masksToBounds = true
     }
     
     private func addSubViews() {
-        contentView.addSubviewWithoutAutoresizingMask(cardLabel)
-        cardLabel.addSubviewWithoutAutoresizingMask(emojiBackgroundLabel)
         emojiBackgroundLabel.addSubviewWithoutAutoresizingMask(emojiLabel)
-        cardLabel.addSubviewWithoutAutoresizingMask(titleLabel)
-        contentView.addSubviewWithoutAutoresizingMask(counterLabel)
-        contentView.addSubviewWithoutAutoresizingMask(completedButton)
+        [emojiBackgroundLabel, titleLabel, pinImageView].forEach { subview in
+            cardLabel.addSubviewWithoutAutoresizingMask(subview)
+        }
+        [cardLabel, counterLabel, completedButton].forEach { subview in
+            contentView.addSubviewWithoutAutoresizingMask(subview)
+        }
     }
     
     private func applyConstraints() {
@@ -145,6 +160,13 @@ final class TrackerCell: UICollectionViewCell {
         ])
         
         NSLayoutConstraint.activate([
+            pinImageView.widthAnchor.constraint(equalToConstant: 24),
+            pinImageView.heightAnchor.constraint(equalToConstant: 24),
+            pinImageView.topAnchor.constraint(equalTo: cardLabel.topAnchor, constant: 12),
+            pinImageView.trailingAnchor.constraint(equalTo: cardLabel.trailingAnchor, constant: -4)
+        ])
+        
+        NSLayoutConstraint.activate([
             counterLabel.leadingAnchor.constraint(equalTo: cardLabel.leadingAnchor, constant: 12),
             counterLabel.topAnchor.constraint(equalTo: cardLabel.bottomAnchor, constant: 16),
             counterLabel.trailingAnchor.constraint(equalTo: cardLabel.trailingAnchor, constant: -12)
@@ -161,6 +183,7 @@ final class TrackerCell: UICollectionViewCell {
     // MARK: - Actions
     
     @objc private func didTapCompletedButton() {
+        AppMetrica.sendEvent(event: AppMetricaEvents.click, screen: appMetricaScreenName, item: "track")
         guard let indexPath else { return }
         if isDone {
             viewModel?.deleteRecord(indexPath: indexPath)

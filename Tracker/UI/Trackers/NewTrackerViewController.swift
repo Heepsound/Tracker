@@ -7,23 +7,26 @@
 
 import UIKit
 
-protocol NewTrackerViewControllerDelegate: AnyObject {
-    func creationСompleted()
-}
-
 final class NewTrackerViewController: UIViewController {
     private var titleLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .trackerBlack
+        label.textColor = .trackerText
         label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        return label
+    }()
+    private var counterLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .trackerText
+        label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
+        label.textAlignment = .center
         return label
     }()
     private lazy var nameTextField: UITextField = {
         let textField = UITextField()
-        textField.textColor = .trackerBlack
+        textField.textColor = .trackerText
         textField.borderStyle = .none
-        textField.placeholder = "Введите название трекера"
-        textField.backgroundColor = .trackerFieldAlpha30
+        textField.placeholder = NSLocalizedString("newTracker.trackerName.placeholder", comment: "Подсказка ввода названия трекера")
+        textField.backgroundColor = .trackerTextField
         textField.layer.cornerRadius = 16
         textField.layer.masksToBounds = true
         textField.font = UIFont.systemFont(ofSize: 17, weight: .regular)
@@ -37,7 +40,9 @@ final class NewTrackerViewController: UIViewController {
         let tableView = UITableView.init(frame: .zero, style: .plain)
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.backgroundColor = .trackerFieldAlpha30
+        tableView.backgroundColor = .clear
+        tableView.separatorColor = .trackerSeparator
+        tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         tableView.layer.masksToBounds = true
         tableView.layer.cornerRadius = 16
         tableView.register(TrackerTypeCell.self, forCellReuseIdentifier: TrackerTypeCell.reuseIdentifier)
@@ -65,8 +70,11 @@ final class NewTrackerViewController: UIViewController {
         let button = UIButton(type: .custom)
         button.backgroundColor = .trackerGray
         button.isEnabled = false
-        button.setTitle("Создать", for: .normal)
-        button.setTitleColor(.trackerWhite, for: .normal)
+        let buttonTitle = viewModel.isEditMode ?
+            NSLocalizedString("newTracker.saveButton.title", comment: "Заголовок кнопки сохранения отредактированного трекера") :
+            NSLocalizedString("newTracker.addButton.title", comment: "Заголовок кнопки подтверждения создания нового трекера")
+        button.setTitle(buttonTitle, for: .normal)
+        button.setTitleColor(.trackerButtonText, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
@@ -75,14 +83,15 @@ final class NewTrackerViewController: UIViewController {
     }()
     private lazy var cancelButton: UIButton = {
         let button = UIButton(type: .custom)
-        button.backgroundColor = .trackerWhite
-        button.setTitle("Отменить", for: .normal)
-        button.setTitleColor(.trackerPink, for: .normal)
+        button.backgroundColor = .clear
+        let buttonTitle = NSLocalizedString("cancelButton.title", comment: "Заголовок кнопки отмены создания нового трекера")
+        button.setTitle(buttonTitle, for: .normal)
+        button.setTitleColor(.trackerRed, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
         button.layer.borderWidth = 1
-        button.layer.borderColor = UIColor.trackerPink.cgColor
+        button.layer.borderColor = UIColor.trackerRed.cgColor
         button.addTarget(self, action: #selector(didTapCancelButton), for: .touchUpInside)
         return button
     }()
@@ -98,7 +107,7 @@ final class NewTrackerViewController: UIViewController {
         return scroll
     }()
     
-    weak var delegate: NewTrackerViewControllerDelegate?
+    weak var delegate: EntityEditViewControllerDelegate?
     private let viewModel: NewTrackerViewModel = NewTrackerViewModel()
     
     // MARK: - Lifecycle
@@ -114,6 +123,15 @@ final class NewTrackerViewController: UIViewController {
     
     func initialize(trackerType: TrackerTypes) {
         viewModel.trackerType = trackerType
+        counterLabel.isHidden = true
+    }
+    
+    func initialize(indexPath: IndexPath) {
+        viewModel.indexPath = indexPath
+        counterLabel.text = String.localizedStringWithFormat(
+            NSLocalizedString("recordsCount", comment: "Количество завершённых трекеров"),
+            viewModel.recordCount(indexPath: indexPath)
+        )
     }
     
     override func viewDidLoad() {
@@ -123,10 +141,15 @@ final class NewTrackerViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        if viewModel.isEditMode {
+            emojisCollectionView.selectItem(at: viewModel.emojiIndexPath, animated: true, scrollPosition: .centeredVertically)
+            colorsCollectionView.selectItem(at: viewModel.colorIndexPath, animated: true, scrollPosition: .centeredVertically)
+        }
         let contentRect: CGRect = scrollView.subviews.reduce(into: .zero) { rect, view in
             rect = rect.union(view.frame)
         }
         scrollView.contentSize = CGSize(width: self.view.frame.size.width, height: contentRect.height)
+        
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -135,11 +158,20 @@ final class NewTrackerViewController: UIViewController {
     }
     
     private func setupNewTrackerViewController() {
-        view.backgroundColor = .trackerWhite
+        view.backgroundColor = .trackerBackground
+        if let trackerName = viewModel.trackerName {
+            nameTextField.text = trackerName
+        }
+        let newIrregularEvent = viewModel.isEditMode ?
+            NSLocalizedString("newTracker.editIrregularEvent", comment: "Текст заголовка формы редактирования трекера с нерегулярным событием") :
+            NSLocalizedString("newTracker.newIrregularEvent", comment: "Текст заголовка формы создания трекера с нерегулярным событием")
+        let newHabit = viewModel.isEditMode ?
+            NSLocalizedString("newTracker.editHabit", comment: "Текст заголовка формы редактирования трекера с привычкой") :
+            NSLocalizedString("newTracker.newHabit", comment: "Текст заголовка формы создания трекера с привычкой")
         if let isIrregularEvent = viewModel.isIrregularEvent {
-            titleLabel.text = isIrregularEvent ? "Новое нерегулярное событие" : "Новая привычка"
+            titleLabel.text = isIrregularEvent ? newIrregularEvent : newHabit
         } else {
-            titleLabel.text = "Новое нерегулярное событие"
+            titleLabel.text = newIrregularEvent
         }
         let indexPaths = (0..<viewModel.categoryRowsCount).map { i in
             IndexPath(row: i, section: 0)
@@ -154,7 +186,7 @@ final class NewTrackerViewController: UIViewController {
         [titleLabel, scrollView].forEach { subview in
             view.addSubviewWithoutAutoresizingMask(subview)
         }
-        [nameTextField, tableView, emojisCollectionView, colorsCollectionView, buttonsStackView].forEach { subview in
+        [counterLabel, nameTextField, tableView, emojisCollectionView, colorsCollectionView, buttonsStackView].forEach { subview in
             scrollView.addSubviewWithoutAutoresizingMask(subview)
         }
         [cancelButton, addButton].forEach { subview in
@@ -174,10 +206,15 @@ final class NewTrackerViewController: UIViewController {
             scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
         NSLayoutConstraint.activate([
+            counterLabel.widthAnchor.constraint(equalToConstant: 343),
+            counterLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            counterLabel.topAnchor.constraint(equalTo: scrollView.topAnchor)
+        ])
+        NSLayoutConstraint.activate([
             nameTextField.widthAnchor.constraint(equalToConstant: 343),
             nameTextField.heightAnchor.constraint(equalToConstant: 75),
             nameTextField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            nameTextField.topAnchor.constraint(equalTo: scrollView.topAnchor)
+            nameTextField.topAnchor.constraint(equalTo: counterLabel.bottomAnchor, constant: counterLabel.isHidden ? 0 : 38)
         ])
         NSLayoutConstraint.activate([
             tableView.widthAnchor.constraint(equalToConstant: 343),
@@ -214,19 +251,20 @@ final class NewTrackerViewController: UIViewController {
     private func bind() {
         viewModel.allDataEntered = { [weak self] allDataEntered in
             self?.addButton.isEnabled = allDataEntered
-            self?.addButton.backgroundColor = allDataEntered ? UIColor.trackerBlack : UIColor.trackerGray
+            self?.addButton.backgroundColor = allDataEntered ? UIColor.trackerButtonBackground : UIColor.trackerGray
+            self?.addButton.setTitleColor(allDataEntered ? UIColor.trackerButtonText : UIColor.trackerWhite, for: .normal)
         }
     }
     
     // MARK: - Actions
     
     @objc private func didTapAddButton() {
-        viewModel.add()
-        delegate?.creationСompleted()
+        viewModel.save()
+        delegate?.editingСompleted(nil)
     }
     
     @objc private func didTapCancelButton() {
-        delegate?.creationСompleted()
+        delegate?.editingСompleted(nil)
     }
     
     @objc private func nameTextFieldDidChange(_ sender: UITextField) {
@@ -339,7 +377,7 @@ extension NewTrackerViewController: UICollectionViewDataSource {
             if collectionView == emojisCollectionView {
                 view.title = "Emoji"
             } else {
-                view.title = "Цвет"
+                view.title = NSLocalizedString("newTracker.colorCollection.title", comment: "Текст заголовка коллекции цветов")
             }
             return view
         case UICollectionView.elementKindSectionFooter:
@@ -393,10 +431,6 @@ extension NewTrackerViewController: UICollectionViewDelegate {
             let cell = collectionView.cellForItem(at: indexPath) as? ColorCell
             viewModel.trackerColor = cell?.hexColor
         }
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        
     }
 }
 

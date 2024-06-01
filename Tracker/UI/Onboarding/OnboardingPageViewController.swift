@@ -25,7 +25,8 @@ final class OnboardingPageViewController: UIViewController {
     private lazy var confirmButton: UIButton = {
         let button = UIButton(type: .custom)
         button.backgroundColor = .trackerBlack
-        button.setTitle("Вот это технологии!", for: .normal)
+        let buttonTitle = NSLocalizedString("onboarding.confirmButton.title", comment: "Заголовок кнопки завершения онбординга")
+        button.setTitle(buttonTitle, for: .normal)
         button.setTitleColor(.trackerWhite, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16

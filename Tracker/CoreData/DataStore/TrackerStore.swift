@@ -13,14 +13,14 @@ final class TrackerStore: NSObject {
     private var coreDataManager = CoreDataManager.shared
     
     weak var delegate: DataStoreDelegate?
-    private var insertedIndexPaths: [IndexPath] = []
-    private var deletedIndexPaths: [IndexPath] = []
+    private var dataStoreUpdate = DataStoreUpdate()
     
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCoreData> = {
         let request = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
-        request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
-        request.propertiesToFetch = ["name", "color", "emoji", "trackerType", "category"]
-        let fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: coreDataManager.context, sectionNameKeyPath: "category", cacheName: nil)
+        let categorySortDescriptor = NSSortDescriptor(key: "category.name", ascending: true)
+        let nameSortDescriptor = NSSortDescriptor(key: "name", ascending: true)
+        request.sortDescriptors = [categorySortDescriptor, nameSortDescriptor]
+        let fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: coreDataManager.context, sectionNameKeyPath: "category.name", cacheName: nil)
         fetchedResultsController.delegate = self
         return fetchedResultsController
     }()
@@ -38,23 +38,47 @@ final class TrackerStore: NSObject {
         return sections.isEmpty ? .zero : sections[section].numberOfObjects
     }
     
-    func object(at indexPath: IndexPath) -> TrackerCoreData? {
+    func object(at indexPath: IndexPath) -> TrackerCoreData {
         return fetchedResultsController.object(at: indexPath)
     }
     
-    func add(_ tracker: Tracker, _ category: TrackerCategory) {
-        let object = TrackerCoreData(context: coreDataManager.context)
-        object.id = tracker.id
+    func save(_ tracker: Tracker, _ category: TrackerCategory, at indexPath: IndexPath?) {
+        if let indexPath {
+            let object = object(at: indexPath)
+            fillData(object: object, tracker, category)
+            coreDataManager.saveContext()
+        } else {
+            let object = TrackerCoreData(context: coreDataManager.context)
+            object.id = tracker.id
+            fillData(object: object, tracker, category)
+            coreDataManager.saveContext()
+        }
+    }
+    
+    private func fillData(object: TrackerCoreData, _ tracker: Tracker, _ category: TrackerCategory) {
         object.name = tracker.name
         object.trackerType = Int16(tracker.trackerType.rawValue)
         object.color = tracker.color
         object.emoji = tracker.emoji
+        object.pinned = tracker.pinned
         object.category = TrackerCategoryStore.shared.object(category)
-        for shedule in tracker.schedule {
-            let scheduleEntity = ScheduleCoreData(context: coreDataManager.context)
-            scheduleEntity.dayOfWeek = Int16(shedule.rawValue)
-            scheduleEntity.tracker = object
+        if let schedule = object.schedule?.allObjects {
+            for item in schedule {
+                if let scheduleObject = item as? ScheduleCoreData {
+                    coreDataManager.context.delete(scheduleObject)
+                }
+            }
         }
+        for item in tracker.schedule {
+            let schedule = ScheduleCoreData(context: coreDataManager.context)
+            schedule.dayOfWeek = Int16(item.rawValue)
+            schedule.tracker = object
+        }
+    }
+    
+    func setPinned(at indexPath: IndexPath) {
+        let object = object(at: indexPath)
+        object.pinned = !object.pinned
         coreDataManager.saveContext()
     }
     
@@ -64,18 +88,39 @@ final class TrackerStore: NSObject {
         coreDataManager.saveContext()
     }
     
-    func getOnDate(date: Date) {
-        let weekday = DaysOfWeek.dayByNumber(Calendar.current.component(.weekday, from: date))
-        fetchedResultsController.fetchRequest.predicate = NSPredicate(format: "(any %K.%K == %ld) or ((any %K == nil or any %K.%K == %@) and %K == %ld)",
-                                                                      #keyPath(TrackerCoreData.schedule),
-                                                                      #keyPath(ScheduleCoreData.dayOfWeek),
-                                                                      weekday?.rawValue ?? 1,
-                                                                      #keyPath(TrackerCoreData.records),
-                                                                      #keyPath(TrackerCoreData.records),
-                                                                      #keyPath(TrackerRecordCoreData.date),
-                                                                      date as CVarArg,
-                                                                      #keyPath(TrackerCoreData.trackerType),
-                                                                      TrackerTypes.irregularEvent.rawValue)
+    func getOnDate(date: Date, searchBy searchedText: String, filterBy filter: FilterTypes) {
+        let weekday = DaysOfWeek(rawValue: Calendar.current.component(.weekday, from: date))
+        var requestText = "((any %K.%K == %ld or (%K == %ld"
+        var argumentsArray: [Any] = []
+        argumentsArray.append(#keyPath(TrackerCoreData.schedule))
+        argumentsArray.append(#keyPath(ScheduleCoreData.dayOfWeek))
+        argumentsArray.append(weekday?.rawValue ?? 1)
+        argumentsArray.append(#keyPath(TrackerCoreData.trackerType))
+        argumentsArray.append(TrackerTypes.irregularEvent.rawValue)
+        if filter == .completed {
+            requestText.append(")) and any %K.%K == %@)")
+            argumentsArray.append(#keyPath(TrackerCoreData.records))
+            argumentsArray.append(#keyPath(TrackerRecordCoreData.date))
+            argumentsArray.append(date as CVarArg)
+        } else if filter == .notCompleted {
+            requestText.append(")) and (any %K == nil or NOT (%K.%K CONTAINS %@)))")
+            argumentsArray.append(#keyPath(TrackerCoreData.records))
+            argumentsArray.append(#keyPath(TrackerCoreData.records))
+            argumentsArray.append(#keyPath(TrackerRecordCoreData.date))
+            argumentsArray.append(date as CVarArg)
+        } else {
+            requestText.append(" and (any %K == nil or any %K.%K == %@))) or %K = true)")
+            argumentsArray.append(#keyPath(TrackerCoreData.records))
+            argumentsArray.append(#keyPath(TrackerCoreData.records))
+            argumentsArray.append(#keyPath(TrackerRecordCoreData.date))
+            argumentsArray.append(date as CVarArg)
+            argumentsArray.append(#keyPath(TrackerCoreData.pinned))
+        }
+        if !searchedText.isEmpty {
+            requestText.append(" and name CONTAINS[cd] %@")
+            argumentsArray.append(searchedText as CVarArg)
+        }
+        fetchedResultsController.fetchRequest.predicate = NSPredicate(format: requestText, argumentArray: argumentsArray)
         try? fetchedResultsController.performFetch()
     }
 }
@@ -84,17 +129,12 @@ final class TrackerStore: NSObject {
 
 extension TrackerStore: NSFetchedResultsControllerDelegate {
     func controllerWillChangeContent(_ controller: NSFetchedResultsController<any NSFetchRequestResult>) {
-        insertedIndexPaths = []
-        deletedIndexPaths = []
+        dataStoreUpdate.clear()
     }
     
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<any NSFetchRequestResult>) {
-        delegate?.didUpdate(DataStoreUpdate(
-            insertedIndexPaths: insertedIndexPaths,
-            deletedIndexPaths: deletedIndexPaths
-        ))
-        insertedIndexPaths = []
-        deletedIndexPaths = []
+        delegate?.didUpdate(DataStoreUpdate(from: dataStoreUpdate))
+        dataStoreUpdate.clear()
     }
     
     func controller(
@@ -107,10 +147,13 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
         switch type {
         case .delete:
             guard let indexPath else { return }
-            deletedIndexPaths.append(indexPath)
+            dataStoreUpdate.deletedIndexPaths.append(indexPath)
         case .insert:
             guard let newIndexPath else { return }
-            insertedIndexPaths.append(newIndexPath)
+            dataStoreUpdate.insertedIndexPaths.append(newIndexPath)
+        case .update:
+            guard let indexPath else { return }
+            dataStoreUpdate.updatedIndexPaths.append(indexPath)
         default:
             break
         }

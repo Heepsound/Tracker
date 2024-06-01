@@ -10,7 +10,7 @@ import UIKit
 final class TrackerTypeCell: UITableViewCell {
     private var titleLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .trackerBlack
+        label.textColor = .trackerText
         label.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         return label
     }()
@@ -37,11 +37,11 @@ final class TrackerTypeCell: UITableViewCell {
         didSet {
             if let isSchedule {
                 if isSchedule {
-                    titleLabel.text = "Расписание"
+                    titleLabel.text = NSLocalizedString("schedule", comment: "Заголовок расписание")
                     valueLabel.text = ""
                     guard let schedule = viewModel?.trackerSchedule else { return }
                     if schedule.count == 7 {
-                        valueLabel.text = "Каждый день"
+                        valueLabel.text = NSLocalizedString("trackerTypeCell.schedule.everyDay", comment: "Заголовок при выборе всех дней в расписаниии")
                     } else {
                         for dayOfWeek in schedule {
                             if let isEmpty = valueLabel.text?.isEmpty, !isEmpty {
@@ -51,11 +51,11 @@ final class TrackerTypeCell: UITableViewCell {
                         }
                     }
                 } else {
-                    titleLabel.text = "Категория"
+                    titleLabel.text = NSLocalizedString("category", comment: "Заголовок категория")
                     valueLabel.text = viewModel?.trackerCategory?.name ?? ""
                 }
             } else {
-                titleLabel.text = "Неопределено"
+                titleLabel.text = NSLocalizedString("undefined", comment: "Значение неопределено")
                 valueLabel.text = ""
             }
         }
@@ -77,8 +77,7 @@ final class TrackerTypeCell: UITableViewCell {
     }
     
     private func setupCategoryCell() {
-        backgroundColor = .clear
-        contentView.backgroundColor = .clear
+        backgroundColor = .trackerTextField
         selectionStyle = .none
         addSubViews()
         applyConstraints()

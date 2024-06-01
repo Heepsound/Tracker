@@ -1,0 +1,65 @@
+/* 
+  Localizable.strings
+  Tracker
+
+  Created by Владимир Горбачев on 18.05.2024.
+  
+*/
+
+habit = "Привычка";
+irregularEvent = "Нерегулярное событие";
+
+category = "Категория";
+schedule = "Расписание";
+
+undefined = "Неопределено";
+
+deleteButton.title = "Удалить";
+cancelButton.title = "Отменить";
+
+onboarding.page1.title = "Отслеживайте только то, что хотите";
+onboarding.page2.title = "Даже если это не литры воды и йога";
+onboarding.confirmButton.title = "Вот это технологии!";
+
+trackers.title = "Трекеры";
+trackers.searchBar.placeholder = "Поиск";
+trackers.noTrackersLabel = "Что будем отслеживать?";
+trackers.noTrackersFoundLabel = "Ничего не найдено";
+trackers.menu.pin = "Закрепить";
+trackers.menu.unpin = "Открепить";
+trackers.menu.edit = "Редактировать";
+trackers.filtersButton.title = "Фильтры";
+trackers.deleteAlert.title = "Уверены что хотите удалить трекер?";
+
+tabBar.trackers.title = "Трекеры";
+tabBar.statistics.title = "Статистика";
+
+newTracker.trackerName.placeholder = "Введите название трекера";
+newTracker.addButton.title = "Создать";
+newTracker.saveButton.title = "Сохранить";
+
+newTracker.newIrregularEvent = "Новое нерегулярное событие";
+newTracker.newHabit = "Новая привычка";
+newTracker.editIrregularEvent = "Редактирование нерегулярного события";
+newTracker.editHabit = "Редактирование привычки";
+
+newTracker.colorCollection.title = "Цвет";
+
+trackerType.title = "Создание трекера";
+trackerTypeCell.schedule.everyDay = "Каждый день";
+
+filters.title = "Фильтры";
+
+categories.noCategoryLabel = "Привычки и события можно \nобъединить по смыслу";
+categories.addButton.title = "Добавить категорию";
+categories.deleteAlert.title = "Эта категория точно не нужна?";
+
+newCategory.title = "Новая категория";
+newCategory.editTitle = "Редактирование категории";
+newCategory.categoryName.placeholder = "Введите название категории";
+newCategory.addButton.title = "Готово";
+
+schedule.title = "Расписание";
+schedule.confirmButton.title = "Готово";
+
+statistics.noStatisticsLabel = "Анализировать пока нечего";

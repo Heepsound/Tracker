@@ -10,23 +10,25 @@ import CoreData
 final class TrackerRecordStore {
     static let shared = TrackerRecordStore()
     
-    private var coreDataManager = CoreDataManager.shared
-    private var trackerStore = TrackerStore.shared
+    private let coreDataManager = CoreDataManager.shared
+    private let trackerStore = TrackerStore.shared
     
     // MARK: - Lifecycle
     
     private init() {}
     
     func add(indexPath: IndexPath, onDate: Date) {
-        guard let tracker = trackerStore.object(at: indexPath) else { return }
+        let tracker = trackerStore.object(at: indexPath)
         let record = TrackerRecordCoreData(context: coreDataManager.context)
         record.tracker = tracker
         record.date = onDate
+        let weekday = Calendar.current.dateComponents([.weekday], from: onDate).weekday ?? 0
+        record.dayOfWeek = Int16(weekday)
         coreDataManager.saveContext()
     }
     
     func delete(indexPath: IndexPath, trackersDate: Date) {
-        guard let tracker = trackerStore.object(at: indexPath) else { return }
+        let tracker = trackerStore.object(at: indexPath)
         let predicate = NSPredicate(format: "%K == %@ and %K == %@",
                                         #keyPath(TrackerRecordCoreData.tracker),
                                         tracker,
@@ -42,14 +44,14 @@ final class TrackerRecordStore {
     }
     
     func recordCount(indexPath: IndexPath) -> Int {
-        guard let tracker = trackerStore.object(at: indexPath) else { return .zero }
+        let tracker = trackerStore.object(at: indexPath)
         let predicate = NSPredicate(format: "%K == %@", #keyPath(TrackerRecordCoreData.tracker), tracker)
         guard let result = recordsByPredicate(tracker: tracker, predicate: predicate, resultType: .countResultType), let count = result[0] as? Int else { return 0 }
         return count
     }
     
     func isDone(indexPath: IndexPath, trackersDate: Date) -> Bool {
-        guard let tracker = trackerStore.object(at: indexPath) else { return false }
+        let tracker = trackerStore.object(at: indexPath)
         let predicate = NSPredicate(format: "%K == %@ and %K == %@",
                                     #keyPath(TrackerRecordCoreData.tracker),
                                     tracker,

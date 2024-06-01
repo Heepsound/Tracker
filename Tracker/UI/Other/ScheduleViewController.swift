@@ -10,16 +10,18 @@ import UIKit
 final class ScheduleViewController: UIViewController {
     private var titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Расписание"
-        label.textColor = .trackerBlack
+        label.text = NSLocalizedString("schedule.title", comment: "Заголовок экрана")
+        label.textColor = .trackerText
         label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         return label
     }()
     private lazy var tableView: UITableView = {
-        let tableView = UITableView.init(frame: .zero, style: .plain)
+        let tableView = UITableView.init(frame: .zero, style: .insetGrouped)
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.backgroundColor = .trackerFieldAlpha30
+        tableView.backgroundColor = .clear
+        tableView.separatorColor = .trackerSeparator
+        tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         tableView.layer.masksToBounds = true
         tableView.layer.cornerRadius = 16
         tableView.register(ScheduleCell.self, forCellReuseIdentifier: ScheduleCell.reuseIdentifier)
@@ -27,15 +29,18 @@ final class ScheduleViewController: UIViewController {
     }()
     private lazy var confirmButton: UIButton = {
         let button = UIButton(type: .custom)
-        button.backgroundColor = .trackerBlack
-        button.setTitle("Готово", for: .normal)
-        button.setTitleColor(.trackerWhite, for: .normal)
+        button.backgroundColor = .trackerButtonBackground
+        let buttonTitle = NSLocalizedString("schedule.confirmButton.title", comment: "Заголовок кнопки подтверждения расписания")
+        button.setTitle(buttonTitle, for: .normal)
+        button.setTitleColor(.trackerButtonText, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
         button.addTarget(self, action: #selector(didTapConfirmButton), for: .touchUpInside)
         return button
     }()
+    
+    private let viewModel = ScheduleViewModel()
     
     var schedule: [DaysOfWeek] = []
     
@@ -49,12 +54,7 @@ final class ScheduleViewController: UIViewController {
     }
     
     private func setupScheduleViewController() {
-        view.backgroundColor = .trackerWhite
-        let indexPaths = (0...6).map { i in
-            IndexPath(row: i, section: 0)
-        }
-        tableView.insertRows(at: indexPaths, with: .automatic)
-        tableView.reloadData()
+        view.backgroundColor = .trackerBackground
         addSubViews()
         applyConstraints()
     }
@@ -72,10 +72,10 @@ final class ScheduleViewController: UIViewController {
             titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 28)
         ])
         NSLayoutConstraint.activate([
-            tableView.widthAnchor.constraint(equalToConstant: 343),
-            tableView.heightAnchor.constraint(equalToConstant: CGFloat(7 * 75)),
-            tableView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            tableView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 30)
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tableView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 30),
+            tableView.bottomAnchor.constraint(equalTo: confirmButton.topAnchor, constant: -30)
         ])
         NSLayoutConstraint.activate([
             confirmButton.widthAnchor.constraint(equalToConstant: 335),
@@ -88,6 +88,7 @@ final class ScheduleViewController: UIViewController {
     // MARK: - Actions
     
     @objc private func didTapConfirmButton() {
+        schedule.sort(by: {$0.sortNumber < $1.sortNumber})
         dismissClosure?(schedule)
         dismiss(animated: true)
     }
@@ -97,7 +98,7 @@ final class ScheduleViewController: UIViewController {
 
 extension ScheduleViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 7
+        return viewModel.numberOfRowsInSection(section)
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -106,12 +107,7 @@ extension ScheduleViewController: UITableViewDataSource {
             return UITableViewCell()
         }
         cell.delegate = self
-        cell.dayOfWeek = DaysOfWeek(rawValue: indexPath.row + 1)
-        if indexPath.row == 6 {
-            cell.separatorInset.left = 1000
-        } else {
-            cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-        }
+        cell.dayOfWeek = viewModel.model(at: indexPath)
         return cell
     }
     

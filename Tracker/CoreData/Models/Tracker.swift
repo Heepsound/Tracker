@@ -13,14 +13,16 @@ struct Tracker {
     let trackerType: TrackerTypes
     let color: String
     let emoji: String
+    let pinned: Bool
     let schedule: [DaysOfWeek]
 
-    init(name: String, trackerType: TrackerTypes, color: String, emoji: String, schedule: [DaysOfWeek]) {
+    init(name: String, trackerType: TrackerTypes, color: String, emoji: String, pinned: Bool, schedule: [DaysOfWeek]) {
         self.id = UUID().self
         self.name = name
         self.trackerType = trackerType
         self.color = color
         self.emoji = emoji
+        self.pinned = pinned
         self.schedule = schedule
     }
     
@@ -30,6 +32,7 @@ struct Tracker {
         self.trackerType = TrackerTypes(rawValue: Int(trackerCoreData.trackerType)) ?? .habit
         self.color = trackerCoreData.color ?? "7994F5"
         self.emoji = trackerCoreData.emoji ?? "🤔"
+        self.pinned = trackerCoreData.pinned
         var tempSchedule: [DaysOfWeek] = []
         if let schedule = trackerCoreData.schedule {
             for item in schedule {
@@ -38,6 +41,7 @@ struct Tracker {
                 }
             }
         }
+        tempSchedule.sort(by: {$0.sortNumber < $1.sortNumber})
         self.schedule = tempSchedule
     }
 }

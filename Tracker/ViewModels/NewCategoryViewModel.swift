@@ -12,6 +12,19 @@ final class NewCategoryViewModel {
     
     var allDataEntered: Binding<Bool>?
     
+    var indexPath: IndexPath? {
+        didSet {
+            guard let indexPath else { return }
+            let object = dataStore.object(at: indexPath)
+            categoryName = object.name
+        }
+    }
+    
+    var isEditMode: Bool {
+        guard let _ = indexPath else { return false }
+        return true
+    }
+    
     var categoryName: String? {
         didSet {
             checkNewCategoryData()
@@ -26,8 +39,8 @@ final class NewCategoryViewModel {
         allDataEntered?(result)
     }
     
-    func add() {
+    func save() {
         let model = TrackerCategory(name: categoryName ?? "Untitled", trackers: [])
-        dataStore.add(model)
+        dataStore.save(model, at: indexPath)
     }
 }
