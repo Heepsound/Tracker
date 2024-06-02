@@ -191,7 +191,6 @@ final class TrackerCell: UICollectionViewCell {
             viewModel?.addRecord(indexPath: indexPath)
         }
         isDone = !isDone
-        doneTimes = viewModel?.recordCount(indexPath: indexPath) ?? 0
     }
 }
 

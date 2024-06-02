@@ -17,10 +17,17 @@ final class TrackerStore: NSObject {
     
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCoreData> = {
         let request = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
-        let categorySortDescriptor = NSSortDescriptor(key: "category.name", ascending: true)
-        let nameSortDescriptor = NSSortDescriptor(key: "name", ascending: true)
-        request.sortDescriptors = [categorySortDescriptor, nameSortDescriptor]
-        let fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: coreDataManager.context, sectionNameKeyPath: "category.name", cacheName: nil)
+        request.sortDescriptors = [
+            NSSortDescriptor(key: "pinned", ascending: false),
+            NSSortDescriptor(key: "category.name", ascending: true),
+            NSSortDescriptor(key: "name", ascending: true)
+        ]
+        let fetchedResultsController = NSFetchedResultsController(
+            fetchRequest: request,
+            managedObjectContext: coreDataManager.context,
+            sectionNameKeyPath: "category.name",
+            cacheName: nil
+        )
         fetchedResultsController.delegate = self
         return fetchedResultsController
     }()
