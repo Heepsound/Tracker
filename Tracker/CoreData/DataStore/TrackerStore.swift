@@ -104,8 +104,7 @@ final class TrackerStore: NSObject {
             argumentsArray.append(#keyPath(TrackerRecordCoreData.date))
             argumentsArray.append(date as CVarArg)
         case .notCompleted:
-            requestText.append(")) and (any %K == nil or NOT (%K.%K CONTAINS %@)))")
-            argumentsArray.append(#keyPath(TrackerCoreData.records))
+            requestText.append(")) and SUBQUERY(%K, $x, $x.%K == %@).@count == 0)")
             argumentsArray.append(#keyPath(TrackerCoreData.records))
             argumentsArray.append(#keyPath(TrackerRecordCoreData.date))
             argumentsArray.append(date as CVarArg)
