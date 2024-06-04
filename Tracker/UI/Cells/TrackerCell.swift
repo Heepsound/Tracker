@@ -33,7 +33,7 @@ final class TrackerCell: UICollectionViewCell {
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
-    private var cardLabel: UILabel = {
+    private(set) var cardLabel: UILabel = {
         let label = UILabel()
         label.layer.cornerRadius = 16
         label.layer.masksToBounds = true
@@ -117,8 +117,6 @@ final class TrackerCell: UICollectionViewCell {
     private func setupTrackerCell() {
         addSubViews()
         applyConstraints()
-        layer.cornerRadius = 16
-        layer.masksToBounds = true
     }
     
     private func addSubViews() {
