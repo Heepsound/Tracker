@@ -17,6 +17,7 @@ final class TrackerCategoryStore: NSObject {
     
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCategoryCoreData> = {
         let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
+        request.predicate = NSPredicate(format: "%K == false", #keyPath(TrackerCategoryCoreData.pinned))
         request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: coreDataManager.context, sectionNameKeyPath: nil, cacheName: nil)
         fetchedResultsController.delegate = self
@@ -65,6 +66,19 @@ final class TrackerCategoryStore: NSObject {
         let record = fetchedResultsController.object(at: indexPath)
         coreDataManager.context.delete(record)
         coreDataManager.saveContext()
+    }
+    
+    func getPinnedCategory() -> TrackerCategoryCoreData {
+        let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
+        request.predicate = NSPredicate(format: "%K == true", #keyPath(TrackerCategoryCoreData.pinned))
+        if let result = try? coreDataManager.context.fetch(request), !result.isEmpty {
+            return result[0]
+        }
+        let object = TrackerCategoryCoreData(context: coreDataManager.context)
+        object.id = UUID()
+        object.name = "Закрепленные"
+        object.pinned = true
+        return object
     }
 }
 

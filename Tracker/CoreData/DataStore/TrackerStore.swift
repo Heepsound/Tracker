@@ -11,6 +11,7 @@ final class TrackerStore: NSObject {
     static let shared = TrackerStore()
     
     private var coreDataManager = CoreDataManager.shared
+    private var trackerCategoryStore = TrackerCategoryStore.shared
     
     weak var delegate: DataStoreDelegate?
     private var dataStoreUpdate = DataStoreUpdate()
@@ -19,13 +20,13 @@ final class TrackerStore: NSObject {
         let request = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
         request.sortDescriptors = [
             NSSortDescriptor(key: "pinned", ascending: false),
-            NSSortDescriptor(key: "category.name", ascending: true),
+            //NSSortDescriptor(key: "category.name", ascending: true),
             NSSortDescriptor(key: "name", ascending: true)
         ]
         let fetchedResultsController = NSFetchedResultsController(
             fetchRequest: request,
             managedObjectContext: coreDataManager.context,
-            sectionNameKeyPath: "category.name",
+            sectionNameKeyPath: #keyPath(TrackerCoreData.category.name),
             cacheName: nil
         )
         fetchedResultsController.delegate = self
@@ -86,6 +87,15 @@ final class TrackerStore: NSObject {
     func setPinned(at indexPath: IndexPath) {
         let object = object(at: indexPath)
         object.pinned = !object.pinned
+        if object.pinned{
+            object.mainCategory = object.category
+            object.category = trackerCategoryStore.getPinnedCategory()
+        } else {
+            if let mainCategory = object.mainCategory {
+                object.category = mainCategory
+            }
+            object.mainCategory = nil
+        }
         coreDataManager.saveContext()
     }
     
