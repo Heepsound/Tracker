@@ -352,6 +352,16 @@ extension TrackersViewController: UICollectionViewDelegate {
             ])
         })
     }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        contextMenuConfiguration configuration: UIContextMenuConfiguration,
+        highlightPreviewForItemAt indexPath: IndexPath
+    ) -> UITargetedPreview? {
+        guard let cell = collectionView.cellForItem(at: indexPath) as? TrackerCell else { return nil }
+        let targetPreview = UITargetedPreview(view: cell.cardLabel)
+        return targetPreview
+    }
 }
 
 // MARK: - EntityEditViewControllerDelegate

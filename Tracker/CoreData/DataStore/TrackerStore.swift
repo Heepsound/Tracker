@@ -11,16 +11,24 @@ final class TrackerStore: NSObject {
     static let shared = TrackerStore()
     
     private var coreDataManager = CoreDataManager.shared
+    private var trackerCategoryStore = TrackerCategoryStore.shared
     
     weak var delegate: DataStoreDelegate?
     private var dataStoreUpdate = DataStoreUpdate()
     
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCoreData> = {
         let request = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
-        let categorySortDescriptor = NSSortDescriptor(key: "category.name", ascending: true)
-        let nameSortDescriptor = NSSortDescriptor(key: "name", ascending: true)
-        request.sortDescriptors = [categorySortDescriptor, nameSortDescriptor]
-        let fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: coreDataManager.context, sectionNameKeyPath: "category.name", cacheName: nil)
+        request.sortDescriptors = [
+            NSSortDescriptor(key: "pinned", ascending: false),
+            //NSSortDescriptor(key: "category.name", ascending: true),
+            NSSortDescriptor(key: "name", ascending: true)
+        ]
+        let fetchedResultsController = NSFetchedResultsController(
+            fetchRequest: request,
+            managedObjectContext: coreDataManager.context,
+            sectionNameKeyPath: #keyPath(TrackerCoreData.category.name),
+            cacheName: nil
+        )
         fetchedResultsController.delegate = self
         return fetchedResultsController
     }()
@@ -79,6 +87,15 @@ final class TrackerStore: NSObject {
     func setPinned(at indexPath: IndexPath) {
         let object = object(at: indexPath)
         object.pinned = !object.pinned
+        if object.pinned{
+            object.mainCategory = object.category
+            object.category = trackerCategoryStore.getPinnedCategory()
+        } else {
+            if let mainCategory = object.mainCategory {
+                object.category = mainCategory
+            }
+            object.mainCategory = nil
+        }
         coreDataManager.saveContext()
     }
     
@@ -97,18 +114,18 @@ final class TrackerStore: NSObject {
         argumentsArray.append(weekday?.rawValue ?? 1)
         argumentsArray.append(#keyPath(TrackerCoreData.trackerType))
         argumentsArray.append(TrackerTypes.irregularEvent.rawValue)
-        if filter == .completed {
+        switch filter {
+        case .completed:
             requestText.append(")) and any %K.%K == %@)")
             argumentsArray.append(#keyPath(TrackerCoreData.records))
             argumentsArray.append(#keyPath(TrackerRecordCoreData.date))
             argumentsArray.append(date as CVarArg)
-        } else if filter == .notCompleted {
-            requestText.append(")) and (any %K == nil or NOT (%K.%K CONTAINS %@)))")
-            argumentsArray.append(#keyPath(TrackerCoreData.records))
+        case .notCompleted:
+            requestText.append(")) and SUBQUERY(%K, $x, $x.%K == %@).@count == 0)")
             argumentsArray.append(#keyPath(TrackerCoreData.records))
             argumentsArray.append(#keyPath(TrackerRecordCoreData.date))
             argumentsArray.append(date as CVarArg)
-        } else {
+        default:
             requestText.append(" and (any %K == nil or any %K.%K == %@))) or %K = true)")
             argumentsArray.append(#keyPath(TrackerCoreData.records))
             argumentsArray.append(#keyPath(TrackerCoreData.records))

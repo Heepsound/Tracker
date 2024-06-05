@@ -20,7 +20,6 @@ final class StatisticsStore {
         guard let result = try? coreDataManager.context.execute(requestRecords) as? NSAsynchronousFetchResult<NSFetchRequestResult>,
               let result = result.finalResult else { return 0 }
         
-        // Не знаю, как без SQL запросов сделать объединение с помощью NSFetchRequest, в обучении этого нет, далее будет колхоз
         var count = 0
         var current = 0
         var previousDate: Date?
@@ -57,7 +56,6 @@ final class StatisticsStore {
         guard let result = try? coreDataManager.context.execute(requestRecords) as? NSAsynchronousFetchResult<NSFetchRequestResult>,
               let result = result.finalResult else { return 0 }
         
-        // Не знаю, как без SQL запросов сделать объединение с помощью NSFetchRequest, в обучении этого нет, далее будет колхоз
         var count = 0
         result.forEach { item in
             if let dayOfWeek = (item as AnyObject).value(forKey: "dayOfWeek") as? Int,
@@ -86,7 +84,6 @@ final class StatisticsStore {
         guard let result = try? coreDataManager.context.execute(request) as? NSAsynchronousFetchResult<NSFetchRequestResult>,
               let result = result.finalResult else { return 0 }
         
-        // Не знаю, как без SQL запросов написать вложенный запрос с помощью NSFetchRequest, в обучении этого нет, далее будет колхоз
         var count = 0
         result.forEach { item in
             if let trackerCount = (item as AnyObject).value(forKey: "trackersCount") as? Int {
